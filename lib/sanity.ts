@@ -22,6 +22,8 @@ export const reptileByIdQuery = `*[_type == "reptile" && _id == $id][0] {
   _id, name{pl, en}, "species": species->name.pl, latinName, morph{pl, en}, sex{pl, en}, weight, status, description{pl, en}, price, featured, "imageUrl": image.asset->url
 }`
 
+export const guideByIdQuery = `*[_type == "guide" && _id == $id][0] { _id, title{pl, en}, excerpt{pl, en}, category{pl, en}, readingTime, body, "imageUrl": image.asset->url }`
+
 export const guidesQuery = `*[_type == "guide"] | order(order asc, _createdAt desc) { _id, title{pl, en}, excerpt{pl, en}, category{pl, en}, readingTime, "imageUrl": image.asset->url }`
 
 export const reptilesQuery = `*[_type == "reptile"] | order(order asc, _createdAt asc) {

@@ -86,6 +86,14 @@ body {
   overflow-x: hidden;
 }
 
+.guide-detail-page { min-height: 100vh; background: var(--paper, #f2f0e8); color: var(--ink, #172019); padding: 28px 5vw 100px; }
+.guide-detail { max-width: 820px; margin: 130px auto 0; }
+.guide-detail h1 { font-size: clamp(58px, 9vw, 132px); line-height: .84; letter-spacing: -.06em; margin: 22px 0 28px; }
+.guide-detail-lead { font-size: 21px; line-height: 1.5; max-width: 650px; margin-bottom: 50px; }
+.guide-detail-image { display: block; width: 100%; max-height: 520px; object-fit: cover; margin-bottom: 55px; }
+.guide-body { max-width: 680px; font-size: 18px; line-height: 1.75; }
+.guide-body p { margin: 0 0 24px; }
+
 .guides-page { min-height: 100vh; background: var(--paper, #f2f0e8); color: var(--ink, #172019); padding: 28px 5vw 90px; }
 .guides-header { max-width: 1240px; margin: 0 auto; display: flex; justify-content: space-between; align-items: flex-start; }
 .guides-brand { color: inherit; font-size: 11px; letter-spacing: .16em; line-height: .95; }
