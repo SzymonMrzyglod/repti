@@ -39,8 +39,7 @@ export default function NoctuaHome({ animals, settings }: NoctuaHomeProps) {
       <section className="hero" id="start">
         <img src="/images/hero-gecko.png" alt="Gekon orzęsiony na gałęzi w tropikalnym terrarium" className="hero-image" />
         <div className="hero-overlay" />
-        <SiteHeader menuOpen={menuOpen} onToggle={() => setMenuOpen(!menuOpen)} onNavigate={() => setMenuOpen(false)} />
-        <div className="language-switcher" aria-label="Wybierz język"><button className={locale === 'pl' ? 'active' : ''} onClick={() => setLocale('pl')}>PL</button><button className={locale === 'en' ? 'active' : ''} onClick={() => setLocale('en')}>EN</button></div>
+<SiteHeader menuOpen={menuOpen} onToggle={() => setMenuOpen(!menuOpen)} onNavigate={() => setMenuOpen(false)} locale={locale} onLocaleChange={setLocale} />
         <div className="hero-content">
           <p className="eyebrow"><span /> {copy(settings?.heroEyebrow, locale, 'HODOWLA Z PASJĄ · OD 2017')}</p>
           <h1>{copy(settings?.heroTitle, locale, 'Piękno z natury.')}</h1>
