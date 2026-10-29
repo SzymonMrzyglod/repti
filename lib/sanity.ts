@@ -23,6 +23,6 @@ export const reptileByNameQuery = `*[_type == "reptile" && (name.pl == $name || 
 }`
 
 export const reptilesQuery = `*[_type == "reptile"] | order(order asc, _createdAt asc) {
-  _id, name{pl, en}, species, latinName, morph{pl, en}, sex{pl, en}, weight, status,
+  _id, name{pl, en}, "speciesId": species._ref, "speciesName": species->name, "speciesLatinName": species->latinName, latinName, morph{pl, en}, sex{pl, en}, weight, status,
   description{pl, en}, price, featured, "imageUrl": image.asset->url
 }`

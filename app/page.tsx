@@ -6,7 +6,9 @@ type Localized = { pl?: string; en?: string }
 
 type SanityReptile = {
   name?: Localized
-  species?: string
+  species?: { _ref?: string }
+  speciesName?: Localized
+  speciesLatinName?: string
   latinName?: string
   morph?: Localized
   sex?: Localized
@@ -34,8 +36,8 @@ export default async function Page() {
   const fallbackImages = ['/images/gecko-luna.png', '/images/gecko-moss.png', '/images/snake-ember.png']
   const animals = entries.length ? entries.map((entry, index) => ({
     name: text(entry.name, 'pl', 'Nowy podopieczny'),
-    species: entry.species?.toLowerCase().includes('wąż') ? 'Wąż zbożowy' as const : 'Gekon orzęsiony' as const,
-    latin: entry.latinName || (entry.species?.toLowerCase().includes('wąż') ? 'Pantherophis guttatus' : 'Correlophus ciliatus'),
+    species: text(entry.speciesName, 'pl', 'Bez przypisanego gatunku'),
+    latin: entry.speciesLatinName || entry.latinName || '—',
     morph: text(entry.morph, 'pl', 'Do uzupełnienia'), sex: text(entry.sex, 'pl', 'Do uzupełnienia'),
     weight: entry.weight || 'Do uzupełnienia', status: entry.status === 'reserved' ? 'Rezerwacja' as const : 'Dostępny' as const,
     image: entry.imageUrl || fallbackImages[index % fallbackImages.length],

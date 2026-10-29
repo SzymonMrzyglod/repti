@@ -8,7 +8,7 @@ import SiteHeader from '@/components/site-header'
 
 type Animal = {
   name: string
-  species: 'Gekon orzęsiony' | 'Wąż zbożowy'
+  species: string
   latin: string
   morph: string
   sex: string
@@ -32,7 +32,8 @@ const copy = (value: Localized | undefined, locale: 'pl' | 'en', fallback: strin
 export default function NoctuaHome({ animals, settings }: NoctuaHomeProps) {
   const [menuOpen, setMenuOpen] = useState(false)
   const [locale, setLocale] = useState<'pl' | 'en'>('pl')
-  const [filter, setFilter] = useState<'Wszystkie' | Animal['species']>('Wszystkie')
+  const [filter, setFilter] = useState('Wszystkie')
+  const species = useMemo(() => Array.from(new Set(animals.map((animal) => animal.species).filter(Boolean))), [animals])
   const visibleAnimals = useMemo(() => filter === 'Wszystkie' ? animals : animals.filter((animal) => animal.species === filter), [filter, animals])
 
   return (
@@ -58,7 +59,7 @@ export default function NoctuaHome({ animals, settings }: NoctuaHomeProps) {
 
       <section className="catalog-section" id="zwierzeta">
         <div className="section-heading"><div><p className="eyebrow"><span /> {copy(settings?.collectionEyebrow, locale, 'NASZA KOLEKCJA')}</p><h2>{copy(settings?.collectionTitle, locale, 'Poznaj naszych podopiecznych.')}</h2></div><p className="section-note">{copy(settings?.collectionNote, locale, 'Starannie wyselekcjonowane osobniki, gotowe, by stać się częścią Twojej historii.')}</p></div>
-        <div className="filter-row"><div className="filters">{(['Wszystkie', 'Gekon orzęsiony', 'Wąż zbożowy'] as const).map((item) => <button key={item} className={filter === item ? 'filter active' : 'filter'} onClick={() => setFilter(item)}>{item}</button>)}</div><button className="select-filter">Filtruj kolekcję <ChevronDown size={16} /></button></div>
+        <div className="filter-row"><div className="filters">{['Wszystkie', ...species].map((item) => <button key={item} className={filter === item ? 'filter active' : 'filter'} onClick={() => setFilter(item)}>{item}</button>)}</div><button className="select-filter">Filtruj kolekcję <ChevronDown size={16} /></button></div>
         <div className="animal-grid">{visibleAnimals.map((animal) => <AnimalCard animal={animal} key={animal.name} />)}</div>
         <div className="catalog-foot"><span>01 — 0{visibleAnimals.length}</span><a href="#zwierzeta" className="text-link light">Zobacz pełną kolekcję <ArrowUpRight size={15} /></a></div>
       </section>
