@@ -22,6 +22,7 @@ type Localized = { pl?: string; en?: string }
 type SiteSettings = {
   brandName?: string
   logoUrl?: string
+  heroImageUrl?: string
   heroEyebrow?: Localized; heroTitle?: Localized; heroText?: Localized
   historyEyebrow?: Localized; historyTitle?: Localized; historyLead?: Localized; historyText?: Localized
   collectionEyebrow?: Localized; collectionTitle?: Localized; collectionNote?: Localized
@@ -43,7 +44,7 @@ export default function NoctuaHome({ animals, settings }: NoctuaHomeProps) {
   return (
     <main className="site-shell">
       <section className="hero" id="start">
-        <img src="/images/hero-gecko.png" alt="Gekon orzęsiony na gałęzi w tropikalnym terrarium" className="hero-image" />
+        <img src={settings?.heroImageUrl || '/images/hero-gecko.png'} alt="Gekon orzęsiony na gałęzi w tropikalnym terrarium" className="hero-image" />
         <div className="hero-overlay" />
 <SiteHeader menuOpen={menuOpen} onToggle={() => setMenuOpen(!menuOpen)} onNavigate={() => setMenuOpen(false)} locale={locale} onLocaleChange={setLocale} brandName={settings?.brandName} logoUrl={settings?.logoUrl} />
         <div className="hero-content">

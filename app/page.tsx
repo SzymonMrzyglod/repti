@@ -22,6 +22,7 @@ type SanityReptile = {
 type SanitySettings = {
   brandName?: string
   logoUrl?: string
+  heroImageUrl?: string
   heroEyebrow?: Localized; heroTitle?: Localized; heroText?: Localized
   historyEyebrow?: Localized; historyTitle?: Localized; historyLead?: Localized; historyText?: Localized
   collectionEyebrow?: Localized; collectionTitle?: Localized; collectionNote?: Localized
