@@ -18,7 +18,7 @@ export const siteSettingsQuery = `*[_type == "siteSettings"][0]{
   footerText{pl, en}, seoTitle{pl, en}, seoDescription{pl, en}
 }`
 
-export const reptileByNameQuery = `*[_type == "reptile" && (name.pl == $name || name.en == $name)][0] {
+export const reptileByIdQuery = `*[_type == "reptile" && _id == $id][0] {
   _id, name{pl, en}, species, latinName, morph{pl, en}, sex{pl, en}, weight, status, description{pl, en}, price, featured, "imageUrl": image.asset->url
 }`
 

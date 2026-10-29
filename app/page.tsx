@@ -35,6 +35,7 @@ export default async function Page() {
   ])
   const fallbackImages = ['/images/gecko-luna.png', '/images/gecko-moss.png', '/images/snake-ember.png']
   const animals = entries.length ? entries.map((entry, index) => ({
+    id: entry._id,
     name: text(entry.name, 'pl', 'Nowy podopieczny'),
     species: text(entry.speciesName, 'pl', 'Bez przypisanego gatunku'),
     latin: entry.speciesLatinName || entry.latinName || '—',
