@@ -1,5 +1,3 @@
-"use client";
-
 import { ArrowUpRight, Menu, X } from "lucide-react";
 import BrandMark from "@/components/brand-mark";
 
