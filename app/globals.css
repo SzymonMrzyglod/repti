@@ -12,10 +12,10 @@ a { color: inherit; text-decoration: none; }
 .hero { position: relative; min-height: 720px; height: 100svh; color: #f3f1e8; background: #16251c; }
 .hero-image { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: center 37%; filter: saturate(.82); }
 .hero-overlay { position: absolute; inset: 0; background: linear-gradient(90deg, rgba(10,20,14,.82), rgba(11,20,14,.2) 63%, rgba(10,16,12,.38)), linear-gradient(0deg, rgba(8,14,11,.65), transparent 42%); }
-.site-header { position: relative; z-index: 2; display: flex; justify-content: space-between; align-items: center; padding: 28px 5.5vw; border-bottom: 1px solid rgba(245,241,229,.2); }
+.site-header { position: relative; z-index: 2; display: flex; justify-content: space-between; align-items: center; padding: 12px 5.5vw; border-bottom: 1px solid rgba(245,241,229,.2); }
 .logo { display: flex; gap: 11px; align-items: center; font-size: 12px; line-height: .92; letter-spacing: .17em; font-weight: 700; }
 .logo em { font-style: normal; font-size: 8px; letter-spacing: .36em; color: #b9b39f; }
-.brand-mark { position: relative; isolation: isolate; width: 58px; height: 58px; display: block; flex: 0 0 auto; border-radius: 50%; }
+.brand-mark { position: relative; isolation: isolate; width: 72px; height: 72px; display: block; flex: 0 0 auto; border-radius: 50%; }
 .brand-mark::before { content: ''; position: absolute; z-index: -1; inset: -16px; border-radius: 50%; background: radial-gradient(circle, rgba(255,255,255,.98) 0%, rgba(255,255,255,.72) 42%, rgba(255,255,255,.24) 63%, rgba(255,255,255,0) 78%); }
 .brand-mark img { position: relative; display: block; width: 100%; height: 100%; object-fit: cover; border-radius: 50%; }
 .main-nav { display: flex; gap: clamp(20px, 3.2vw, 54px); margin-left: auto; margin-right: 5vw; font-size: 11px; text-transform: uppercase; letter-spacing: .15em; color: #d7d5c9; }
