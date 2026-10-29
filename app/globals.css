@@ -34,7 +34,7 @@ h1, h2 { font-family: Georgia, 'Times New Roman', serif; font-weight: 400; }
 h1 { font-size: clamp(74px, 11vw, 156px); line-height: .84; letter-spacing: -.07em; margin: 28px 0 30px; }
 h1 i, h2 i { color: var(--gold); font-style: italic; }
 .hero-text { font-size: 14px; line-height: 1.7; color: #d0cec3; margin-bottom: 35px; }
-.outline-button { display: inline-flex; align-items: center; gap: 25px; border: 1px solid rgba(232,228,214,.5); padding: 15px 18px 15px 20px; font-size: 10px; letter-spacing: .16em; text-transform: uppercase; transition: .3s; }
+.outline-button { display: inline-flex; align-items: center; gap: 25px; width: fit-content; max-width: 100%; white-space: nowrap; border: 1px solid rgba(232,228,214,.5); padding: 15px 18px 15px 20px; font-size: 10px; letter-spacing: .16em; text-transform: uppercase; transition: .3s; }
 .outline-button:hover { background: #f0ede0; color: var(--forest); border-color: #f0ede0; }
 .hero-foot { position: absolute; bottom: 28px; left: 5.5vw; right: 5.5vw; display: flex; justify-content: space-between; font-size: 9px; color: #b8b8aa; letter-spacing: .18em; }
 .hero-index { color: #e9e4d7; }.hero-index i { color: var(--gold); font-style: normal; margin: 0 8px; }
@@ -54,6 +54,10 @@ footer { background: var(--ivory); padding: 90px 5.5vw 25px; }.footer-top { disp
   font-size: clamp(58px, 7vw, 104px);
   line-height: 0.86;
   max-width: 8ch;
+}
+
+@media (min-width: 1000px) and (max-width: 1999px) {
+  .hero-content { padding-top: 10vh; }
 }
 
 @media (min-width: 2000px) {
