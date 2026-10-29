@@ -66,7 +66,7 @@ export default function NoctuaHome({ animals, settings }: NoctuaHomeProps) {
         <div className="catalog-foot"><span>01 — 0{filteredAnimals.length}</span>{filteredAnimals.length > 3 && <button type="button" className="text-link light collection-link" onClick={() => setShowAll((current) => !current)}>{showAll ? 'Pokaż mniej' : 'Zobacz pełną kolekcję'} <ArrowUpRight size={15} /></button>}</div>
       </section>
 
-      <section className="care-section" id="opieka"><div className="care-inner"><p className="eyebrow"><span /> {copy(settings?.careEyebrow, locale, 'WIEDZA I OPIEKA')}</p><h2>{copy(settings?.careTitle, locale, 'Dobry początek to podstawa.')}</h2><p>{copy(settings?.careText, locale, 'Przygotowaliśmy praktyczne przewodniki, które pomogą Ci zapewnić Twojemu gadowi najlepsze warunki od pierwszego dnia.')}</p><a href="#kontakt" className="outline-button">{locale === 'en' ? 'Go to guides' : 'Przejdź do poradników'} <ArrowUpRight size={16} /></a></div></section>
+      <section className="care-section" id="opieka"><div className="care-inner"><p className="eyebrow"><span /> {copy(settings?.careEyebrow, locale, 'WIEDZA I OPIEKA')}</p><h2>{copy(settings?.careTitle, locale, 'Dobry początek to podstawa.')}</h2><p>{copy(settings?.careText, locale, 'Przygotowaliśmy praktyczne przewodniki, które pomogą Ci zapewnić Twojemu gadowi najlepsze warunki od pierwszego dnia.')}</p><a href="/poradniki" className="outline-button">{locale === 'en' ? 'Go to guides' : 'Przejdź do poradników'} <ArrowUpRight size={16} /></a></div></section>
 
       <SiteFooter />
     </main>
