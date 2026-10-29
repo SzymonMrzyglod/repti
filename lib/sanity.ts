@@ -8,7 +8,7 @@ export const sanityClient = createClient({
 })
 
 export const siteSettingsQuery = `*[_type == "siteSettings"][0]{
-  brandName,
+  brandName, "logoUrl": logo.asset->url,
   navigation[]{_key, href, label{pl, en}},
   heroEyebrow{pl, en}, heroTitle{pl, en}, heroText{pl, en}, "heroImageUrl": heroImage.asset->url,
   historyEyebrow{pl, en}, historyTitle{pl, en}, historyLead{pl, en}, historyText{pl, en},
