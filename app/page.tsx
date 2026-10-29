@@ -13,6 +13,7 @@ type SanityReptile = {
   weight?: string
   status?: 'available' | 'reserved' | 'adopted'
   imageUrl?: string
+  description?: Localized
 }
 
 type SanitySettings = {
@@ -30,13 +31,14 @@ export default async function Page() {
     sanityClient.fetch<SanityReptile[]>(reptilesQuery).catch(() => []),
     sanityClient.fetch<SanitySettings | null>(siteSettingsQuery).catch(() => null),
   ])
-  const animals = entries.length ? entries.map((entry) => ({
+  const fallbackImages = ['/images/gecko-luna.png', '/images/gecko-moss.png', '/images/snake-ember.png']
+  const animals = entries.length ? entries.map((entry, index) => ({
     name: text(entry.name, 'pl', 'Nowy podopieczny'),
     species: entry.species?.toLowerCase().includes('wąż') ? 'Wąż zbożowy' as const : 'Gekon orzęsiony' as const,
     latin: entry.latinName || (entry.species?.toLowerCase().includes('wąż') ? 'Pantherophis guttatus' : 'Correlophus ciliatus'),
     morph: text(entry.morph, 'pl', 'Do uzupełnienia'), sex: text(entry.sex, 'pl', 'Do uzupełnienia'),
     weight: entry.weight || 'Do uzupełnienia', status: entry.status === 'reserved' ? 'Rezerwacja' as const : 'Dostępny' as const,
-    image: entry.imageUrl || '',
+    image: entry.imageUrl || fallbackImages[index % fallbackImages.length],
   })) : []
 
   return <NoctuaHome animals={animals} settings={settings} />
