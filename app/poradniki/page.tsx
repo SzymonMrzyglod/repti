@@ -2,6 +2,8 @@ import Link from 'next/link'
 import { ArrowLeft, ArrowUpRight } from 'lucide-react'
 import { guidesQuery, sanityClient } from '@/lib/sanity'
 
+export const dynamic = 'force-dynamic'
+
 type Localized = { pl?: string; en?: string }
 type Guide = { _id: string; title?: Localized; excerpt?: Localized; category?: Localized; readingTime?: string; imageUrl?: string }
 const text = (value: Localized | undefined) => value?.pl || value?.en || ''

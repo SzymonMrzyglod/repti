@@ -4,7 +4,7 @@ export const sanityClient = createClient({
   projectId: 'por5jwj3',
   dataset: 'production',
   apiVersion: '2026-10-28',
-  useCdn: true,
+  useCdn: false,
 })
 
 export const siteSettingsQuery = `*[_type == "siteSettings"][0]{

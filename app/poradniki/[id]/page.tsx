@@ -3,6 +3,8 @@ import { ArrowLeft } from 'lucide-react'
 import { notFound } from 'next/navigation'
 import { guideByIdQuery, sanityClient } from '@/lib/sanity'
 
+export const dynamic = 'force-dynamic'
+
 type Localized = { pl?: string; en?: string }
 type Block = { _type?: string; children?: { text?: string }[] }
 type Guide = { _id: string; title?: Localized; excerpt?: Localized; category?: Localized; readingTime?: string; body?: Block[]; imageUrl?: string }

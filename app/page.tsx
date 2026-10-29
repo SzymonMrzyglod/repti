@@ -1,6 +1,8 @@
 import NoctuaHome from '@/components/noctua-home'
 import { reptilesQuery, sanityClient, siteSettingsQuery } from '@/lib/sanity'
 
+export const dynamic = 'force-dynamic'
+
 type Locale = 'pl' | 'en'
 type Localized = { pl?: string; en?: string }
 
