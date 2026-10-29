@@ -3,8 +3,8 @@ import type { Metadata, Viewport } from 'next'
 import './globals.css'
 
 export const metadata: Metadata = {
-  title: 'Noctua Reptiles — Hodowla z pasją',
-  description: 'Profesjonalna hodowla gekonów orzęsionych i węży zbożowych. Piękno z natury.',
+  title: 'O ty gadzie! — Hodowla z pasją',
+  description: 'O ty gadzie! — profesjonalna hodowla gekonów orzęsionych i węży zbożowych. Piękno z natury.',
   generator: 'v0.app',
   icons: {
     icon: [
