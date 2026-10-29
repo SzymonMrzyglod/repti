@@ -71,7 +71,7 @@ export default function NoctuaHome({ animals, settings }: NoctuaHomeProps) {
 
       <section className="care-section" id="opieka"><div className="care-inner"><p className="eyebrow"><span /> {copy(settings?.careEyebrow, locale, 'WIEDZA I OPIEKA')}</p><h2>{copy(settings?.careTitle, locale, 'Dobry początek to podstawa.')}</h2><p>{copy(settings?.careText, locale, 'Przygotowaliśmy praktyczne przewodniki, które pomogą Ci zapewnić Twojemu gadowi najlepsze warunki od pierwszego dnia.')}</p><a href="/poradniki" className="outline-button">{locale === 'en' ? 'Go to guides' : 'Przejdź do poradników'} <ArrowUpRight size={16} /></a></div></section>
 
-      <SiteFooter />
+      <SiteFooter logoUrl={settings?.logoUrl} />
     </main>
   )
 }
