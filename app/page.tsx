@@ -5,6 +5,7 @@ type Locale = 'pl' | 'en'
 type Localized = { pl?: string; en?: string }
 
 type SanityReptile = {
+  _id: string
   name?: Localized
   species?: { _ref?: string }
   speciesName?: Localized
@@ -31,8 +32,8 @@ const text = (value: Localized | undefined, locale: Locale, fallback: string) =>
 
 export default async function Page() {
   const [entries, settings] = await Promise.all([
-    sanityClient.fetch<SanityReptile[]>(reptilesQuery).catch(() => []),
-    sanityClient.fetch<SanitySettings | null>(siteSettingsQuery).catch(() => null),
+    sanityClient.fetch<SanityReptile[]>(reptilesQuery),
+    sanityClient.fetch<SanitySettings | null>(siteSettingsQuery),
   ])
   const fallbackImages = ['/images/gecko-luna.png', '/images/gecko-moss.png', '/images/snake-ember.png']
   const animals = entries.length ? entries.map((entry, index) => ({
@@ -41,7 +42,7 @@ export default async function Page() {
     species: text(entry.speciesName, 'pl', 'Bez przypisanego gatunku'),
     latin: entry.speciesLatinName || entry.latinName || '—',
     morph: text(entry.morph, 'pl', 'Do uzupełnienia'), sex: text(entry.sex, 'pl', 'Do uzupełnienia'),
-    weight: entry.weight || 'Do uzupełnienia', status: entry.status === 'reserved' ? 'Rezerwacja' as const : 'Dostępny' as const,
+    weight: entry.weight || 'Do uzupełnienia', status: entry.status === 'reserved' ? 'Rezerwacja' as const : entry.status === 'adopted' ? 'Adoptowany' as const : 'Dostępny' as const,
     image: entry.imageUrl || fallbackImages[index % fallbackImages.length],
   })) : []
 

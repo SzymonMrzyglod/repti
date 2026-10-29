@@ -1,25 +1,27 @@
 'use client'
 
 import { useMemo, useState } from 'react'
-import { ArrowDown, ArrowUpRight, ChevronDown } from 'lucide-react'
+import { ArrowDown, ArrowUpRight } from 'lucide-react'
 import AnimalCard from '@/components/animal-card'
 import SiteFooter from '@/components/site-footer'
 import SiteHeader from '@/components/site-header'
 
 type Animal = {
+  id: string
   name: string
   species: string
   latin: string
   morph: string
   sex: string
   weight: string
-  status: 'Dostępny' | 'Rezerwacja'
+  status: 'Dostępny' | 'Rezerwacja' | 'Adoptowany'
   image: string
 }
 
 type Localized = { pl?: string; en?: string }
 type SiteSettings = {
   brandName?: string
+  logoUrl?: string
   heroEyebrow?: Localized; heroTitle?: Localized; heroText?: Localized
   historyEyebrow?: Localized; historyTitle?: Localized; historyLead?: Localized; historyText?: Localized
   collectionEyebrow?: Localized; collectionTitle?: Localized; collectionNote?: Localized
@@ -61,7 +63,7 @@ export default function NoctuaHome({ animals, settings }: NoctuaHomeProps) {
 
       <section className="catalog-section" id="zwierzeta">
         <div className="section-heading"><div><p className="eyebrow"><span /> {copy(settings?.collectionEyebrow, locale, 'NASZA KOLEKCJA')}</p><h2>{copy(settings?.collectionTitle, locale, 'Poznaj naszych podopiecznych.')}</h2></div><p className="section-note">{copy(settings?.collectionNote, locale, 'Starannie wyselekcjonowane osobniki, gotowe, by stać się częścią Twojej historii.')}</p></div>
-        <div className="filter-row"><div className="filters">{['Wszystkie', ...species].map((item) => <button key={item} className={filter === item ? 'filter active' : 'filter'} onClick={() => { setFilter(item); setShowAll(false) }}>{item}</button>)}</div><button className="select-filter">Filtruj kolekcję <ChevronDown size={16} /></button></div>
+        <div className="filter-row"><div className="filters">{['Wszystkie', ...species].map((item) => <button key={item} className={filter === item ? 'filter active' : 'filter'} onClick={() => { setFilter(item); setShowAll(false) }}>{item}</button>)}</div></div>
         <div className="animal-grid">{visibleAnimals.map((animal) => <AnimalCard animal={animal} key={animal.id} />)}</div>
         <div className="catalog-foot"><span>01 — 0{filteredAnimals.length}</span>{filteredAnimals.length > 3 && <button type="button" className="text-link light collection-link" onClick={() => setShowAll((current) => !current)}>{showAll ? 'Pokaż mniej' : 'Zobacz pełną kolekcję'} <ArrowUpRight size={15} /></button>}</div>
       </section>

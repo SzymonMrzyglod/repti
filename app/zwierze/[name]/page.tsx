@@ -6,7 +6,7 @@ type Params = { params: Promise<{ name: string }> }
 
 export default async function AnimalPage({ params }: Params) {
   const { name: id } = await params
-  const animal = await sanityClient.fetch(reptileByIdQuery, { id: decodeURIComponent(id) }).catch(() => null)
+  const animal = await sanityClient.fetch(reptileByIdQuery, { id })
   if (!animal) notFound()
   const imageUrl = animal.imageUrl || (animal.latinName?.includes('Pantherophis') ? '/images/snake-ember.png' : '/images/gecko-luna.png')
   return <AnimalDetail animal={{ ...animal, imageUrl }} />

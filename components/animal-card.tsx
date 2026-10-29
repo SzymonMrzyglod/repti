@@ -8,7 +8,7 @@ type Animal = {
   morph: string
   sex: string
   weight: string
-  status: 'Dostępny' | 'Rezerwacja'
+  status: 'Dostępny' | 'Rezerwacja' | 'Adoptowany'
   image: string
 }
 
