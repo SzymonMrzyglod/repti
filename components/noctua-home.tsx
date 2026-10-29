@@ -58,7 +58,7 @@ export default function NoctuaHome({ animals, settings }: NoctuaHomeProps) {
 
       <section className="intro-section" id="filozofia">
         <p className="eyebrow dark"><span /> {copy(settings?.historyEyebrow, locale, 'NASZA HISTORIA')}</p>
-        <div className="intro-grid"><h2>{copy(settings?.historyTitle, locale, 'Więcej niż hodowla.')}</h2><div><p className="lead">{copy(settings?.historyLead, locale, 'Noctua Reptiles to mała, rodzinna hodowla zrodzona z fascynacji światem gadów.')}</p><p>{copy(settings?.historyText, locale, 'Każde zwierzę otaczamy troską, której potrzebuje, aby rozwijać się w zdrowiu i spokoju.')}</p><a href="#kontakt" className="text-link">Poznaj nas bliżej <ArrowUpRight size={15} /></a></div></div>
+        <div className="intro-grid"><h2>{copy(settings?.historyTitle, locale, 'Więcej niż hodowla.')}</h2><div><p className="lead">{copy(settings?.historyLead, locale, 'O ty gadzie! to mała, rodzinna hodowla zrodzona z fascynacji światem gadów.')}</p><p>{copy(settings?.historyText, locale, 'Każde zwierzę otaczamy troską, której potrzebuje, aby rozwijać się w zdrowiu i spokoju.')}</p><a href="#kontakt" className="text-link">Poznaj nas bliżej <ArrowUpRight size={15} /></a></div></div>
         <div className="numbers"><div><strong>7</strong><span>lat doświadczenia</span></div><div><strong>38</strong><span>zdrowych podopiecznych</span></div><div><strong>100%</strong><span>zaangażowania</span></div></div>
       </section>
 
