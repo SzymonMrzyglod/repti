@@ -1,7 +1,10 @@
 'use client'
 
 import { useMemo, useState } from 'react'
-import { ArrowDown, ArrowUpRight, ChevronDown, Camera, Menu, X } from 'lucide-react'
+import { ArrowDown, ArrowUpRight, ChevronDown } from 'lucide-react'
+import AnimalCard from '@/components/animal-card'
+import SiteFooter from '@/components/site-footer'
+import SiteHeader from '@/components/site-header'
 
 type Animal = {
   name: string
@@ -18,27 +21,6 @@ type NoctuaHomeProps = {
   animals: Animal[]
 }
 
-function Mark() {
-  return <div className="brand-mark" aria-hidden="true"><span>◒</span></div>
-}
-
-function AnimalCard({ animal }: { animal: Animal }) {
-  return (
-    <article className="animal-card">
-      <div className="card-image-wrap">
-        <img src={animal.image} alt={`${animal.name}, ${animal.morph}`} className="card-image" />
-        <span className={`status-pill ${animal.status === 'Dostępny' ? 'available' : 'reserved'}`}>{animal.status}</span>
-        <button className="card-arrow" aria-label={`Zobacz ${animal.name}`}><ArrowUpRight size={17} /></button>
-      </div>
-      <div className="card-copy">
-        <div className="card-title-row"><h3>{animal.name}</h3><span className="sex">{animal.sex}</span></div>
-        <p className="latin">{animal.latin}</p>
-        <div className="animal-meta"><span><small>ODMIANA</small>{animal.morph}</span><span><small>WAGA</small>{animal.weight}</span></div>
-      </div>
-    </article>
-  )
-}
-
 export default function NoctuaHome({ animals }: NoctuaHomeProps) {
   const [menuOpen, setMenuOpen] = useState(false)
   const [filter, setFilter] = useState<'Wszystkie' | Animal['species']>('Wszystkie')
@@ -49,14 +31,7 @@ export default function NoctuaHome({ animals }: NoctuaHomeProps) {
       <section className="hero" id="start">
         <img src="/images/hero-gecko.png" alt="Gekon orzęsiony na gałęzi w tropikalnym terrarium" className="hero-image" />
         <div className="hero-overlay" />
-        <header className="site-header">
-          <a href="#start" className="logo"><Mark /><span>NOCTUA<br /><em>REPTILES</em></span></a>
-          <nav className={`main-nav ${menuOpen ? 'open' : ''}`}>
-            <a href="#zwierzeta" onClick={() => setMenuOpen(false)}>Zwierzęta</a><a href="#filozofia" onClick={() => setMenuOpen(false)}>Nasza filozofia</a><a href="#opieka" onClick={() => setMenuOpen(false)}>Opieka</a><a href="#kontakt" onClick={() => setMenuOpen(false)}>Kontakt</a>
-          </nav>
-          <a href="#kontakt" className="header-cta">Zapytaj o dostępność <ArrowUpRight size={15} /></a>
-          <button className="mobile-menu" onClick={() => setMenuOpen(!menuOpen)} aria-label="Otwórz menu">{menuOpen ? <X /> : <Menu />}</button>
-        </header>
+        <SiteHeader menuOpen={menuOpen} onToggle={() => setMenuOpen(!menuOpen)} onNavigate={() => setMenuOpen(false)} />
         <div className="hero-content">
           <p className="eyebrow"><span /> HODOWLA Z PASJĄ · OD 2017</p>
           <h1>Piękno<br /><i>z natury.</i></h1>
@@ -81,7 +56,7 @@ export default function NoctuaHome({ animals }: NoctuaHomeProps) {
 
       <section className="care-section" id="opieka"><div className="care-inner"><p className="eyebrow"><span /> WIEDZA I OPIEKA</p><h2>Dobry początek<br />to <i>podstawa.</i></h2><p>Przygotowaliśmy praktyczne przewodniki, które pomogą Ci zapewnić Twojemu gadowi najlepsze warunki od pierwszego dnia.</p><a href="#kontakt" className="outline-button">Przejdź do poradników <ArrowUpRight size={16} /></a></div></section>
 
-      <footer id="kontakt"><div className="footer-top"><a href="#start" className="logo"><Mark /><span>NOCTUA<br /><em>REPTILES</em></span></a><div className="footer-question"><p className="eyebrow dark"><span /> MASZ PYTANIA?</p><h2>Porozmawiajmy o<br /><i>Twoim gadzie.</i></h2><a href="mailto:kontakt@noctuareptiles.pl" className="text-link">kontakt@noctuareptiles.pl <ArrowUpRight size={15} /></a></div><div className="footer-links"><span>Nawigacja</span><a href="#zwierzeta">Zwierzęta</a><a href="#filozofia">O hodowli</a><a href="#opieka">Poradniki</a><a href="#kontakt">Kontakt</a></div><div className="footer-links"><span>Znajdź nas</span><a href="#kontakt"><Camera size={16} /> Instagram</a><a href="#kontakt">Facebook</a></div></div><div className="footer-bottom"><span>© 2024 NOCTUA REPTILES</span><span>WARSZAWA · POLSKA</span><span>STRONA STWORZONA Z PASJĄ</span></div></footer>
+      <SiteFooter />
     </main>
   )
 }
