@@ -15,7 +15,7 @@ type Animal = {
 export default function AnimalCard({ animal }: { animal: Animal }) {
   return (
     <Link
-      href={`/animal/${encodeURIComponent(animal.id)}`}
+      to={`/animal/${encodeURIComponent(animal.id)}`}
       className="animal-card"
     >
       <div className="card-image-wrap">
