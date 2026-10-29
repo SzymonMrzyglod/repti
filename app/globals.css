@@ -86,6 +86,8 @@ body {
   overflow-x: hidden;
 }
 
+.collection-link { border: 0; background: transparent; cursor: pointer; font: inherit; }
+
 .detail-page { min-height: 100vh; background: var(--paper, #f2f0e8); color: var(--ink, #172019); padding: 28px 5vw 80px; }
 .detail-header { display: flex; align-items: center; justify-content: space-between; max-width: 1240px; margin: 0 auto 64px; }
 .detail-grid { max-width: 1240px; margin: 0 auto; display: grid; grid-template-columns: minmax(0, 1fr) minmax(360px, .9fr); gap: clamp(40px, 7vw, 120px); align-items: center; }
