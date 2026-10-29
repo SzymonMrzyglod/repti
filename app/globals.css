@@ -49,6 +49,12 @@ footer { background: var(--ivory); padding: 90px 5.5vw 25px; }.footer-top { disp
 
 .hero h1 { max-width: 9ch; overflow-wrap: normal; }
 .hero-text { max-width: 48ch; }
+.hero h1 {
+  font-size: clamp(58px, 7vw, 104px);
+  line-height: 0.86;
+  max-width: 8ch;
+}
+
 @media (min-width: 2000px) {
   .hero-content {
     max-width: 1120px;
