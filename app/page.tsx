@@ -1,34 +1,53 @@
 import NoctuaHome from '@/components/noctua-home'
-import { reptilesQuery, sanityClient } from '@/lib/sanity'
+import { reptilesQuery, sanityClient, siteSettingsQuery } from '@/lib/sanity'
+
+export const dynamic = 'force-dynamic'
+
+type Locale = 'pl' | 'en'
+type Localized = { pl?: string; en?: string }
 
 type SanityReptile = {
-  name?: string
-  species?: string
+  _id: string
+  name?: Localized
+  species?: { _ref?: string }
+  speciesName?: Localized
+  speciesLatinName?: string
+  latinName?: string
+  morph?: Localized
+  sex?: Localized
+  weight?: string
   status?: 'available' | 'reserved' | 'adopted'
-  description?: string
   imageUrl?: string
+  description?: Localized
 }
 
-const fallbackAnimals = [
-  { name: 'Luna', species: 'Gekon orzęsiony' as const, latin: 'Correlophus ciliatus', morph: 'Harlequin', sex: 'Samica', weight: '48 g', status: 'Dostępny' as const, image: '/images/gecko-luna.png' },
-  { name: 'Ember', species: 'Wąż zbożowy' as const, latin: 'Pantherophis guttatus', morph: 'Lavender Tessera', sex: 'Samica', weight: '312 g', status: 'Dostępny' as const, image: '/images/snake-ember.png' },
-  { name: 'Moss', species: 'Gekon orzęsiony' as const, latin: 'Correlophus ciliatus', morph: 'Olive Dalmatian', sex: 'Samiec', weight: '36 g', status: 'Rezerwacja' as const, image: '/images/gecko-moss.png' },
-]
+type SanitySettings = {
+  brandName?: string
+  logoUrl?: string
+  heroImageUrl?: string
+  heroEyebrow?: Localized; heroTitle?: Localized; heroText?: Localized
+  historyEyebrow?: Localized; historyTitle?: Localized; historyLead?: Localized; historyText?: Localized
+  collectionEyebrow?: Localized; collectionTitle?: Localized; collectionNote?: Localized
+  careEyebrow?: Localized; careTitle?: Localized; careText?: Localized
+}
+
+const text = (value: Localized | undefined, locale: Locale, fallback: string) => value?.[locale] || value?.pl || value?.en || fallback
 
 export default async function Page() {
-  const entries = await sanityClient.fetch<SanityReptile[]>(reptilesQuery).catch(() => [])
-  const animals = entries.length
-    ? entries.map((entry, index) => ({
-        name: entry.name ?? 'Nowy podopieczny',
-        species: entry.species?.toLowerCase().includes('wąż') ? 'Wąż zbożowy' as const : 'Gekon orzęsiony' as const,
-        latin: entry.species?.toLowerCase().includes('wąż') ? 'Pantherophis guttatus' : 'Correlophus ciliatus',
-        morph: entry.description?.split('·')[0]?.trim() || 'Do uzupełnienia',
-        sex: 'Do uzupełnienia',
-        weight: 'Do uzupełnienia',
-        status: entry.status === 'reserved' ? 'Rezerwacja' as const : 'Dostępny' as const,
-        image: entry.imageUrl || fallbackAnimals[index % fallbackAnimals.length].image,
-      }))
-    : fallbackAnimals
+  const [entries, settings] = await Promise.all([
+    sanityClient.fetch<SanityReptile[]>(reptilesQuery),
+    sanityClient.fetch<SanitySettings | null>(siteSettingsQuery),
+  ])
+  const fallbackImages = ['/images/gecko-luna.png', '/images/gecko-moss.png', '/images/snake-ember.png']
+  const animals = entries.length ? entries.map((entry, index) => ({
+    id: entry._id,
+    name: text(entry.name, 'pl', 'Nowy podopieczny'),
+    species: text(entry.speciesName, 'pl', 'Bez przypisanego gatunku'),
+    latin: entry.speciesLatinName || entry.latinName || '—',
+    morph: text(entry.morph, 'pl', 'Do uzupełnienia'), sex: text(entry.sex, 'pl', 'Do uzupełnienia'),
+    weight: entry.weight || 'Do uzupełnienia', status: entry.status === 'reserved' ? 'Rezerwacja' as const : entry.status === 'adopted' ? 'Adoptowany' as const : 'Dostępny' as const,
+    image: entry.imageUrl || fallbackImages[index % fallbackImages.length],
+  })) : []
 
-  return <NoctuaHome animals={animals} />
+  return <NoctuaHome animals={animals} settings={settings} />
 }
