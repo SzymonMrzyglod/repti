@@ -22,12 +22,6 @@ type SanitySettings = {
   careEyebrow?: Localized; careTitle?: Localized; careText?: Localized
 }
 
-const fallbackAnimals = [
-  { name: 'Luna', species: 'Gekon orzęsiony' as const, latin: 'Correlophus ciliatus', morph: 'Harlequin', sex: 'Samica', weight: '48 g', status: 'Dostępny' as const, image: '/images/gecko-luna.png' },
-  { name: 'Ember', species: 'Wąż zbożowy' as const, latin: 'Pantherophis guttatus', morph: 'Lavender Tessera', sex: 'Samica', weight: '312 g', status: 'Dostępny' as const, image: '/images/snake-ember.png' },
-  { name: 'Moss', species: 'Gekon orzęsiony' as const, latin: 'Correlophus ciliatus', morph: 'Olive Dalmatian', sex: 'Samiec', weight: '36 g', status: 'Rezerwacja' as const, image: '/images/gecko-moss.png' },
-]
-
 const text = (value: Localized | undefined, locale: Locale, fallback: string) => value?.[locale] || value?.pl || value?.en || fallback
 
 export default async function Page() {
@@ -35,14 +29,14 @@ export default async function Page() {
     sanityClient.fetch<SanityReptile[]>(reptilesQuery).catch(() => []),
     sanityClient.fetch<SanitySettings | null>(siteSettingsQuery).catch(() => null),
   ])
-  const animals = entries.length ? entries.map((entry, index) => ({
+  const animals = entries.length ? entries.map((entry) => ({
     name: text(entry.name, 'pl', 'Nowy podopieczny'),
     species: entry.species?.toLowerCase().includes('wąż') ? 'Wąż zbożowy' as const : 'Gekon orzęsiony' as const,
     latin: entry.latinName || (entry.species?.toLowerCase().includes('wąż') ? 'Pantherophis guttatus' : 'Correlophus ciliatus'),
     morph: text(entry.morph, 'pl', 'Do uzupełnienia'), sex: text(entry.sex, 'pl', 'Do uzupełnienia'),
     weight: entry.weight || 'Do uzupełnienia', status: entry.status === 'reserved' ? 'Rezerwacja' as const : 'Dostępny' as const,
-    image: entry.imageUrl || fallbackAnimals[index % fallbackAnimals.length].image,
-  })) : fallbackAnimals
+    image: entry.imageUrl || '',
+  })) : []
 
   return <NoctuaHome animals={animals} settings={settings} />
 }
