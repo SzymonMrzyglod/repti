@@ -33,8 +33,10 @@ export default function NoctuaHome({ animals, settings }: NoctuaHomeProps) {
   const [menuOpen, setMenuOpen] = useState(false)
   const [locale, setLocale] = useState<'pl' | 'en'>('pl')
   const [filter, setFilter] = useState('Wszystkie')
+  const [showAll, setShowAll] = useState(false)
   const species = useMemo(() => Array.from(new Set(animals.map((animal) => animal.species).filter(Boolean))), [animals])
-  const visibleAnimals = useMemo(() => filter === 'Wszystkie' ? animals : animals.filter((animal) => animal.species === filter), [filter, animals])
+  const filteredAnimals = useMemo(() => filter === 'Wszystkie' ? animals : animals.filter((animal) => animal.species === filter), [filter, animals])
+  const visibleAnimals = showAll ? filteredAnimals : filteredAnimals.slice(0, 3)
 
   return (
     <main className="site-shell">
@@ -59,9 +61,9 @@ export default function NoctuaHome({ animals, settings }: NoctuaHomeProps) {
 
       <section className="catalog-section" id="zwierzeta">
         <div className="section-heading"><div><p className="eyebrow"><span /> {copy(settings?.collectionEyebrow, locale, 'NASZA KOLEKCJA')}</p><h2>{copy(settings?.collectionTitle, locale, 'Poznaj naszych podopiecznych.')}</h2></div><p className="section-note">{copy(settings?.collectionNote, locale, 'Starannie wyselekcjonowane osobniki, gotowe, by stać się częścią Twojej historii.')}</p></div>
-        <div className="filter-row"><div className="filters">{['Wszystkie', ...species].map((item) => <button key={item} className={filter === item ? 'filter active' : 'filter'} onClick={() => setFilter(item)}>{item}</button>)}</div><button className="select-filter">Filtruj kolekcję <ChevronDown size={16} /></button></div>
-        <div className="animal-grid">{visibleAnimals.map((animal) => <AnimalCard animal={animal} key={animal.name} />)}</div>
-        <div className="catalog-foot"><span>01 — 0{visibleAnimals.length}</span><button type="button" className="text-link light collection-link" onClick={() => { setFilter('Wszystkie'); document.getElementById('zwierzeta')?.scrollIntoView({ behavior: 'smooth', block: 'start' }) }}>Zobacz pełną kolekcję <ArrowUpRight size={15} /></button></div>
+        <div className="filter-row"><div className="filters">{['Wszystkie', ...species].map((item) => <button key={item} className={filter === item ? 'filter active' : 'filter'} onClick={() => { setFilter(item); setShowAll(false) }}>{item}</button>)}</div><button className="select-filter">Filtruj kolekcję <ChevronDown size={16} /></button></div>
+        <div className="animal-grid">{visibleAnimals.map((animal) => <AnimalCard animal={animal} key={animal.id} />)}</div>
+        <div className="catalog-foot"><span>01 — 0{filteredAnimals.length}</span>{filteredAnimals.length > 3 && <button type="button" className="text-link light collection-link" onClick={() => setShowAll((current) => !current)}>{showAll ? 'Pokaż mniej' : 'Zobacz pełną kolekcję'} <ArrowUpRight size={15} /></button>}</div>
       </section>
 
       <section className="care-section" id="opieka"><div className="care-inner"><p className="eyebrow"><span /> {copy(settings?.careEyebrow, locale, 'WIEDZA I OPIEKA')}</p><h2>{copy(settings?.careTitle, locale, 'Dobry początek to podstawa.')}</h2><p>{copy(settings?.careText, locale, 'Przygotowaliśmy praktyczne przewodniki, które pomogą Ci zapewnić Twojemu gadowi najlepsze warunki od pierwszego dnia.')}</p><a href="#kontakt" className="outline-button">{locale === 'en' ? 'Go to guides' : 'Przejdź do poradników'} <ArrowUpRight size={16} /></a></div></section>
