@@ -50,11 +50,15 @@ footer { background: var(--ivory); padding: 90px 5.5vw 25px; }.footer-top { disp
 @media (min-width: 2000px) {
   .hero-content {
     max-width: 1120px;
-    padding-top: 190px;
+    padding-top: 120px;
   }
 
   .hero h1 {
-    font-size: clamp(92px, 8vw, 168px);
+    font-size: clamp(84px, 7vw, 132px);
+  }
+
+  .hero-foot {
+    bottom: 20px;
   }
 
   .hero-foot,
