@@ -38,7 +38,11 @@ type SiteSettings = {
   careTitle?: Localized;
   careText?: Localized;
 };
-type HomePageProps = { animals: Animal[]; settings?: SiteSettings | null };
+type HomePageProps = {
+  animals: Animal[];
+  settings?: SiteSettings | null;
+  initialShowAll?: boolean;
+};
 
 function localizedText(
   value: Localized | undefined,
@@ -48,12 +52,16 @@ function localizedText(
   return value?.[locale] || (locale === "pl" ? value?.en : "") || fallback;
 }
 
-export default function HomePage({ animals, settings }: HomePageProps) {
+export default function HomePage({
+  animals,
+  settings,
+  initialShowAll = false,
+}: HomePageProps) {
   const { locale } = useLocale();
   const translations = getTranslations(locale);
   const [menuOpen, setMenuOpen] = useState(false);
   const [filter, setFilter] = useState("all");
-  const [showAll, setShowAll] = useState(false);
+  const [showAll, setShowAll] = useState(initialShowAll);
   const species = useMemo(
     () =>
       Array.from(
@@ -229,7 +237,11 @@ export default function HomePage({ animals, settings }: HomePageProps) {
         </div>
         <div className="animal-grid">
           {visibleAnimals.map((animal) => (
-            <AnimalCard animal={animal} key={animal.id} />
+            <AnimalCard
+              animal={animal}
+              collectionShowAll={showAll}
+              key={animal.id}
+            />
           ))}
         </div>
         <div className="catalog-foot">

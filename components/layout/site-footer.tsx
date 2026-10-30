@@ -29,13 +29,16 @@ export default function SiteFooter({ logoUrl }: { logoUrl?: string }) {
             <i>{translations.footer.contactTitleAccent}</i>
           </h2>
           <FooterContactForm />
+          <div className="footer-contact-details">
+            <a href="tel:+48888163509">888 163 509</a>
+            <a href="mailto:o.ty.gadzie@gmail.com">o.ty.gadzie@gmail.com</a>
+          </div>
         </div>
         <div className="footer-links">
           <span>{translations.footer.navigation}</span>
           <a href="#animals">{translations.footer.animals}</a>
           <a href="#philosophy">{translations.footer.breeding}</a>
           <Link to="/guides">{translations.footer.guides}</Link>
-          <a href="#contact">{translations.footer.contact}</a>
         </div>
         <div className="footer-links">
           <span>{translations.footer.findUs}</span>

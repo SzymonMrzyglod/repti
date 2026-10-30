@@ -1,8 +1,14 @@
-import { useEffect, useState, type ComponentProps } from "react";
+import {
+  useEffect,
+  useLayoutEffect,
+  useState,
+  type ComponentProps,
+} from "react";
 import {
   Link,
   Route,
   Routes,
+  useLocation,
   useParams,
   useSearchParams,
 } from "react-router-dom";
@@ -80,9 +86,34 @@ function mapHomeData(
 
 function HomeRoute() {
   const { locale } = useLocale();
+  const location = useLocation();
   const translations = getTranslations(locale);
   const [data, setData] = useState<HomeData | null>(null);
   const [hasError, setHasError] = useState(false);
+
+  useLayoutEffect(() => {
+    if (!data || location.hash !== "#animals") return;
+
+    const savedScrollY =
+      location.state &&
+      typeof location.state.collectionScrollY === "number" &&
+      Number.isFinite(location.state.collectionScrollY)
+        ? location.state.collectionScrollY
+        : undefined;
+    const root = document.documentElement;
+    const previousScrollBehavior = root.style.scrollBehavior;
+    root.style.scrollBehavior = "auto";
+
+    try {
+      if (savedScrollY !== undefined) {
+        window.scrollTo(0, savedScrollY);
+      } else {
+        document.getElementById("animals")?.scrollIntoView();
+      }
+    } finally {
+      root.style.scrollBehavior = previousScrollBehavior;
+    }
+  }, [data, location.hash, location.state]);
 
   useEffect(() => {
     let isActive = true;
@@ -111,7 +142,18 @@ function HomeRoute() {
 
   if (!data) return <LoadingState />;
 
-  return <HomePage {...mapHomeData(data.reptiles, data.settings, locale)} />;
+  const initialShowAll =
+    location.state &&
+    typeof location.state.collectionShowAll === "boolean"
+      ? location.state.collectionShowAll
+      : false;
+
+  return (
+    <HomePage
+      {...mapHomeData(data.reptiles, data.settings, locale)}
+      initialShowAll={initialShowAll}
+    />
+  );
 }
 
 function GuidesRoute() {
