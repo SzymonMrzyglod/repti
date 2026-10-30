@@ -43,7 +43,7 @@ export default function SiteFooter({ logoUrl }: { logoUrl?: string }) {
           <a href="#contact">
             <Camera size={16} /> Instagram
           </a>
-          <a href="#contact">Facebook</a>
+          <a href="#contact">Facebook </a>
         </div>
       </div>
       <div className="footer-bottom">
