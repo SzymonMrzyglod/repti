@@ -1,0 +1,24 @@
+.loading-state {
+  display: grid;
+  min-height: 100svh;
+  place-items: center;
+  color: var(--gold);
+}
+
+.loading-state svg {
+  width: 34px;
+  height: 34px;
+  animation: loading-spin 0.9s linear infinite;
+}
+
+@keyframes loading-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .loading-state svg {
+    animation: none;
+  }
+}

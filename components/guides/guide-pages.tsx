@@ -69,6 +69,8 @@ export function GuidesPage({ guides }: { guides: Guide[] }) {
                 guide.imageUrl || fallbackImages[index % fallbackImages.length]
               }
               alt=""
+              loading="lazy"
+              decoding="async"
             />
             <div className="guide-card-copy">
               <p className="guide-meta">

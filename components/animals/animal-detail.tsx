@@ -72,6 +72,8 @@ export default function AnimalDetail({ animal }: AnimalDetailProps) {
               src={currentImage}
               alt={`${text(animal.name, locale, translations.animal.unnamed)} (${currentImageIndex + 1} ${translations.animal.photoOf} ${images.length})`}
               className="detail-image"
+              fetchPriority="high"
+              decoding="async"
             />
           ) : (
             <div className="detail-image detail-image-empty" />

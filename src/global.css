@@ -5,6 +5,7 @@
 @import "../components/home/home-page.css";
 @import "../components/animals/animal-card.css";
 @import "../components/layout/site-footer.css";
+@import "../components/layout/loading-state.css";
 @import "../components/guides/guides.css";
 @import "../components/animals/animal-detail.css";
 

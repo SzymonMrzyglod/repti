@@ -227,7 +227,7 @@
   min-height: 580px;
   background:
     linear-gradient(90deg, rgba(15, 34, 24, 0.94), rgba(15, 34, 24, 0.7)),
-    url("/images/hero-gecko.png") center 49% / cover;
+    url("/images/hero-gecko.webp") center 49% / cover;
   color: var(--ivory);
 }
 

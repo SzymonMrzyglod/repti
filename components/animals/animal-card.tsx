@@ -29,6 +29,8 @@ export default function AnimalCard({ animal }: { animal: Animal }) {
             src={animal.image}
             alt={`${animal.name}, ${animal.morph}`}
             className="card-image"
+            loading="lazy"
+            decoding="async"
           />
         ) : (
           <div className="card-image card-image-empty" aria-hidden="true" />

@@ -81,9 +81,11 @@ export default function HomePage({ animals, settings }: HomePageProps) {
     <main className="site-shell">
       <section className="hero" id="start">
         <img
-          src={settings?.heroImageUrl || "/images/hero-gecko.png"}
+          src={settings?.heroImageUrl || "/images/hero-gecko.webp"}
           alt={translations.home.heroAlt}
           className="hero-image"
+          fetchPriority="high"
+          decoding="async"
         />
         <div className="hero-overlay" />
         <SiteHeader

@@ -1,6 +1,7 @@
 import { useEffect, useState, type ComponentProps } from "react";
 import { Route, Routes, useParams } from "react-router-dom";
 import AnimalDetail from "@/components/animals/animal-detail";
+import LoadingState from "@/components/layout/loading-state";
 import {
   GuideDetailPage,
   GuidesPage,
@@ -101,9 +102,7 @@ function HomeRoute() {
     return <main className="guides-empty">{translations.home.loadError}</main>;
   }
 
-  if (!data) {
-    return <main className="guides-empty">{translations.home.loading}</main>;
-  }
+  if (!data) return <LoadingState />;
 
   return <HomePage {...mapHomeData(data.reptiles, data.settings, locale)} />;
 }
@@ -127,8 +126,6 @@ function GuidesRoute() {
 }
 
 function AnimalRoute() {
-  const { locale } = useLocale();
-  const translations = getTranslations(locale);
   const { name } = useParams();
   const [animal, setAnimal] = useState<SanityReptile | null>(null);
 
@@ -148,15 +145,11 @@ function AnimalRoute() {
     };
   }, [name]);
 
-  if (!animal) {
-    return <main className="guides-empty">{translations.home.loading}</main>;
-  }
+  if (!animal) return <LoadingState />;
   return <AnimalDetail animal={animal} />;
 }
 
 function GuideRoute() {
-  const { locale } = useLocale();
-  const translations = getTranslations(locale);
   const { id } = useParams();
   const [guide, setGuide] = useState<Guide | null>(null);
 
@@ -174,9 +167,7 @@ function GuideRoute() {
     };
   }, [id]);
 
-  if (!guide) {
-    return <main className="guides-empty">{translations.home.loading}</main>;
-  }
+  if (!guide) return <LoadingState />;
 
   return <GuideDetailPage guide={guide} />;
 }
