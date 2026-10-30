@@ -7,6 +7,7 @@ import {
   ChevronRight,
 } from "lucide-react";
 import LocaleSwitcher from "@/components/layout/locale-switcher";
+import { ContactFormModal } from "@/components/contact-form";
 import { useLocale } from "@/lib/locale-context";
 import { getTranslations } from "@/lib/translations";
 
@@ -38,6 +39,7 @@ export default function AnimalDetail({ animal }: AnimalDetailProps) {
   const { locale } = useLocale();
   const translations = getTranslations(locale);
   const [activeImageIndex, setActiveImageIndex] = useState(0);
+  const [contactOpen, setContactOpen] = useState(false);
   const images = Array.from(
     new Set([animal.imageUrl, ...(animal.galleryUrls || [])].filter(Boolean)),
   ) as string[];
@@ -46,6 +48,7 @@ export default function AnimalDetail({ animal }: AnimalDetailProps) {
     Math.max(images.length - 1, 0),
   );
   const currentImage = images[currentImageIndex];
+  const animalName = text(animal.name, locale, translations.animal.unnamed);
   const status =
     animal.status === "reserved"
       ? "reserved"
@@ -130,7 +133,7 @@ export default function AnimalDetail({ animal }: AnimalDetailProps) {
           <p className="eyebrow dark">
             <span /> {translations.animal.collectionSpecimen}
           </p>
-          <h1>{text(animal.name, locale, translations.animal.unnamed)}</h1>
+          <h1>{animalName}</h1>
           <p className="detail-species">
             {animal.latinName || animal.speciesLatinName || animal.species}
           </p>
@@ -159,11 +162,20 @@ export default function AnimalDetail({ animal }: AnimalDetailProps) {
               <strong>{translations.animal[status]}</strong>
             </div>
           </div>
-          <a href="/#contact" className="outline-button">
+          <button
+            type="button"
+            className="outline-button"
+            onClick={() => setContactOpen(true)}
+          >
             {translations.animal.askAboutAnimal} <ArrowUpRight size={16} />
-          </a>
+          </button>
         </div>
       </section>
+      <ContactFormModal
+        open={contactOpen}
+        onClose={() => setContactOpen(false)}
+        animal={animal}
+      />
     </main>
   );
 }

@@ -38,6 +38,14 @@ footer {
   align-items: center;
 }
 
+.facebook-mark {
+  display: block;
+  width: 8px;
+  height: 16px;
+  flex: 0 0 8px;
+  color: inherit;
+}
+
 .footer-links a:hover {
   color: var(--gold);
 }

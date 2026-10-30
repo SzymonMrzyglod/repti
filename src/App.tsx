@@ -1,6 +1,13 @@
 import { useEffect, useState, type ComponentProps } from "react";
-import { Route, Routes, useParams } from "react-router-dom";
+import {
+  Link,
+  Route,
+  Routes,
+  useParams,
+  useSearchParams,
+} from "react-router-dom";
 import AnimalDetail from "@/components/animals/animal-detail";
+import ContactForm from "@/components/contact-form";
 import LoadingState from "@/components/layout/loading-state";
 import {
   GuideDetailPage,
@@ -149,6 +156,65 @@ function AnimalRoute() {
   return <AnimalDetail animal={animal} />;
 }
 
+function ContactRoute() {
+  const [searchParams] = useSearchParams();
+  const animalId = searchParams.get("animalId");
+  const { locale } = useLocale();
+  const [animal, setAnimal] = useState<SanityReptile | null>(null);
+  const [isLoading, setIsLoading] = useState(Boolean(animalId));
+  const [hasError, setHasError] = useState(false);
+
+  useEffect(() => {
+    if (!animalId) {
+      setAnimal(null);
+      setHasError(false);
+      setIsLoading(false);
+      return;
+    }
+
+    let isActive = true;
+    setIsLoading(true);
+    setHasError(false);
+
+    sanityClient
+      .fetch<SanityReptile | null>(reptileByIdQuery, { id: animalId })
+      .then((result) => {
+        if (isActive) {
+          setAnimal(result);
+          setHasError(!result);
+          setIsLoading(false);
+        }
+      })
+      .catch(() => {
+        if (isActive) {
+          setHasError(true);
+          setIsLoading(false);
+        }
+      });
+
+    return () => {
+      isActive = false;
+    };
+  }, [animalId]);
+
+  if (isLoading) return <LoadingState />;
+
+  if (hasError) {
+    const contactTranslations = getTranslations(locale).contact;
+
+    return (
+      <main className="contact-page">
+        <p>{contactTranslations.loadError}</p>
+        <Link className="text-link dark" to="/">
+          {contactTranslations.backToCollection}
+        </Link>
+      </main>
+    );
+  }
+
+  return <ContactForm animal={animal ?? undefined} />;
+}
+
 function GuideRoute() {
   const { id } = useParams();
   const [guide, setGuide] = useState<Guide | null>(null);
@@ -179,6 +245,7 @@ export default function App() {
       <Route path="/guides" element={<GuidesRoute />} />
       <Route path="/guides/:id" element={<GuideRoute />} />
       <Route path="/animal/:name" element={<AnimalRoute />} />
+      <Route path="/contact" element={<ContactRoute />} />
       <Route path="*" element={<HomeRoute />} />
     </Routes>
   );
