@@ -1,8 +1,9 @@
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { ArrowUpRight } from "lucide-react";
 import { useLocale } from "@/lib/locale-context";
 import { getTranslations } from "@/lib/translations";
 import type { MouseEvent } from "react";
+import { saveCollectionReturnState } from "@/lib/collection-navigation";
 
 type Animal = {
   id: string;
@@ -25,6 +26,7 @@ export default function AnimalCard({
   const { locale } = useLocale();
   const translations = getTranslations(locale);
   const navigate = useNavigate();
+  const location = useLocation();
   const animalPath = `/animal/${encodeURIComponent(animal.id)}`;
 
   return (
@@ -43,11 +45,13 @@ export default function AnimalCard({
         }
 
         event.preventDefault();
+        const collectionReturnState = {
+          collectionScrollY: window.scrollY,
+          collectionShowAll,
+        };
+        saveCollectionReturnState(collectionReturnState, location.key);
         navigate(animalPath, {
-          state: {
-            collectionScrollY: window.scrollY,
-            collectionShowAll,
-          },
+          state: collectionReturnState,
         });
       }}
     >

@@ -31,6 +31,10 @@ import {
   siteSettingsQuery,
 } from "@/lib/sanity";
 import { getTranslations } from "@/lib/translations";
+import {
+  clearCollectionReturnState,
+  getCollectionReturnState,
+} from "@/lib/collection-navigation";
 
 type Localized = { pl?: string; en?: string };
 type SanityReptile = {
@@ -87,33 +91,33 @@ function mapHomeData(
 function HomeRoute() {
   const { locale } = useLocale();
   const location = useLocation();
+  const collectionReturnState = getCollectionReturnState(
+    location.state,
+    location.key,
+  );
   const translations = getTranslations(locale);
   const [data, setData] = useState<HomeData | null>(null);
   const [hasError, setHasError] = useState(false);
 
   useLayoutEffect(() => {
-    if (!data || location.hash !== "#animals") return;
+    if (!data) return;
+    if (!collectionReturnState && location.hash !== "#animals") return;
 
-    const savedScrollY =
-      location.state &&
-      typeof location.state.collectionScrollY === "number" &&
-      Number.isFinite(location.state.collectionScrollY)
-        ? location.state.collectionScrollY
-        : undefined;
     const root = document.documentElement;
     const previousScrollBehavior = root.style.scrollBehavior;
     root.style.scrollBehavior = "auto";
 
     try {
-      if (savedScrollY !== undefined) {
-        window.scrollTo(0, savedScrollY);
+      if (collectionReturnState) {
+        window.scrollTo(0, collectionReturnState.collectionScrollY);
       } else {
         document.getElementById("animals")?.scrollIntoView();
       }
     } finally {
       root.style.scrollBehavior = previousScrollBehavior;
     }
-  }, [data, location.hash, location.state]);
+    clearCollectionReturnState();
+  }, [collectionReturnState, data, location.hash]);
 
   useEffect(() => {
     let isActive = true;
@@ -142,11 +146,7 @@ function HomeRoute() {
 
   if (!data) return <LoadingState />;
 
-  const initialShowAll =
-    location.state &&
-    typeof location.state.collectionShowAll === "boolean"
-      ? location.state.collectionShowAll
-      : false;
+  const initialShowAll = collectionReturnState?.collectionShowAll ?? false;
 
   return (
     <HomePage
