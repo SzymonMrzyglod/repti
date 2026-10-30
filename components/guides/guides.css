@@ -12,6 +12,7 @@
 
 .guide-body {
   max-width: 680px;
+  display: flow-root;
   font-size: 18px;
   line-height: 1.75;
 }
@@ -22,6 +23,27 @@
 
 .guide-body-image {
   margin: 36px 0;
+}
+
+.guide-body-image--full {
+  clear: both;
+}
+
+.guide-body-image--left,
+.guide-body-image--right {
+  width: calc(50% - 18px);
+  margin-top: 8px;
+  margin-bottom: 18px;
+}
+
+.guide-body-image--left {
+  float: left;
+  margin-right: 32px;
+}
+
+.guide-body-image--right {
+  float: right;
+  margin-left: 32px;
 }
 
 .guide-body-image img {
@@ -153,5 +175,14 @@
 
   .guide-card-copy {
     padding: 20px;
+  }
+}
+
+@media (max-width: 640px) {
+  .guide-body-image--left,
+  .guide-body-image--right {
+    float: none;
+    width: auto;
+    margin: 28px 0;
   }
 }

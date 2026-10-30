@@ -120,6 +120,20 @@ const guide = defineType({
           options: { hotspot: true },
           fields: [
             defineField({ name: "alt", title: "Alt text", type: "string" }),
+            defineField({
+              name: "layout",
+              title: "Placement",
+              type: "string",
+              initialValue: "full",
+              options: {
+                layout: "radio",
+                list: [
+                  { title: "Full width", value: "full" },
+                  { title: "Half width, left", value: "left" },
+                  { title: "Half width, right", value: "right" },
+                ],
+              },
+            }),
           ],
         }),
       ],
@@ -135,6 +149,20 @@ const guide = defineType({
           options: { hotspot: true },
           fields: [
             defineField({ name: "alt", title: "Alt text", type: "string" }),
+            defineField({
+              name: "layout",
+              title: "Placement",
+              type: "string",
+              initialValue: "full",
+              options: {
+                layout: "radio",
+                list: [
+                  { title: "Full width", value: "full" },
+                  { title: "Half width, left", value: "left" },
+                  { title: "Half width, right", value: "right" },
+                ],
+              },
+            }),
           ],
         }),
       ],

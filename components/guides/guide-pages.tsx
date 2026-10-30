@@ -15,6 +15,7 @@ type GuideImageBlock = {
   _type: "image";
   assetUrl?: string;
   alt?: string;
+  layout?: "full" | "left" | "right";
 };
 type GuideBodyBlock = PortableTextBlock | GuideImageBlock;
 export type Guide = {
@@ -44,7 +45,9 @@ const portableTextComponents: PortableTextComponents<GuideBodyBlock> = {
       if (!value.assetUrl) return null;
 
       return (
-        <figure className="guide-body-image">
+        <figure
+          className={`guide-body-image guide-body-image--${value.layout || "full"}`}
+        >
           <img
             src={value.assetUrl}
             alt={value.alt || ""}
