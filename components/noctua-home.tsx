@@ -1,5 +1,3 @@
-"use client";
-
 import { useMemo, useState } from "react";
 import { ArrowDown, ArrowUpRight } from "lucide-react";
 import AnimalCard from "@/components/animal-card";

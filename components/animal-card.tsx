@@ -1,4 +1,4 @@
-import Link from "next/link";
+import { Link } from "react-router-dom";
 import { ArrowUpRight } from "lucide-react";
 
 type Animal = {
@@ -15,7 +15,7 @@ type Animal = {
 export default function AnimalCard({ animal }: { animal: Animal }) {
   return (
     <Link
-      href={`/animal/${encodeURIComponent(animal.id)}`}
+      to={`/animal/${encodeURIComponent(animal.id)}`}
       className="animal-card"
     >
       <div className="card-image-wrap">

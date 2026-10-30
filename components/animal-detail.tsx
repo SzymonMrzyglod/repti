@@ -1,7 +1,5 @@
-"use client";
-
 import { useState } from "react";
-import Link from "next/link";
+import { Link } from "react-router-dom";
 import { ArrowLeft, ArrowUpRight } from "lucide-react";
 
 type Localized = { pl?: string; en?: string };
@@ -31,7 +29,7 @@ export default function AnimalDetail({ animal }: AnimalDetailProps) {
   return (
     <main className="detail-page">
       <header className="detail-header">
-        <Link href="/#zwierzeta" className="text-link">
+        <Link to="/#zwierzeta" className="text-link">
           <ArrowLeft size={15} />{" "}
           {locale === "en" ? "Back to collection" : "Wróć do kolekcji"}
         </Link>
