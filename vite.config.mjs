@@ -6,7 +6,7 @@ import react from "@vitejs/plugin-react";
 const root = path.dirname(fileURLToPath(import.meta.url));
 
 export default defineConfig({
-  base: "/repti/",
+  base: "/",
   plugins: [react()],
   resolve: {
     alias: {
