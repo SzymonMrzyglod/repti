@@ -1,4 +1,7 @@
-import { PortableText } from "@portabletext/react";
+import {
+  PortableText,
+  type PortableTextComponents,
+} from "@portabletext/react";
 import type { PortableTextBlock } from "@portabletext/types";
 import { ArrowLeft, ArrowUpRight } from "lucide-react";
 import { Link } from "react-router-dom";
@@ -7,6 +10,13 @@ import { useLocale } from "@/lib/locale-context";
 import { getTranslations } from "@/lib/translations";
 
 type LocalizedText = { pl?: string; en?: string };
+type GuideImageBlock = {
+  _key: string;
+  _type: "image";
+  assetUrl?: string;
+  alt?: string;
+};
+type GuideBodyBlock = PortableTextBlock | GuideImageBlock;
 export type Guide = {
   _id: string;
   title?: LocalizedText;
@@ -14,8 +24,8 @@ export type Guide = {
   category?: LocalizedText;
   readingTime?: string;
   imageUrl?: string;
-  body?: PortableTextBlock[];
-  bodyEn?: PortableTextBlock[];
+  body?: GuideBodyBlock[];
+  bodyEn?: GuideBodyBlock[];
 };
 
 const fallbackImages = [
@@ -27,6 +37,26 @@ const fallbackImages = [
 function localizedText(value: LocalizedText | undefined, locale: "pl" | "en") {
   return value?.[locale] || (locale === "pl" ? value?.en : "") || "";
 }
+
+const portableTextComponents: PortableTextComponents<GuideBodyBlock> = {
+  types: {
+    image: ({ value }) => {
+      if (!value.assetUrl) return null;
+
+      return (
+        <figure className="guide-body-image">
+          <img
+            src={value.assetUrl}
+            alt={value.alt || ""}
+            loading="lazy"
+            decoding="async"
+          />
+          {value.alt && <figcaption>{value.alt}</figcaption>}
+        </figure>
+      );
+    },
+  },
+};
 
 export function GuidesPage({ guides }: { guides: Guide[] }) {
   const { locale } = useLocale();
@@ -118,7 +148,10 @@ export function GuideDetailPage({ guide }: { guide: Guide }) {
         <p>{localizedText(guide.excerpt, locale)}</p>
         {body && (
           <div className="guide-body">
-            <PortableText value={body} />
+            <PortableText<GuideBodyBlock>
+              value={body}
+              components={portableTextComponents}
+            />
           </div>
         )}
       </article>

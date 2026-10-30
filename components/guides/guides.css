@@ -20,6 +20,24 @@
   margin: 0 0 24px;
 }
 
+.guide-body-image {
+  margin: 36px 0;
+}
+
+.guide-body-image img {
+  display: block;
+  width: 100%;
+  max-height: 680px;
+  object-fit: cover;
+}
+
+.guide-body-image figcaption {
+  margin-top: 10px;
+  color: #73766d;
+  font-size: 12px;
+  line-height: 1.5;
+}
+
 .guides-page {
   min-height: 100vh;
   padding: 28px 5vw 90px;

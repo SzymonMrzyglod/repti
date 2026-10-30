@@ -1,4 +1,4 @@
-import { defineField, defineType } from "sanity";
+import { defineArrayMember, defineField, defineType } from "sanity";
 
 const localizedString = defineType({
   name: "localizedString",
@@ -113,13 +113,31 @@ const guide = defineType({
       name: "body",
       title: "Body",
       type: "array",
-      of: [{ type: "block" }],
+      of: [
+        defineArrayMember({ type: "block" }),
+        defineArrayMember({
+          type: "image",
+          options: { hotspot: true },
+          fields: [
+            defineField({ name: "alt", title: "Alt text", type: "string" }),
+          ],
+        }),
+      ],
     }),
     defineField({
       name: "bodyEn",
       title: "Body (English)",
       type: "array",
-      of: [{ type: "block" }],
+      of: [
+        defineArrayMember({ type: "block" }),
+        defineArrayMember({
+          type: "image",
+          options: { hotspot: true },
+          fields: [
+            defineField({ name: "alt", title: "Alt text", type: "string" }),
+          ],
+        }),
+      ],
     }),
     defineField({ name: "image", title: "Image", type: "image" }),
     defineField({ name: "order", title: "Order", type: "number" }),

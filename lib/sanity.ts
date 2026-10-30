@@ -24,7 +24,11 @@ export const reptileByIdQuery = `*[_type == "reptile" && _id == $id][0] {
   "galleryUrls": gallery[]{"url": asset->url + "?auto=format&fit=max&w=1200&q=80"}[].url
 }`;
 
-export const guideByIdQuery = `*[_type == "guide" && _id == $id][0] { _id, title{pl, en}, excerpt{pl, en}, category{pl, en}, readingTime, body, bodyEn }`;
+export const guideByIdQuery = `*[_type == "guide" && _id == $id][0] {
+  _id, title{pl, en}, excerpt{pl, en}, category{pl, en}, readingTime,
+  body[]{..., "assetUrl": asset->url + "?auto=format&fit=max&w=1400&q=80"},
+  bodyEn[]{..., "assetUrl": asset->url + "?auto=format&fit=max&w=1400&q=80"}
+}`;
 
 export const guidesQuery = `*[_type == "guide"] | order(order asc, _createdAt desc) { _id, title{pl, en}, excerpt{pl, en}, category{pl, en}, readingTime, "imageUrl": image.asset->url + "?auto=format&fit=crop&w=800&q=74" }`;
 

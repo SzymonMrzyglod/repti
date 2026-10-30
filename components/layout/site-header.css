@@ -76,23 +76,32 @@
 
 @media (max-width: 700px) {
   .site-header {
-    padding: 21px 6vw;
+    padding: 12px 6vw;
   }
 
   .main-nav {
-    display: none;
+    display: flex;
     position: absolute;
-    top: 74px;
+    top: calc(100% + 1px);
     left: 0;
     right: 0;
     background: var(--forest);
     flex-direction: column;
     padding: 25px 6vw;
     margin: 0;
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+    transform: translateY(-8px);
+    transition: opacity 180ms ease, transform 180ms ease, visibility 0s linear 180ms;
   }
 
   .main-nav.open {
-    display: flex;
+    opacity: 1;
+    visibility: visible;
+    pointer-events: auto;
+    transform: translateY(0);
+    transition-delay: 0s;
   }
 
   .header-cta {
@@ -101,5 +110,11 @@
 
   .mobile-menu {
     display: block;
+  }
+}
+
+@media (max-width: 700px) and (prefers-reduced-motion: reduce) {
+  .main-nav {
+    transition: none;
   }
 }
