@@ -7,6 +7,7 @@ type AnimalDetailProps = {
   animal: {
     name?: Localized;
     species?: string;
+    speciesLatinName?: string;
     latinName?: string;
     morph?: Localized;
     sex?: Localized;
@@ -26,6 +27,17 @@ const text = (
 export default function AnimalDetail({ animal }: AnimalDetailProps) {
   const [locale, setLocale] = useState<"pl" | "en">("pl");
   const isReserved = animal.status === "reserved";
+  const statusLabel = isReserved
+    ? locale === "en"
+      ? "Reserved"
+      : "Rezerwacja"
+    : animal.status === "adopted"
+      ? locale === "en"
+        ? "Adopted"
+        : "Adoptowany"
+      : locale === "en"
+        ? "Available"
+        : "Dostępny";
   return (
     <main className="detail-page">
       <header className="detail-header">
@@ -66,7 +78,9 @@ export default function AnimalDetail({ animal }: AnimalDetailProps) {
             {locale === "en" ? "COLLECTION SPECIMEN" : "PODOPIECZNY Z KOLEKCJI"}
           </p>
           <h1>{text(animal.name, locale, "Podopieczny")}</h1>
-          <p className="detail-species">{animal.latinName || animal.species}</p>
+          <p className="detail-species">
+            {animal.latinName || animal.speciesLatinName || animal.species}
+          </p>
           <p className="detail-description">
             {text(
               animal.description,
@@ -91,15 +105,7 @@ export default function AnimalDetail({ animal }: AnimalDetailProps) {
             </div>
             <div>
               <small>{locale === "en" ? "STATUS" : "STATUS"}</small>
-              <strong>
-                {isReserved
-                  ? locale === "en"
-                    ? "Reserved"
-                    : "Rezerwacja"
-                  : locale === "en"
-                    ? "Available"
-                    : "Dostępny"}
-              </strong>
+              <strong>{statusLabel}</strong>
             </div>
           </div>
           <a href="/#kontakt" className="outline-button">

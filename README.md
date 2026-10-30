@@ -1,33 +1,38 @@
 # repti
 
-This is a [Next.js](https://nextjs.org) project bootstrapped with [v0](https://v0.app).
-
-## Built with v0
-
-This repository is linked to a [v0](https://v0.app) project. You can continue developing by visiting the link below -- start new chats to make changes, and v0 will push commits directly to this repo. Every merge to `main` will automatically deploy.
-
-[Continue working on v0 →](https://v0.app/chat/projects/prj_fJeVvoGL0HmEhQwA9SLO3AF1FDWF)
-
 ## Getting Started
 
-First, run the development server:
+Use the Node.js version in `.nvmrc` and pnpm `12.3.4`. On Windows with NVM for Windows, install and activate Node, then install pnpm once:
+
+```powershell
+nvm install 24.22.2
+nvm use 24.22.2
+npm install --global --allow-scripts=pnpm pnpm@12.3.4
+```
+
+Install project dependencies and start the Vite development server:
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
+pnpm install
 pnpm dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open [http://localhost:5173](http://localhost:5173) to view the app.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+Create a production build with:
 
-## Learn More
+```bash
+pnpm build
+```
 
-To learn more, take a look at the following resources:
+## CMS Studio
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-- [v0 Documentation](https://v0.app/docs) - learn about v0 and how to use it.
+The Studio source and schemas are in `studio/`. The hosted Studio uses project `t5to691s` and dataset `production`.
+
+```bash
+pnpm cms:dev
+pnpm cms:build
+pnpm cms:deploy
+```
+
+The CMS is available at [o-ty-gadzie-cms-v2.sanity.studio](https://o-ty-gadzie-cms-v2.sanity.studio/).

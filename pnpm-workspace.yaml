@@ -1,5 +1,18 @@
+packages:
+  - studio
+
 pmOnFail: ignore
 
 minimumReleaseAgeExclude:
-  - '@next/*'
+  - "@next/*"
   - next
+  - "@sanity/access-ui@6.21.0"
+  - "@sanity/diff@6.21.0"
+  - "@sanity/mutator@6.21.0"
+  - "@sanity/schema@6.21.0"
+  - "@sanity/types@6.21.0"
+  - "@sanity/util@6.21.0"
+  - "@sanity/validation@6.21.0"
+  - sanity@6.21.0
+allowBuilds:
+  esbuild: true

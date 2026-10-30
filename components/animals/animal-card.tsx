@@ -1,5 +1,7 @@
 import { Link } from "react-router-dom";
 import { ArrowUpRight } from "lucide-react";
+import { useLocale } from "@/lib/locale-context";
+import { getTranslations } from "@/lib/translations";
 
 type Animal = {
   id: string;
@@ -8,11 +10,14 @@ type Animal = {
   morph: string;
   sex: string;
   weight: string;
-  status: "Dostępny" | "Rezerwacja" | "Adoptowany";
+  status: "available" | "reserved" | "adopted";
   image: string;
 };
 
 export default function AnimalCard({ animal }: { animal: Animal }) {
+  const { locale } = useLocale();
+  const translations = getTranslations(locale);
+
   return (
     <Link
       to={`/animal/${encodeURIComponent(animal.id)}`}
@@ -29,9 +34,9 @@ export default function AnimalCard({ animal }: { animal: Animal }) {
           <div className="card-image card-image-empty" aria-hidden="true" />
         )}
         <span
-          className={`status-pill ${animal.status === "Dostępny" ? "available" : "reserved"}`}
+          className={`status-pill ${animal.status === "available" ? "available" : "reserved"}`}
         >
-          {animal.status}
+          {translations.animal[animal.status]}
         </span>
         <span className="card-arrow" aria-hidden="true">
           <ArrowUpRight size={17} />
@@ -45,11 +50,11 @@ export default function AnimalCard({ animal }: { animal: Animal }) {
         <p className="latin">{animal.latin}</p>
         <div className="animal-meta">
           <span>
-            <small>ODMIANA</small>
+            <small>{translations.animal.morph}</small>
             {animal.morph}
           </span>
           <span>
-            <small>WAGA</small>
+            <small>{translations.animal.weight}</small>
             {animal.weight}
           </span>
         </div>

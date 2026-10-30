@@ -1,0 +1,105 @@
+.site-header {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 5.5vw;
+  border-bottom: 1px solid rgba(245, 241, 229, 0.2);
+}
+
+.logo {
+  display: flex;
+  gap: 11px;
+  align-items: center;
+  font-size: 12px;
+  line-height: 0.92;
+  letter-spacing: 0.17em;
+  font-weight: 700;
+}
+
+.logo em {
+  font-style: normal;
+  font-size: 8px;
+  letter-spacing: 0.36em;
+  color: #b9b39f;
+}
+
+.main-nav {
+  display: flex;
+  gap: clamp(20px, 3.2vw, 54px);
+  margin-left: auto;
+  margin-right: 5vw;
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+  color: #d7d5c9;
+}
+
+.main-nav a:hover {
+  color: var(--gold);
+}
+
+.header-actions {
+  display: flex;
+  align-items: center;
+  gap: 22px;
+}
+
+.header-cta {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: #dad6c8;
+}
+
+.mobile-menu {
+  display: none;
+  background: none;
+  border: 0;
+  color: white;
+}
+
+@media (max-width: 900px) {
+  .site-header {
+    padding-inline: 6vw;
+  }
+
+  .main-nav {
+    gap: 18px;
+    margin-right: 2vw;
+  }
+}
+
+@media (max-width: 700px) {
+  .site-header {
+    padding: 21px 6vw;
+  }
+
+  .main-nav {
+    display: none;
+    position: absolute;
+    top: 74px;
+    left: 0;
+    right: 0;
+    background: var(--forest);
+    flex-direction: column;
+    padding: 25px 6vw;
+    margin: 0;
+  }
+
+  .main-nav.open {
+    display: flex;
+  }
+
+  .header-cta {
+    display: none;
+  }
+
+  .mobile-menu {
+    display: block;
+  }
+}

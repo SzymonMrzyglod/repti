@@ -1,75 +1,80 @@
 import { ArrowUpRight, Menu, X } from "lucide-react";
-import BrandMark from "@/components/brand-mark";
+import BrandMark from "./brand-mark";
+import { useLocale } from "@/lib/locale-context";
+import { getTranslations } from "@/lib/translations";
 
 export default function SiteHeader({
   menuOpen,
   onToggle,
   onNavigate,
-  locale,
-  onLocaleChange,
   brandName = "O ty gadzie!",
   logoUrl,
 }: {
   menuOpen: boolean;
   onToggle: () => void;
   onNavigate: () => void;
-  locale: "pl" | "en";
-  onLocaleChange: (locale: "pl" | "en") => void;
   brandName?: string;
   logoUrl?: string;
 }) {
+  const { locale, setLocale } = useLocale();
+  const translations = getTranslations(locale);
+
   return (
     <header className="site-header">
       <a
         href="#start"
         className="logo"
-        aria-label={`${brandName} — strona główna`}
+        aria-label={`${brandName} — ${translations.navigation.homePage}`}
       >
         <BrandMark logoUrl={logoUrl} />
       </a>
       <nav className={`main-nav ${menuOpen ? "open" : ""}`}>
-        <a href="#zwierzeta" onClick={onNavigate}>
-          {locale === "en" ? "Animals" : "Zwierzęta"}
+        <a href="#animals" onClick={onNavigate}>
+          {translations.navigation.animals}
         </a>
-        <a href="#filozofia" onClick={onNavigate}>
-          {locale === "en" ? "Our philosophy" : "Nasza filozofia"}
+        <a href="#philosophy" onClick={onNavigate}>
+          {translations.navigation.philosophy}
         </a>
-        <a href="#opieka" onClick={onNavigate}>
-          {locale === "en" ? "Care" : "Opieka"}
+        <a href="#care" onClick={onNavigate}>
+          {translations.navigation.care}
         </a>
-        <a href="#kontakt" onClick={onNavigate}>
-          {locale === "en" ? "Contact" : "Kontakt"}
+        <a href="#contact" onClick={onNavigate}>
+          {translations.navigation.contact}
         </a>
       </nav>
       <div className="header-actions">
         <div
           className="language-switcher"
-          aria-label={locale === "en" ? "Choose language" : "Wybierz język"}
+          aria-label={translations.navigation.chooseLanguage}
         >
           <button
             type="button"
             className={locale === "pl" ? "active" : ""}
-            onClick={() => onLocaleChange("pl")}
+            onClick={() => setLocale("pl")}
           >
             PL
           </button>
           <button
             type="button"
             className={locale === "en" ? "active" : ""}
-            onClick={() => onLocaleChange("en")}
+            onClick={() => setLocale("en")}
           >
             EN
           </button>
         </div>
-        <a href="#kontakt" className="header-cta">
-          {locale === "en" ? "Ask about availability" : "Zapytaj o dostępność"}{" "}
-          <ArrowUpRight size={15} />
+        <a href="#contact" className="header-cta">
+          {translations.navigation.askAvailability} <ArrowUpRight size={15} />
         </a>
       </div>
       <button
+        type="button"
         className="mobile-menu"
         onClick={onToggle}
-        aria-label="Otwórz menu"
+        aria-label={
+          menuOpen
+            ? translations.navigation.closeMenu
+            : translations.navigation.openMenu
+        }
       >
         {menuOpen ? <X /> : <Menu />}
       </button>

@@ -14,5 +14,7 @@ __v0_jsx-dev-runtime.ts
 node_modules
 .next/
 dist/
+.sanity/
 *.tsbuildinfo
 .DS_Store
+sanity-production-backup.tar.gz
