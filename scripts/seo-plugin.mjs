@@ -170,6 +170,32 @@ ${urls
 </urlset>
 `;
 
+      const crawlLinks = [
+        ...reptiles.map((reptile) => ({
+          href: `/animal/${reptile._id}`,
+          label: [pick(reptile.name), pick(reptile.morph)].filter(Boolean).join(" — "),
+        })),
+        ...guides.map((guide) => ({
+          href: `/guides/${guide._id}`,
+          label: pick(guide.title),
+        })),
+      ].filter((link) => link.label);
+
+      if (crawlLinks.length) {
+        const noscript = `<noscript>
+      <h1>${SITE_NAME} — hodowla gekonów orzęsionych i węży zbożowych</h1>
+      <nav>
+${crawlLinks.map((link) => `        <a href="${link.href}">${escapeHtml(link.label)}</a>`).join("\n")}
+        <a href="/guides">Poradniki</a>
+      </nav>
+    </noscript>`;
+        const homePage = template.replace(
+          '<div id="root"></div>',
+          `<div id="root"></div>\n    ${noscript}`,
+        );
+        await fs.writeFile(path.join(outDir, "index.html"), homePage);
+      }
+
       await fs.writeFile(path.join(outDir, "sitemap.xml"), sitemap);
       await fs.writeFile(
         path.join(outDir, "robots.txt"),

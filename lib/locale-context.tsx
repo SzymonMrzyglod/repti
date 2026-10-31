@@ -5,7 +5,6 @@ import {
   useState,
   type ReactNode,
 } from "react";
-import { getTranslations } from "./translations";
 
 export type Locale = "pl" | "en";
 
@@ -28,13 +27,6 @@ export function LocaleProvider({ children }: { children: ReactNode }) {
 
   useEffect(() => {
     document.documentElement.lang = locale;
-    const site = getTranslations(locale).site;
-    document.title = site.title;
-
-    const description = document.querySelector<HTMLMetaElement>(
-      'meta[name="description"]',
-    );
-    if (description) description.content = site.description;
   }, [locale]);
 
   return (
