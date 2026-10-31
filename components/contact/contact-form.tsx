@@ -29,9 +29,11 @@ function localized(value: Localized | undefined, locale: "pl" | "en") {
 export default function ContactForm({
   animal,
   embedded = false,
+  onSuccess,
 }: {
   animal?: ContactAnimal;
   embedded?: boolean;
+  onSuccess?: () => void;
 }) {
   const { locale } = useLocale();
   const content = getTranslations(locale).contact;
@@ -69,7 +71,9 @@ export default function ContactForm({
         body: formData,
       });
       const data = await response.json();
-      setResult(response.ok && data.success ? "success" : "error");
+      const isSuccess = response.ok && data.success;
+      setResult(isSuccess ? "success" : "error");
+      if (isSuccess) onSuccess?.();
     } catch {
       setResult("error");
     }
@@ -229,6 +233,11 @@ export function ContactFormModal({
   const translations = getTranslations(locale);
   const content = translations.contact;
   const animalName = localized(animal?.name, locale);
+  const [sent, setSent] = useState(false);
+
+  useEffect(() => {
+    if (!open) setSent(false);
+  }, [open]);
 
   useEffect(() => {
     const dialog = dialogRef.current;
@@ -255,27 +264,53 @@ export function ContactFormModal({
         if (event.target === event.currentTarget) onClose();
       }}
     >
-      <div className="contact-modal-header">
-        <p className="eyebrow dark">
-          <span /> {content.eyebrow}
-        </p>
-        <button
-          type="button"
-          className="contact-modal-close"
-          aria-label={translations.navigation.closeMenu}
-          onClick={onClose}
-        >
-          <X size={20} />
-        </button>
-      </div>
-      <h2 id="contact-modal-title">{content.title}</h2>
-      {animal && (
-        <p className="contact-modal-subtitle">
-          {animalName} · {animal.latinName || animal.speciesLatinName || animal.species}
-        </p>
+      {sent ? (
+        <div className="contact-modal-thanks" role="status" aria-live="polite">
+          <span className="contact-success-icon">
+            <Check size={20} />
+          </span>
+          <h2 id="contact-modal-title">{content.successTitle}</h2>
+          <p>{content.success}</p>
+          <button
+            type="button"
+            className="contact-submit"
+            onClick={onClose}
+          >
+            {content.close}
+          </button>
+        </div>
+      ) : (
+        <>
+          <div className="contact-modal-header">
+            <p className="eyebrow dark">
+              <span /> {content.eyebrow}
+            </p>
+            <button
+              type="button"
+              className="contact-modal-close"
+              aria-label={content.close}
+              onClick={onClose}
+            >
+              <X size={20} />
+            </button>
+          </div>
+          <h2 id="contact-modal-title">{content.title}</h2>
+          {animal && (
+            <p className="contact-modal-subtitle">
+              {animalName} ·{" "}
+              {animal.latinName || animal.speciesLatinName || animal.species}
+            </p>
+          )}
+          <p className="contact-modal-intro">{content.introduction}</p>
+          {open && (
+            <ContactForm
+              animal={animal}
+              embedded
+              onSuccess={() => setSent(true)}
+            />
+          )}
+        </>
       )}
-      <p className="contact-modal-intro">{content.introduction}</p>
-      {open && <ContactForm animal={animal} embedded />}
     </dialog>,
     document.body,
   );

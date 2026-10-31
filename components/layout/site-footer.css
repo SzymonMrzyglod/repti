@@ -16,19 +16,6 @@ footer {
   font-size: clamp(40px, 4vw, 58px);
 }
 
-.footer-contact-details {
-  display: grid;
-  justify-items: start;
-  gap: 8px;
-  margin-top: 20px;
-  color: #6d7168;
-  font-size: 12px;
-}
-
-.footer-contact-details a:hover {
-  color: var(--gold);
-}
-
 .footer-links {
   display: flex;
   flex-direction: column;
@@ -49,6 +36,7 @@ footer {
   display: flex;
   gap: 8px;
   align-items: center;
+  overflow-wrap: anywhere;
 }
 
 .facebook-mark {

@@ -1,9 +1,4 @@
-import {
-  useEffect,
-  useLayoutEffect,
-  useState,
-  type ComponentProps,
-} from "react";
+import { useLayoutEffect, useState, useEffect, type ComponentProps } from "react";
 import {
   Link,
   Route,
@@ -13,7 +8,7 @@ import {
   useSearchParams,
 } from "react-router-dom";
 import AnimalDetail from "@/components/animals/animal-detail";
-import ContactForm from "@/components/contact-form";
+import ContactForm from "@/components/contact/contact-form";
 import LoadingState from "@/components/layout/loading-state";
 import {
   GuideDetailPage,
@@ -31,10 +26,7 @@ import {
   siteSettingsQuery,
 } from "@/lib/sanity";
 import { getTranslations } from "@/lib/translations";
-import {
-  clearCollectionReturnState,
-  getCollectionReturnState,
-} from "@/lib/collection-navigation";
+import { getHomeViewState } from "@/lib/home-view-state";
 
 type Localized = { pl?: string; en?: string };
 type SanityReptile = {
@@ -91,33 +83,31 @@ function mapHomeData(
 function HomeRoute() {
   const { locale } = useLocale();
   const location = useLocation();
-  const collectionReturnState = getCollectionReturnState(
-    location.state,
-    location.key,
-  );
   const translations = getTranslations(locale);
+  const [savedView] = useState(getHomeViewState);
   const [data, setData] = useState<HomeData | null>(null);
   const [hasError, setHasError] = useState(false);
 
   useLayoutEffect(() => {
     if (!data) return;
-    if (!collectionReturnState && location.hash !== "#animals") return;
+    if (!savedView && location.hash !== "#animals") return;
 
     const root = document.documentElement;
     const previousScrollBehavior = root.style.scrollBehavior;
     root.style.scrollBehavior = "auto";
 
     try {
-      if (collectionReturnState) {
-        window.scrollTo(0, collectionReturnState.collectionScrollY);
+      if (savedView) {
+        window.scrollTo(0, savedView.scrollY);
       } else {
         document.getElementById("animals")?.scrollIntoView();
       }
     } finally {
       root.style.scrollBehavior = previousScrollBehavior;
     }
-    clearCollectionReturnState();
-  }, [collectionReturnState, data, location.hash]);
+    // Restore only once, when the home page content first appears.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [data]);
 
   useEffect(() => {
     let isActive = true;
@@ -146,12 +136,11 @@ function HomeRoute() {
 
   if (!data) return <LoadingState />;
 
-  const initialShowAll = collectionReturnState?.collectionShowAll ?? false;
-
   return (
     <HomePage
       {...mapHomeData(data.reptiles, data.settings, locale)}
-      initialShowAll={initialShowAll}
+      initialShowAll={savedView?.showAll}
+      initialFilter={savedView?.filter}
     />
   );
 }

@@ -1,9 +1,7 @@
-import { Link, useLocation, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { ArrowUpRight } from "lucide-react";
 import { useLocale } from "@/lib/locale-context";
 import { getTranslations } from "@/lib/translations";
-import type { MouseEvent } from "react";
-import { saveCollectionReturnState } from "@/lib/collection-navigation";
 
 type Animal = {
   id: string;
@@ -16,44 +14,14 @@ type Animal = {
   image: string;
 };
 
-export default function AnimalCard({
-  animal,
-  collectionShowAll,
-}: {
-  animal: Animal;
-  collectionShowAll: boolean;
-}) {
+export default function AnimalCard({ animal }: { animal: Animal }) {
   const { locale } = useLocale();
   const translations = getTranslations(locale);
-  const navigate = useNavigate();
-  const location = useLocation();
-  const animalPath = `/animal/${encodeURIComponent(animal.id)}`;
 
   return (
     <Link
-      to={animalPath}
+      to={`/animal/${encodeURIComponent(animal.id)}`}
       className="animal-card"
-      onClick={(event: MouseEvent<HTMLAnchorElement>) => {
-        if (
-          event.button !== 0 ||
-          event.metaKey ||
-          event.ctrlKey ||
-          event.shiftKey ||
-          event.altKey
-        ) {
-          return;
-        }
-
-        event.preventDefault();
-        const collectionReturnState = {
-          collectionScrollY: window.scrollY,
-          collectionShowAll,
-        };
-        saveCollectionReturnState(collectionReturnState, location.key);
-        navigate(animalPath, {
-          state: collectionReturnState,
-        });
-      }}
     >
       <div className="card-image-wrap">
         {animal.image ? (

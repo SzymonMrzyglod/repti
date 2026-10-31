@@ -326,6 +326,23 @@
   color: #9c302a;
 }
 
+.contact-modal-thanks {
+  display: grid;
+  justify-items: start;
+  gap: 16px;
+}
+
+.contact-modal-thanks h2 {
+  margin: 0;
+  font-size: clamp(36px, 6vw, 52px);
+  line-height: 1;
+}
+
+.contact-modal-thanks p {
+  margin: 0;
+  line-height: 1.5;
+}
+
 .contact-success {
   display: flex;
   align-items: flex-start;

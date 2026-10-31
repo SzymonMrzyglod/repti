@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useEffect, useLayoutEffect, useMemo, useState } from "react";
 import { ArrowDown, ArrowUpRight } from "lucide-react";
 import { Link } from "react-router-dom";
 import AnimalCard from "@/components/animals/animal-card";
@@ -6,6 +6,7 @@ import SiteFooter from "@/components/layout/site-footer";
 import SiteHeader from "@/components/layout/site-header";
 import { useLocale } from "@/lib/locale-context";
 import { getTranslations } from "@/lib/translations";
+import { saveHomeViewState } from "@/lib/home-view-state";
 
 type Animal = {
   id: string;
@@ -42,6 +43,7 @@ type HomePageProps = {
   animals: Animal[];
   settings?: SiteSettings | null;
   initialShowAll?: boolean;
+  initialFilter?: string;
 };
 
 function localizedText(
@@ -56,12 +58,35 @@ export default function HomePage({
   animals,
   settings,
   initialShowAll = false,
+  initialFilter = "all",
 }: HomePageProps) {
   const { locale } = useLocale();
   const translations = getTranslations(locale);
   const [menuOpen, setMenuOpen] = useState(false);
-  const [filter, setFilter] = useState("all");
+  const [filter, setFilter] = useState(initialFilter);
   const [showAll, setShowAll] = useState(initialShowAll);
+
+  useEffect(() => {
+    saveHomeViewState({ showAll, filter });
+  }, [showAll, filter]);
+
+  // Layout effect so the listener is removed in the same commit that leaves the
+  // page, before the shorter next page clamps the scroll position to the top.
+  useLayoutEffect(() => {
+    let frame = 0;
+    const saveScroll = () => {
+      cancelAnimationFrame(frame);
+      frame = requestAnimationFrame(() =>
+        saveHomeViewState({ scrollY: window.scrollY }),
+      );
+    };
+
+    window.addEventListener("scroll", saveScroll, { passive: true });
+    return () => {
+      cancelAnimationFrame(frame);
+      window.removeEventListener("scroll", saveScroll);
+    };
+  }, []);
   const species = useMemo(
     () =>
       Array.from(
@@ -237,11 +262,7 @@ export default function HomePage({
         </div>
         <div className="animal-grid">
           {visibleAnimals.map((animal) => (
-            <AnimalCard
-              animal={animal}
-              collectionShowAll={showAll}
-              key={animal.id}
-            />
+            <AnimalCard animal={animal} key={animal.id} />
           ))}
         </div>
         <div className="catalog-foot">

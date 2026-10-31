@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Link, useLocation } from "react-router-dom";
+import { Link } from "react-router-dom";
 import {
   ArrowLeft,
   ArrowUpRight,
@@ -7,7 +7,7 @@ import {
   ChevronRight,
 } from "lucide-react";
 import LocaleSwitcher from "@/components/layout/locale-switcher";
-import { ContactFormModal } from "@/components/contact-form";
+import { ContactFormModal } from "@/components/contact/contact-form";
 import { useLocale } from "@/lib/locale-context";
 import { getTranslations } from "@/lib/translations";
 
@@ -37,7 +37,6 @@ const text = (
 
 export default function AnimalDetail({ animal }: AnimalDetailProps) {
   const { locale } = useLocale();
-  const location = useLocation();
   const translations = getTranslations(locale);
   const [activeImageIndex, setActiveImageIndex] = useState(0);
   const [contactOpen, setContactOpen] = useState(false);
@@ -50,17 +49,6 @@ export default function AnimalDetail({ animal }: AnimalDetailProps) {
   );
   const currentImage = images[currentImageIndex];
   const animalName = text(animal.name, locale, translations.animal.unnamed);
-  const collectionScrollY =
-    location.state &&
-    typeof location.state.collectionScrollY === "number" &&
-    Number.isFinite(location.state.collectionScrollY)
-      ? location.state.collectionScrollY
-      : undefined;
-  const collectionShowAll =
-    location.state &&
-    typeof location.state.collectionShowAll === "boolean"
-      ? location.state.collectionShowAll
-      : undefined;
   const status =
     animal.status === "reserved"
       ? "reserved"
@@ -75,11 +63,7 @@ export default function AnimalDetail({ animal }: AnimalDetailProps) {
   return (
     <main className="detail-page">
       <header className="detail-header">
-        <Link
-          to="/#animals"
-          state={{ collectionScrollY, collectionShowAll }}
-          className="text-link"
-        >
+        <Link to="/#animals" className="text-link">
           <ArrowLeft size={15} /> {translations.animal.backToCollection}
         </Link>
         <LocaleSwitcher />

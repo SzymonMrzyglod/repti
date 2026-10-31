@@ -1,6 +1,6 @@
-import { Camera } from "lucide-react";
+import { Camera, Mail, Phone } from "lucide-react";
 import { Link } from "react-router-dom";
-import { FooterContactForm } from "@/components/contact-form";
+import { FooterContactForm } from "@/components/contact/contact-form";
 import BrandMark from "./brand-mark";
 import { useLocale } from "@/lib/locale-context";
 import { getTranslations } from "@/lib/translations";
@@ -29,10 +29,6 @@ export default function SiteFooter({ logoUrl }: { logoUrl?: string }) {
             <i>{translations.footer.contactTitleAccent}</i>
           </h2>
           <FooterContactForm />
-          <div className="footer-contact-details">
-            <a href="tel:+48888163509">888 163 509</a>
-            <a href="mailto:o.ty.gadzie@gmail.com">o.ty.gadzie@gmail.com</a>
-          </div>
         </div>
         <div className="footer-links">
           <span>{translations.footer.navigation}</span>
@@ -42,6 +38,12 @@ export default function SiteFooter({ logoUrl }: { logoUrl?: string }) {
         </div>
         <div className="footer-links">
           <span>{translations.footer.findUs}</span>
+          <a href="tel:+48888163509">
+            <Phone size={16} /> 888 163 509
+          </a>
+          <a href="mailto:o.ty.gadzie@gmail.com">
+            <Mail size={16} /> o.ty.gadzie@gmail.com
+          </a>
           <a
             href="https://www.instagram.com/o_ty_gadzie/"
             target="_blank"
