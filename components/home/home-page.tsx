@@ -13,6 +13,7 @@ import {
 import { useLocale } from "@/lib/locale-context";
 import { getTranslations } from "@/lib/translations";
 import { saveHomeViewState } from "@/lib/home-view-state";
+import { localizedText, type Localized } from "@/lib/localized";
 
 type Animal = {
   id: string;
@@ -28,7 +29,6 @@ type Animal = {
   image: string;
 };
 
-type Localized = { pl?: string; en?: string };
 type SiteSettings = {
   brandName?: string;
   logoUrl?: string;
@@ -55,14 +55,6 @@ type HomePageProps = {
   initialShowAll?: boolean;
   initialFilter?: string;
 };
-
-function localizedText(
-  value: Localized | undefined,
-  locale: "pl" | "en",
-  fallback: string,
-) {
-  return value?.[locale] || (locale === "pl" ? value?.en : "") || fallback;
-}
 
 export default function HomePage({
   animals,

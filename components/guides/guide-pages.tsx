@@ -9,9 +9,10 @@ import {
 } from "@/components/ui/styles";
 import LocaleSwitcher from "@/components/layout/locale-switcher";
 import { useLocale } from "@/lib/locale-context";
+import { localizedText, type Localized } from "@/lib/localized";
 import { getTranslations } from "@/lib/translations";
 
-type LocalizedText = { pl?: string; en?: string };
+type LocalizedText = Localized;
 type GuideImageBlock = {
   _key: string;
   _type: "image";
@@ -36,10 +37,6 @@ const fallbackImages = [
   "/images/guides/feeding.png",
   "/images/guides/homecoming.png",
 ];
-
-function localizedText(value: LocalizedText | undefined, locale: "pl" | "en") {
-  return value?.[locale] || (locale === "pl" ? value?.en : "") || "";
-}
 
 const portableTextComponents: PortableTextComponents<GuideBodyBlock> = {
   types: {

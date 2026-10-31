@@ -15,9 +15,9 @@ import {
   spacedTextLinkClassName,
 } from "@/components/ui/styles";
 import { useLocale } from "@/lib/locale-context";
+import { localizedText, type Localized } from "@/lib/localized";
 import { getTranslations } from "@/lib/translations";
 
-type Localized = { pl?: string; en?: string };
 type AnimalDetailProps = {
   animal: {
     _id?: string;
@@ -35,11 +35,7 @@ type AnimalDetailProps = {
     galleryUrls?: string[];
   };
 };
-const text = (
-  value: Localized | undefined,
-  locale: "pl" | "en",
-  fallback: string,
-) => value?.[locale] || (locale === "pl" ? value?.en : undefined) || fallback;
+const text = localizedText;
 
 export default function AnimalDetail({ animal }: AnimalDetailProps) {
   const { locale } = useLocale();
