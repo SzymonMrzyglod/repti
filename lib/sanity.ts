@@ -10,7 +10,7 @@ export const sanityClient = createClient({
 export const siteSettingsQuery = `*[_type == "siteSettings"][0]{
   brandName, "logoUrl": logo.asset->url,
   navigation[]{_key, href, label{pl, en}},
-  heroEyebrow{pl, en}, heroTitle{pl, en}, heroText{pl, en}, "heroImageUrl": heroImage.asset->url + "?auto=format&fit=max&w=1600&q=78",
+  heroEyebrow{pl, en}, heroTitle{pl, en}, heroText{pl, en}, "heroImageUrl": heroImage.asset->url + "?auto=format&fit=max&w=2200&q=84",
   historyEyebrow{pl, en}, historyTitle{pl, en}, historyLead{pl, en}, historyText{pl, en},
   stats[]{_key, value, label{pl, en}},
   collectionEyebrow{pl, en}, collectionTitle{pl, en}, collectionNote{pl, en},
@@ -20,19 +20,19 @@ export const siteSettingsQuery = `*[_type == "siteSettings"][0]{
 
 export const reptileByIdQuery = `*[_type == "reptile" && _id == $id][0] {
   _id, name{pl, en}, "species": species->name.pl, "speciesLatinName": species->latinName, latinName, morph{pl, en}, sex{pl, en}, weight, status, description{pl, en}, price, featured,
-  "imageUrl": coalesce(image.asset->url + "?auto=format&fit=max&w=1200&q=80", gallery[0].asset->url + "?auto=format&fit=max&w=1200&q=80"),
-  "galleryUrls": gallery[]{"url": asset->url + "?auto=format&fit=max&w=1200&q=80"}[].url
+  "imageUrl": coalesce(image.asset->url + "?auto=format&fit=max&w=1800&q=85", gallery[0].asset->url + "?auto=format&fit=max&w=1800&q=85"),
+  "galleryUrls": gallery[]{"url": asset->url + "?auto=format&fit=max&w=1800&q=85"}[].url
 }`;
 
 export const guideByIdQuery = `*[_type == "guide" && _id == $id][0] {
   _id, title{pl, en}, excerpt{pl, en}, category{pl, en}, readingTime,
-  body[]{..., "assetUrl": asset->url + "?auto=format&fit=max&w=1400&q=80"},
-  bodyEn[]{..., "assetUrl": asset->url + "?auto=format&fit=max&w=1400&q=80"}
+  body[]{..., "assetUrl": asset->url + "?auto=format&fit=max&w=1800&q=85"},
+  bodyEn[]{..., "assetUrl": asset->url + "?auto=format&fit=max&w=1800&q=85"}
 }`;
 
-export const guidesQuery = `*[_type == "guide"] | order(order asc, _createdAt desc) { _id, title{pl, en}, excerpt{pl, en}, category{pl, en}, readingTime, "imageUrl": image.asset->url + "?auto=format&fit=crop&w=800&q=74" }`;
+export const guidesQuery = `*[_type == "guide"] | order(order asc, _createdAt desc) { _id, title{pl, en}, excerpt{pl, en}, category{pl, en}, readingTime, "imageUrl": image.asset->url + "?auto=format&fit=crop&w=1000&q=84" }`;
 
 export const reptilesQuery = `*[_type == "reptile"] | order(order asc, _createdAt asc) {
   _id, name{pl, en}, "speciesId": species._ref, "speciesName": species->name, "speciesLatinName": species->latinName, "species": species->name.pl, latinName, morph{pl, en}, sex{pl, en}, weight, status,
-  description{pl, en}, "imageUrl": coalesce(image.asset->url + "?auto=format&fit=crop&w=520&q=72", gallery[0].asset->url + "?auto=format&fit=crop&w=520&q=72")
+  description{pl, en}, "imageUrl": coalesce(image.asset->url + "?auto=format&fit=crop&w=1000&q=84", gallery[0].asset->url + "?auto=format&fit=crop&w=1000&q=84")
 }`;
