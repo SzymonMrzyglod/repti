@@ -126,6 +126,16 @@ export default function seoPlugin() {
         url: `${SITE_URL}/guides`,
       }));
 
+      const contactPage = withMeta(template, {
+        title: `Kontakt | ${SITE_NAME}`,
+        description: "Skontaktuj się z hodowlą O ty gadzie!",
+        url: `${SITE_URL}/contact`,
+      }).replace(
+        /<meta name="robots" content="[^"]*"\s*\/?>/,
+        '<meta name="robots" content="noindex, nofollow" />',
+      );
+      await writePage(outDir, "contact", contactPage);
+
       for (const reptile of reptiles) {
         const route = `animal/${reptile._id}`;
         const name = pick(reptile.name);
@@ -201,7 +211,15 @@ ${crawlLinks.map((link) => `        <a href="${link.href}">${escapeHtml(link.lab
         path.join(outDir, "robots.txt"),
         `User-agent: *\nAllow: /\n\nSitemap: ${SITE_URL}/sitemap.xml\n`,
       );
-      await fs.writeFile(path.join(outDir, "404.html"), template);
+      const notFoundPage = withMeta(template, {
+        title: `Nie znaleziono strony | ${SITE_NAME}`,
+        description: "Nie znaleziono strony pod tym adresem.",
+        url: `${SITE_URL}/404`,
+      }).replace(
+        /<meta name="robots" content="[^"]*"\s*\/?>/,
+        '<meta name="robots" content="noindex, nofollow" />',
+      );
+      await fs.writeFile(path.join(outDir, "404.html"), notFoundPage);
       console.log(`[seo] sitemap.xml with ${urls.length} URLs`);
     },
   };

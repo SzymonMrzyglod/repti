@@ -11,6 +11,7 @@ import AnimalDetail from "@/components/animals/animal-detail";
 import ContactForm from "@/components/contact/contact-form";
 import LoadingState from "@/components/layout/loading-state";
 import LoadError from "@/components/layout/load-error";
+import NotFoundPage from "@/components/layout/not-found-page";
 import Seo from "@/components/seo";
 import {
   GuideDetailPage,
@@ -173,6 +174,7 @@ function HomeRoute() {
 function GuidesRoute() {
   const { locale } = useLocale();
   const [guides, setGuides] = useState<Guide[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
   const [hasError, setHasError] = useState(false);
 
   useEffect(() => {
@@ -181,10 +183,16 @@ function GuidesRoute() {
     sanityClient
       .fetch<Guide[]>(guidesQuery)
       .then((result) => {
-        if (isActive) setGuides(result);
+        if (isActive) {
+          setGuides(result);
+          setIsLoading(false);
+        }
       })
       .catch(() => {
-        if (isActive) setHasError(true);
+        if (isActive) {
+          setHasError(true);
+          setIsLoading(false);
+        }
       });
 
     return () => {
@@ -192,6 +200,7 @@ function GuidesRoute() {
     };
   }, []);
 
+  if (isLoading) return <LoadingState />;
   if (hasError) return <LoadError />;
 
   return (
@@ -218,7 +227,9 @@ function AnimalRoute() {
   const { name } = useParams();
   const { locale } = useLocale();
   const [animal, setAnimal] = useState<SanityReptile | null>(null);
-  const [status, setStatus] = useState<"loading" | "ready" | "error">("loading");
+  const [status, setStatus] = useState<
+    "loading" | "ready" | "not-found" | "error"
+  >("loading");
 
   useEffect(() => {
     if (!name) return;
@@ -232,7 +243,7 @@ function AnimalRoute() {
       .then((result) => {
         if (!isActive) return;
         setAnimal(result);
-        setStatus(result ? "ready" : "error");
+        setStatus(result ? "ready" : "not-found");
       })
       .catch(() => {
         if (isActive) setStatus("error");
@@ -243,6 +254,7 @@ function AnimalRoute() {
     };
   }, [name]);
 
+  if (status === "not-found") return <NotFoundPage />;
   if (status === "error") return <LoadError />;
   if (!animal) return <LoadingState />;
 
@@ -367,24 +379,26 @@ function GuideRoute() {
   const { id } = useParams();
   const { locale } = useLocale();
   const [guide, setGuide] = useState<Guide | null>(null);
-  const [hasError, setHasError] = useState(false);
+  const [status, setStatus] = useState<
+    "loading" | "ready" | "not-found" | "error"
+  >("loading");
 
   useEffect(() => {
     if (!id) return;
 
     let isActive = true;
     setGuide(null);
-    setHasError(false);
+    setStatus("loading");
 
     sanityClient
       .fetch<Guide | null>(guideByIdQuery, { id })
       .then((result) => {
         if (!isActive) return;
         setGuide(result);
-        if (!result) setHasError(true);
+        setStatus(result ? "ready" : "not-found");
       })
       .catch(() => {
-        if (isActive) setHasError(true);
+        if (isActive) setStatus("error");
       });
 
     return () => {
@@ -392,8 +406,9 @@ function GuideRoute() {
     };
   }, [id]);
 
-  if (hasError) return <LoadError />;
-  if (!guide) return <LoadingState />;
+  if (status === "not-found") return <NotFoundPage />;
+  if (status === "error") return <LoadError />;
+  if (status !== "ready" || !guide) return <LoadingState />;
 
   const guideTitle = localizedText(guide.title, locale);
   const guideDescription =
@@ -444,7 +459,7 @@ export default function App() {
       <Route path="/guides/:id" element={<GuideRoute />} />
       <Route path="/animal/:name" element={<AnimalRoute />} />
       <Route path="/contact" element={<ContactRoute />} />
-      <Route path="*" element={<HomeRoute />} />
+      <Route path="*" element={<NotFoundPage />} />
     </Routes>
   );
 }

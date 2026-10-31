@@ -17,6 +17,12 @@ const translations = {
       askAvailability: "Zapytaj o dostępność",
       homePage: "strona główna",
     },
+    notFound: {
+      eyebrow: "BŁĄD 404",
+      title: "Tej strony tu nie ma.",
+      description: "Adres mógł się zmienić albo strona nie istnieje.",
+      home: "Wróć na stronę główną",
+    },
     home: {
       heroAlt: "Gekon orzęsiony na gałęzi w tropikalnym terrarium",
       heroEyebrow: "HODOWLA Z PASJĄ · OD 2017",
@@ -145,6 +151,12 @@ const translations = {
       closeMenu: "Close menu",
       askAvailability: "Ask about availability",
       homePage: "home",
+    },
+    notFound: {
+      eyebrow: "ERROR 404",
+      title: "This page isn't here.",
+      description: "The address may have changed, or the page may no longer exist.",
+      home: "Back to home",
     },
     home: {
       heroAlt: "A crested gecko perched on a branch in a tropical terrarium",
