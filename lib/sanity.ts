@@ -25,7 +25,7 @@ export const reptileByIdQuery = `*[_type == "reptile" && _id == $id][0] {
 }`;
 
 export const guideByIdQuery = `*[_type == "guide" && _id == $id][0] {
-  _id, title{pl, en}, excerpt{pl, en}, category{pl, en}, readingTime,
+  _id, title{pl, en}, excerpt{pl, en}, category{pl, en}, readingTime, "imageUrl": image.asset->url + "?auto=format&fit=max&w=1200&q=84",
   body[]{..., "assetUrl": asset->url + "?auto=format&fit=max&w=1800&q=85"},
   bodyEn[]{..., "assetUrl": asset->url + "?auto=format&fit=max&w=1800&q=85"}
 }`;

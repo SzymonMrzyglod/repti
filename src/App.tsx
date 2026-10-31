@@ -10,6 +10,7 @@ import {
 import AnimalDetail from "@/components/animals/animal-detail";
 import ContactForm from "@/components/contact/contact-form";
 import LoadingState from "@/components/layout/loading-state";
+import Seo from "@/components/seo";
 import {
   GuideDetailPage,
   GuidesPage,
@@ -30,6 +31,7 @@ import {
   siteSettingsQuery,
 } from "@/lib/sanity";
 import { getTranslations } from "@/lib/translations";
+import { SITE_NAME, absoluteUrl, truncate } from "@/lib/seo";
 import { getHomeViewState } from "@/lib/home-view-state";
 
 type Localized = { pl?: string; en?: string };
@@ -145,15 +147,34 @@ function HomeRoute() {
   if (!data) return <LoadingState />;
 
   return (
-    <HomePage
-      {...mapHomeData(data.reptiles, data.settings, locale)}
-      initialShowAll={savedView?.showAll}
-      initialFilter={savedView?.filter}
-    />
+    <>
+      <Seo
+        title={
+          localizedText(data.settings?.seoTitle, locale) ||
+          (locale === "pl"
+            ? "O ty gadzie! — Hodowla gekonów i węży z pasją"
+            : "O ty gadzie! — Passionate gecko and snake breeder")
+        }
+        description={
+          localizedText(data.settings?.seoDescription, locale) ||
+          (locale === "pl"
+            ? "O ty gadzie! — świadoma hodowla gekonów orzęsionych i węży zbożowych w Jastrzębiu-Zdroju. Zdrowe zwierzęta, rzetelna wiedza i wsparcie na start."
+            : "O ty gadzie! — responsible breeding of crested geckos and corn snakes in Jastrzębie-Zdrój, Poland. Healthy animals, reliable care knowledge and support.")
+        }
+        path="/"
+        image={data.settings?.heroImageUrl}
+      />
+      <HomePage
+        {...mapHomeData(data.reptiles, data.settings, locale)}
+        initialShowAll={savedView?.showAll}
+        initialFilter={savedView?.filter}
+      />
+    </>
   );
 }
 
 function GuidesRoute() {
+  const { locale } = useLocale();
   const [guides, setGuides] = useState<Guide[]>([]);
 
   useEffect(() => {
@@ -168,11 +189,29 @@ function GuidesRoute() {
     };
   }, []);
 
-  return <GuidesPage guides={guides} />;
+  return (
+    <>
+      <Seo
+        title={
+          locale === "pl"
+            ? `Poradniki o opiece nad gadami | ${SITE_NAME}`
+            : `Reptile care guides | ${SITE_NAME}`
+        }
+        description={
+          locale === "pl"
+            ? "Poradniki hodowcy: terrarium, żywienie i pierwsze dni gekona orzęsionego oraz węża zbożowego w nowym domu."
+            : "Breeder's guides: terrarium setup, feeding and the first days of a crested gecko or corn snake in a new home."
+        }
+        path="/guides"
+      />
+      <GuidesPage guides={guides} />
+    </>
+  );
 }
 
 function AnimalRoute() {
   const { name } = useParams();
+  const { locale } = useLocale();
   const [animal, setAnimal] = useState<SanityReptile | null>(null);
 
   useEffect(() => {
@@ -192,7 +231,53 @@ function AnimalRoute() {
   }, [name]);
 
   if (!animal) return <LoadingState />;
-  return <AnimalDetail animal={animal} />;
+
+  const animalName = localizedText(animal.name, locale).trim();
+  const animalMorph = localizedText(animal.morph, locale);
+  const animalSpecies = animal.species || "";
+  const animalTitle = [animalName, animalMorph].filter(Boolean).join(" — ");
+  const animalDescription =
+    truncate(localizedText(animal.description, locale)) ||
+    [animalName, animalMorph, animalSpecies, animal.latinName]
+      .filter(Boolean)
+      .join(", ");
+  const numericPrice = Number.parseFloat(
+    (animal.price || "").replace(/\s/g, "").replace(",", "."),
+  );
+
+  return (
+    <>
+      <Seo
+        title={`${animalTitle || SITE_NAME} | ${SITE_NAME}`}
+        description={animalDescription}
+        path={`/animal/${animal._id}`}
+        image={animal.imageUrl}
+        type="product"
+        jsonLd={{
+          "@context": "https://schema.org",
+          "@type": "Product",
+          name: animalTitle,
+          description: animalDescription,
+          image: animal.imageUrl,
+          category: animalSpecies,
+          brand: { "@type": "Brand", name: SITE_NAME },
+          ...(Number.isFinite(numericPrice) && {
+            offers: {
+              "@type": "Offer",
+              url: absoluteUrl(`/animal/${animal._id}`),
+              price: numericPrice,
+              priceCurrency: "PLN",
+              availability:
+                animal.status === "available"
+                  ? "https://schema.org/InStock"
+                  : "https://schema.org/OutOfStock",
+            },
+          }),
+        }}
+      />
+      <AnimalDetail animal={animal} />
+    </>
+  );
 }
 
 function ContactRoute() {
@@ -251,11 +336,22 @@ function ContactRoute() {
     );
   }
 
-  return <ContactForm animal={animal ?? undefined} />;
+  return (
+    <>
+      <Seo
+        title={`${getTranslations(locale).contact.title} | ${SITE_NAME}`}
+        description={getTranslations(locale).contact.introduction}
+        path="/contact"
+        noindex
+      />
+      <ContactForm animal={animal ?? undefined} />
+    </>
+  );
 }
 
 function GuideRoute() {
   const { id } = useParams();
+  const { locale } = useLocale();
   const [guide, setGuide] = useState<Guide | null>(null);
 
   useEffect(() => {
@@ -274,7 +370,33 @@ function GuideRoute() {
 
   if (!guide) return <LoadingState />;
 
-  return <GuideDetailPage guide={guide} />;
+  const guideTitle = localizedText(guide.title, locale);
+  const guideDescription =
+    truncate(localizedText(guide.excerpt, locale)) ||
+    (locale === "pl" ? "Poradnik hodowcy gadów." : "Reptile breeder's guide.");
+
+  return (
+    <>
+      <Seo
+        title={`${guideTitle} | ${SITE_NAME}`}
+        description={guideDescription}
+        path={`/guides/${guide._id}`}
+        image={guide.imageUrl}
+        type="article"
+        jsonLd={{
+          "@context": "https://schema.org",
+          "@type": "Article",
+          headline: guideTitle,
+          description: guideDescription,
+          image: guide.imageUrl,
+          mainEntityOfPage: absoluteUrl(`/guides/${guide._id}`),
+          author: { "@type": "Organization", name: SITE_NAME },
+          publisher: { "@type": "Organization", name: SITE_NAME },
+        }}
+      />
+      <GuideDetailPage guide={guide} />
+    </>
+  );
 }
 
 export default function App() {

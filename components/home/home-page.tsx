@@ -46,6 +46,8 @@ type SiteSettings = {
   careEyebrow?: Localized;
   careTitle?: Localized;
   careText?: Localized;
+  seoTitle?: Localized;
+  seoDescription?: Localized;
 };
 type HomePageProps = {
   animals: Animal[];
