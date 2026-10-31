@@ -39,6 +39,74 @@ const fallbackImages = [
 ];
 
 const portableTextComponents: PortableTextComponents<GuideBodyBlock> = {
+  block: {
+    h1: ({ children }) => (
+      <h2 className="mt-10 mb-5 font-display text-4xl leading-tight tracking-tight">
+        {children}
+      </h2>
+    ),
+    h2: ({ children }) => (
+      <h3 className="mt-9 mb-4 font-display text-3xl leading-tight tracking-tight">
+        {children}
+      </h3>
+    ),
+    h3: ({ children }) => (
+      <h4 className="mt-8 mb-4 font-display text-2xl leading-tight tracking-tight">
+        {children}
+      </h4>
+    ),
+    h4: ({ children }) => (
+      <h5 className="mt-7 mb-3 font-display text-xl leading-tight">
+        {children}
+      </h5>
+    ),
+    h5: ({ children }) => (
+      <h6 className="mt-6 mb-3 text-lg font-semibold leading-tight">
+        {children}
+      </h6>
+    ),
+    h6: ({ children }) => (
+      <h6 className="mt-6 mb-3 text-base font-semibold leading-tight">
+        {children}
+      </h6>
+    ),
+    blockquote: ({ children }) => (
+      <blockquote className="my-8 border-l-4 border-gold pl-6 italic text-muted">
+        {children}
+      </blockquote>
+    ),
+  },
+  list: {
+    bullet: ({ children }) => (
+      <ul className="my-6 list-disc space-y-2 pl-8 marker:text-gold">
+        {children}
+      </ul>
+    ),
+    number: ({ children }) => (
+      <ol className="my-6 list-decimal space-y-2 pl-8 marker:font-semibold marker:text-gold">
+        {children}
+      </ol>
+    ),
+  },
+  listItem: {
+    bullet: ({ children }) => <li className="pl-1">{children}</li>,
+    number: ({ children }) => <li className="pl-1">{children}</li>,
+  },
+  marks: {
+    link: ({ children, value }) => (
+      <a
+        href={value?.href}
+        className="text-forest underline decoration-gold underline-offset-4 hover:text-forest-2"
+      >
+        {children}
+      </a>
+    ),
+    code: ({ children }) => (
+      <code className="rounded bg-sand px-1.5 py-0.5 font-mono text-[0.9em]">
+        {children}
+      </code>
+    ),
+  },
   types: {
     image: ({ value }) => {
       if (!value.assetUrl) return null;
