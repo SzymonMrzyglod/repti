@@ -11,6 +11,7 @@ type Animal = {
   sex: string;
   weight: string;
   price?: string;
+  featured?: boolean;
   status: "available" | "reserved" | "adopted";
   image: string;
 };
@@ -25,7 +26,13 @@ export default function AnimalCard({ animal }: { animal: Animal }) {
       className="group"
     >
       <div className="relative h-[440px] overflow-hidden bg-[#293a2e] max-[700px]:h-[420px]">
-        {animal.image ? (
+        {animal.featured && (
+          <span className="pointer-events-none absolute inset-0 z-10 border-2 border-gold" aria-hidden="true" />
+        )}        {animal.featured && (
+          <span className="absolute top-[15px] right-[15px] z-10 bg-gold px-[10px] py-[7px] text-[8px] font-medium uppercase tracking-[0.15em] text-[#1d2a20]">
+            {translations.animal.featured}
+          </span>
+        )}        {animal.image ? (
           <img
             src={animal.image}
             alt={`${animal.name}, ${animal.morph}`}

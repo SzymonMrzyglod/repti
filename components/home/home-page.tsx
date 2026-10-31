@@ -23,6 +23,7 @@ type Animal = {
   sex: string;
   weight: string;
   price?: string;
+  featured?: boolean;
   status: "available" | "reserved" | "adopted";
   image: string;
 };

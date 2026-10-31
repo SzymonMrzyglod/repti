@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState, type FormEvent } from "react";
+﻿import { useEffect, useRef, useState, type FormEvent } from "react";
 import { createPortal } from "react-dom";
 import { ArrowLeft, ArrowUpRight, Check, MessageCircle, X } from "lucide-react";
 import { Link } from "react-router-dom";
@@ -98,9 +98,9 @@ export default function ContactForm({
       </div>
     </div>
   ) : (
-    <form className={`grid border-t border-ink/20 pt-6 ${embedded ? "gap-[14px] border-t-0 pt-0" : "gap-[22px]"}`} onSubmit={onSubmit}>
+    <form className={`grid border-t border-ink/20 pt-6 ${embedded ? "grid-cols-2 gap-3 border-t-0 pt-0 max-[560px]:grid-cols-1" : "gap-[22px]"}`} onSubmit={onSubmit}>
       <a
-        className="inline-flex w-fit items-center gap-[9px] text-[12px] text-forest underline decoration-1 underline-offset-[3px] hover:text-[#536e5c]"
+        className={`inline-flex w-fit items-center gap-[9px] text-[12px] text-forest underline decoration-1 underline-offset-[3px] hover:text-[#536e5c] ${embedded ? "order-3 col-span-2 max-[560px]:col-span-1" : ""}`}
         href="https://www.facebook.com/profile.php?id=61596249982202"
         target="_blank"
         rel="noopener noreferrer"
@@ -121,14 +121,14 @@ export default function ContactForm({
           className={formFieldClassName}
         />
       </label>
-      <label className={formLabelClassName}>
+      <label className={`${formLabelClassName} ${embedded ? "col-span-2 max-[560px]:col-span-1" : ""}`}>
         <span>{content.message}</span>
         <textarea
           name="message"
           placeholder={content.messagePlaceholder}
-          rows={embedded ? 4 : 6}
+          rows={embedded ? 3 : 6}
           required
-          className={`${formFieldClassName} resize-y ${embedded ? "min-h-[100px]" : "min-h-[150px]"}`}
+          className={`${formFieldClassName} resize-y ${embedded ? "min-h-[84px]" : "min-h-[150px]"}`}
         />
       </label>
       <input
@@ -140,7 +140,7 @@ export default function ContactForm({
       />
       <button
         type="submit"
-        className={`${embedded ? compactButtonClassName : standardButtonClassName} disabled:cursor-wait disabled:opacity-[0.65]`}
+        className={`${embedded ? `${compactButtonClassName} order-2 col-span-2 max-[560px]:col-span-1` : standardButtonClassName} disabled:cursor-wait disabled:opacity-[0.65]`}
         disabled={result === "sending"}
       >
         {result === "sending" ? content.sending : content.submit}
@@ -148,7 +148,7 @@ export default function ContactForm({
       </button>
       {result === "error" && (
         <p
-          className="m-0 leading-[1.5] text-error"
+          className={`m-0 leading-[1.5] text-error ${embedded ? "order-4 col-span-2 max-[560px]:col-span-1" : ""}`}
           role="alert"
           aria-live="polite"
         >
@@ -160,7 +160,7 @@ export default function ContactForm({
 
   if (embedded) {
     return (
-      <div className="mt-7 grid gap-6">
+      <div className="mt-5 grid gap-4">
         {animal && (
           <aside className="grid grid-cols-[120px_minmax(0,1fr)] items-center gap-[18px] bg-sand p-4 max-[760px]:grid-cols-[76px_minmax(0,1fr)] max-[760px]:gap-3 max-[760px]:p-3">
             {animal.imageUrl && <img src={animal.imageUrl} alt={animalName} className="block aspect-square w-[120px] object-cover max-[760px]:w-[76px]" />}
@@ -258,7 +258,7 @@ export function ContactFormModal({
   return createPortal(
     <dialog
       ref={dialogRef}
-      className="m-auto max-h-[min(90dvh,900px)] w-[min(680px,calc(100vw-32px))] max-w-none border-0 bg-ivory p-[clamp(24px,4vw,48px)] text-ink shadow-[0_24px_90px_rgba(0,0,0,0.35)] backdrop:bg-[rgba(8,18,12,0.76)] backdrop:backdrop-blur-[4px] max-[760px]:max-h-[calc(100dvh-20px)] max-[760px]:w-[calc(100vw-20px)] max-[760px]:px-5 max-[760px]:py-6"
+      className="m-auto max-h-[min(90dvh,900px)] w-[min(680px,calc(100vw-32px))] max-w-none border-0 bg-ivory p-[clamp(20px,3vw,36px)] text-ink shadow-[0_24px_90px_rgba(0,0,0,0.35)] backdrop:bg-[rgba(8,18,12,0.76)] backdrop:backdrop-blur-[4px] max-[760px]:max-h-[calc(100dvh-20px)] max-[760px]:w-[calc(100vw-20px)] max-[760px]:px-5 max-[760px]:py-6"
       aria-labelledby="contact-modal-title"
       onClose={onClose}
       onCancel={onClose}
@@ -300,7 +300,7 @@ export function ContactFormModal({
               <X size={20} />
             </button>
           </div>
-          <h2 id="contact-modal-title" className="mt-5 mb-3 text-[clamp(42px,7vw,64px)] leading-[0.95] tracking-[-0.055em]">{content.title}</h2>
+          <h2 id="contact-modal-title" className="mt-3 mb-2 text-[clamp(36px,5vw,50px)] leading-[0.95] tracking-[-0.055em]">{content.title}</h2>
           {animal && (
             <p className="mb-2 font-mono text-[12px]">
               {animalName} ·{" "}
