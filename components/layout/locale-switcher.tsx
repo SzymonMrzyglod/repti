@@ -24,7 +24,7 @@ export default function LocaleSwitcher({
           <button
             key={language}
             type="button"
-            className={`border px-[7px] py-[6px] text-[9px] tracking-[0.12em] ${
+            className={`border px-[7px] py-[6px] text-[9px] tracking-[0.12em] transition-colors duration-200 motion-reduce:transition-none ${
               isActive
                 ? "border-gold bg-gold text-forest"
                 : variant === "dark"

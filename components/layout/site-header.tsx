@@ -32,7 +32,7 @@ export default function SiteHeader({
       >
         <BrandMark logoUrl={logoUrl} />
       </a>
-      <nav className={`ml-auto mr-[5vw] flex gap-[clamp(20px,3.2vw,54px)] text-[11px] uppercase tracking-[0.15em] text-[#d7d5c9] [&_a:hover]:text-gold max-[900px]:mr-[2vw] max-[900px]:gap-[18px] max-[700px]:absolute max-[700px]:right-0 max-[700px]:top-[calc(100%+1px)] max-[700px]:left-0 max-[700px]:m-0 max-[700px]:flex-col max-[700px]:bg-forest max-[700px]:px-[6vw] max-[700px]:py-[25px] max-[700px]:[transition:opacity_180ms_ease,transform_180ms_ease] max-[700px]:motion-reduce:transition-none ${mobileMenuStateClassName}`}>
+      <nav className={`ml-auto mr-[5vw] flex gap-[clamp(20px,3.2vw,54px)] text-[11px] uppercase tracking-[0.15em] text-[#d7d5c9] [&_a]:transition-colors [&_a]:duration-200 [&_a:hover]:text-gold [&_a]:motion-reduce:transition-none max-[900px]:mr-[2vw] max-[900px]:gap-[18px] max-[700px]:absolute max-[700px]:right-0 max-[700px]:top-[calc(100%+1px)] max-[700px]:left-0 max-[700px]:m-0 max-[700px]:flex-col max-[700px]:bg-forest max-[700px]:px-[6vw] max-[700px]:py-[25px] max-[700px]:[transition:opacity_180ms_ease,transform_180ms_ease] max-[700px]:motion-reduce:transition-none ${mobileMenuStateClassName}`}>
         <a href="#animals" onClick={onNavigate}>
           {translations.navigation.animals}
         </a>

@@ -237,7 +237,7 @@ export default function HomePage({
               <button
                 key={option.value}
                 type="button"
-                className={`border-0 bg-transparent p-0 text-[10px] uppercase tracking-[0.1em] text-[#89978a] max-[700px]:text-[8px] ${filter === option.value ? "text-gold" : ""}`}
+                className={`border-0 bg-transparent p-0 text-[10px] uppercase tracking-[0.1em] text-[#89978a] transition-colors duration-200 hover:text-gold motion-reduce:transition-none max-[700px]:text-[8px] ${filter === option.value ? "text-gold" : ""}`}
                 onClick={() => {
                   setFilter(option.value);
                 }}

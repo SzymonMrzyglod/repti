@@ -48,7 +48,10 @@ export default function AnimalCard({ animal }: { animal: Animal }) {
         >
           {translations.animal[animal.status]}
         </span>
-        <span className="absolute right-[15px] bottom-[15px] grid h-[37px] w-[37px] place-items-center rounded-full border border-[rgba(255,255,255,0.6)] bg-[rgba(15,31,22,0.3)] text-white" aria-hidden="true">
+        <span
+          className="absolute right-[15px] bottom-[15px] grid h-[37px] w-[37px] place-items-center rounded-full border border-[rgba(255,255,255,0.6)] bg-[rgba(15,31,22,0.3)] text-white transition-all duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 group-hover:scale-110 group-hover:border-gold group-hover:bg-gold group-hover:text-forest motion-reduce:transition-none"
+          aria-hidden="true"
+        >
           <ArrowUpRight size={17} />
         </span>
       </div>

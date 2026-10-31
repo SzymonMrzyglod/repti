@@ -203,7 +203,7 @@ export function GuidesPage({ guides }: { guides: Guide[] }) {
           <button
             type="button"
             aria-pressed={selectedSpeciesId === null}
-            className={`border-0 bg-transparent p-0 text-[10px] uppercase tracking-[0.1em] transition-colors ${selectedSpeciesId === null ? "text-gold" : "text-muted hover:text-forest"}`}
+            className={`border-0 bg-transparent p-0 text-[10px] uppercase tracking-[0.1em] transition-colors duration-200 hover:text-gold motion-reduce:transition-none ${selectedSpeciesId === null ? "text-gold" : "text-muted"}`}
             onClick={() => setSelectedSpeciesId(null)}
           >
             {translations.guides.allGuides}
@@ -213,7 +213,7 @@ export function GuidesPage({ guides }: { guides: Guide[] }) {
               key={species.id}
               type="button"
               aria-pressed={selectedSpeciesId === species.id}
-              className={`border-0 bg-transparent p-0 text-[10px] uppercase tracking-[0.1em] transition-colors ${selectedSpeciesId === species.id ? "text-gold" : "text-muted hover:text-forest"}`}
+              className={`border-0 bg-transparent p-0 text-[10px] uppercase tracking-[0.1em] transition-colors duration-200 hover:text-gold motion-reduce:transition-none ${selectedSpeciesId === species.id ? "text-gold" : "text-muted"}`}
               onClick={() => setSelectedSpeciesId(species.id)}
             >
               {species.label}
