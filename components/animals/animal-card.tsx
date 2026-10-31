@@ -21,42 +21,42 @@ export default function AnimalCard({ animal }: { animal: Animal }) {
   return (
     <Link
       to={`/animal/${encodeURIComponent(animal.id)}`}
-      className="animal-card"
+      className="group"
     >
-      <div className="card-image-wrap">
+      <div className="relative h-[440px] overflow-hidden bg-[#293a2e] max-[700px]:h-[420px]">
         {animal.image ? (
           <img
             src={animal.image}
             alt={`${animal.name}, ${animal.morph}`}
-            className="card-image"
+            className="h-full w-full object-cover transition-transform duration-[600ms] group-hover:scale-[1.04]"
             loading="lazy"
             decoding="async"
           />
         ) : (
-          <div className="card-image card-image-empty" aria-hidden="true" />
+          <div className="h-full w-full object-cover" aria-hidden="true" />
         )}
         <span
-          className={`status-pill ${animal.status === "available" ? "available" : "reserved"}`}
+          className={`absolute top-[15px] left-[15px] px-[10px] py-[7px] text-[8px] uppercase tracking-[0.15em] ${animal.status === "available" ? "bg-[#e4d8b8] text-[#43513d]" : "bg-[#30483b] text-[#d9dbc9]"}`}
         >
           {translations.animal[animal.status]}
         </span>
-        <span className="card-arrow" aria-hidden="true">
+        <span className="absolute right-[15px] bottom-[15px] grid h-[37px] w-[37px] place-items-center rounded-full border border-[rgba(255,255,255,0.6)] bg-[rgba(15,31,22,0.3)] text-white" aria-hidden="true">
           <ArrowUpRight size={17} />
         </span>
       </div>
-      <div className="card-copy">
-        <div className="card-title-row">
-          <h3>{animal.name}</h3>
-          <span className="sex">{animal.sex}</span>
+      <div className="pt-[17px] px-[2px]">
+        <div className="flex items-baseline justify-between">
+          <h3 className="m-0 font-display text-[25px] font-normal">{animal.name}</h3>
+          <span className="text-[10px] uppercase tracking-[0.1em] text-sage">{animal.sex}</span>
         </div>
-        <p className="latin">{animal.latin}</p>
-        <div className="animal-meta">
-          <span>
-            <small>{translations.animal.morph}</small>
+        <p className="mt-[5px] text-[10px] italic tracking-[0.04em] text-sage">{animal.latin}</p>
+        <div className="mt-[17px] flex gap-[30px] border-t border-forest-border pt-3 text-[11px] text-[#d7d9cc]">
+          <span className="flex flex-col gap-[5px]">
+            <small className="text-[8px] tracking-[0.16em] text-sage-muted">{translations.animal.morph}</small>
             {animal.morph}
           </span>
-          <span>
-            <small>{translations.animal.weight}</small>
+          <span className="flex flex-col gap-[5px]">
+            <small className="text-[8px] tracking-[0.16em] text-sage-muted">{translations.animal.weight}</small>
             {animal.weight}
           </span>
         </div>

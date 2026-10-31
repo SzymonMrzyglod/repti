@@ -2,7 +2,14 @@ import { useEffect, useRef, useState, type FormEvent } from "react";
 import { createPortal } from "react-dom";
 import { ArrowLeft, ArrowUpRight, Check, MessageCircle, X } from "lucide-react";
 import { Link } from "react-router-dom";
-import "./contact-form.css";
+import Eyebrow from "@/components/ui/eyebrow";
+import {
+  compactButtonClassName,
+  formFieldClassName,
+  pageShellClassName,
+  spacedTextLinkClassName,
+  standardButtonClassName,
+} from "@/components/ui/styles";
 import LocaleSwitcher from "@/components/layout/locale-switcher";
 import { useLocale } from "@/lib/locale-context";
 import { getTranslations } from "@/lib/translations";
@@ -41,6 +48,7 @@ export default function ContactForm({
   const animalName = localized(animal?.name, locale);
   const species =
     animal?.latinName || animal?.speciesLatinName || animal?.species || "—";
+  const formLabelClassName = `grid ${embedded ? "gap-[7px] text-[12px]" : "gap-[9px] text-[13px]"}`;
 
   async function onSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -80,57 +88,59 @@ export default function ContactForm({
   }
 
   const form = result === "success" ? (
-    <div className="contact-success" role="status" aria-live="polite">
-      <span className="contact-success-icon">
+    <div className="flex items-start gap-4 border-t border-ink/20 pt-6" role="status" aria-live="polite">
+      <span className="grid h-[38px] w-[38px] flex-[0_0_auto] place-items-center bg-success-soft text-success">
         <Check size={20} />
       </span>
       <div>
-        <h3>{content.successTitle}</h3>
-        <p>{content.success}</p>
+        <h3 className="mb-[7px] text-[22px] font-medium">{content.successTitle}</h3>
+        <p className="mb-0 leading-[1.5]">{content.success}</p>
       </div>
     </div>
   ) : (
-    <form className={`contact-form${embedded ? " contact-form--compact" : ""}`} onSubmit={onSubmit}>
+    <form className={`grid border-t border-ink/20 pt-6 ${embedded ? "gap-[14px] border-t-0 pt-0" : "gap-[22px]"}`} onSubmit={onSubmit}>
       <a
-        className="contact-messenger"
+        className="inline-flex w-fit items-center gap-[9px] text-[12px] text-forest underline decoration-1 underline-offset-[3px] hover:text-[#536e5c]"
         href="https://www.facebook.com/profile.php?id=61596249982202"
         target="_blank"
         rel="noopener noreferrer"
       >
         <MessageCircle size={17} /> {content.messenger}
       </a>
-      <label>
+      <label className={formLabelClassName}>
         <span>{content.name}</span>
-        <input autoComplete="name" name="name" required />
+        <input autoComplete="name" name="name" required className={formFieldClassName} />
       </label>
-      <label>
+      <label className={formLabelClassName}>
         <span>{content.email}</span>
         <input
           autoComplete="email"
           name="email"
           type="email"
           required
+          className={formFieldClassName}
         />
       </label>
-      <label>
+      <label className={formLabelClassName}>
         <span>{content.message}</span>
         <textarea
           name="message"
           placeholder={content.messagePlaceholder}
           rows={embedded ? 4 : 6}
           required
+          className={`${formFieldClassName} resize-y ${embedded ? "min-h-[100px]" : "min-h-[150px]"}`}
         />
       </label>
       <input
         type="checkbox"
         name="botcheck"
-        className="contact-honeypot"
+        className="sr-only"
         tabIndex={-1}
         autoComplete="off"
       />
       <button
         type="submit"
-        className="contact-submit"
+        className={`${embedded ? compactButtonClassName : standardButtonClassName} disabled:cursor-wait disabled:opacity-[0.65]`}
         disabled={result === "sending"}
       >
         {result === "sending" ? content.sending : content.submit}
@@ -138,7 +148,7 @@ export default function ContactForm({
       </button>
       {result === "error" && (
         <p
-          className="contact-result contact-result--error"
+          className="m-0 leading-[1.5] text-error"
           role="alert"
           aria-live="polite"
         >
@@ -150,14 +160,14 @@ export default function ContactForm({
 
   if (embedded) {
     return (
-      <div className="contact-form-embedded">
+      <div className="mt-7 grid gap-6">
         {animal && (
-          <aside className="contact-modal-animal">
-            {animal.imageUrl && <img src={animal.imageUrl} alt={animalName} />}
+          <aside className="grid grid-cols-[120px_minmax(0,1fr)] items-center gap-[18px] bg-sand p-4 max-[760px]:grid-cols-[76px_minmax(0,1fr)] max-[760px]:gap-3 max-[760px]:p-3">
+            {animal.imageUrl && <img src={animal.imageUrl} alt={animalName} className="block aspect-square w-[120px] object-cover max-[760px]:w-[76px]" />}
             <div>
-              <p className="contact-animal-label">{content.selectedAnimal}</p>
-              <h3>{animalName}</h3>
-              <p className="contact-animal-species">{species}</p>
+              <p className="mb-0 font-mono text-[10px] uppercase tracking-[0.12em] opacity-65">{content.selectedAnimal}</p>
+              <h3 className="mt-2 mb-1 font-display text-[28px] leading-none max-[760px]:text-[23px]">{animalName}</h3>
+              <p className="mb-0 font-mono text-[12px]">{species}</p>
             </div>
           </aside>
         )}
@@ -167,11 +177,11 @@ export default function ContactForm({
   }
 
   return (
-    <main className="contact-page">
-      <header className="contact-header">
+    <main className={`${pageShellClassName} pb-20 max-[760px]:pt-[18px] max-[760px]:pb-12`}>
+      <header className="mx-auto flex max-w-[1240px] items-center justify-between">
         <Link
           to={animal?._id ? `/animal/${animal._id}` : "/"}
-          className="text-link dark"
+          className={`${spacedTextLinkClassName} text-forest`}
         >
           <ArrowLeft size={15} />
           {animal ? content.backToAnimal : content.backToCollection}
@@ -179,34 +189,32 @@ export default function ContactForm({
         <LocaleSwitcher />
       </header>
 
-      <section className="contact-content">
-        <div className="contact-heading">
-          <p className="eyebrow dark">
-            <span /> {content.eyebrow}
-          </p>
-          <h1>{content.title}</h1>
-          <p>{content.introduction}</p>
+      <section className="mx-auto mt-28 max-w-[1080px] max-[760px]:mt-[76px]">
+        <div className="max-w-[660px]">
+          <Eyebrow tone="dark">{content.eyebrow}</Eyebrow>
+          <h1 className="mt-5 mb-6 text-[72px] leading-[0.9] tracking-[-0.06em] max-[760px]:text-[52px]">{content.title}</h1>
+          <p className="max-w-[520px] text-[18px] leading-[1.5]">{content.introduction}</p>
         </div>
 
-        <div className="contact-layout">
+        <div className="mt-12 grid grid-cols-[minmax(0,0.85fr)_minmax(0,1.15fr)] items-start gap-16 max-[760px]:mt-9 max-[760px]:grid-cols-1 max-[760px]:gap-7">
           {animal && (
-            <aside className="contact-animal">
-              {animal.imageUrl && <img src={animal.imageUrl} alt={animalName} />}
-              <p className="contact-animal-label">{content.selectedAnimal}</p>
-              <h2>{animalName}</h2>
-              <p className="contact-animal-species">{species}</p>
-              <dl>
-                <div>
-                  <dt>{content.morph}</dt>
-                  <dd>{localized(animal.morph, locale)}</dd>
+            <aside className="bg-sand p-6 max-[760px]:p-[18px]">
+              {animal.imageUrl && <img src={animal.imageUrl} alt={animalName} className="mb-6 block aspect-[4/3] w-full object-cover" />}
+              <p className="mb-0 font-mono text-[10px] uppercase tracking-[0.12em] opacity-65">{content.selectedAnimal}</p>
+              <h2 className="mt-[14px] mb-2 text-[38px] leading-none tracking-[-0.055em]">{animalName}</h2>
+              <p className="mb-0 font-mono text-[12px]">{species}</p>
+              <dl className="mt-6 grid grid-cols-2 gap-4 border-t border-ink/20 pt-[18px]">
+                <div className="min-w-0">
+                  <dt className="mb-2 font-mono text-[10px] uppercase tracking-[0.12em] opacity-65">{content.morph}</dt>
+                  <dd className="m-0 [overflow-wrap:anywhere]">{localized(animal.morph, locale)}</dd>
                 </div>
-                <div>
-                  <dt>{content.sex}</dt>
-                  <dd>{localized(animal.sex, locale)}</dd>
+                <div className="min-w-0">
+                  <dt className="mb-2 font-mono text-[10px] uppercase tracking-[0.12em] opacity-65">{content.sex}</dt>
+                  <dd className="m-0 [overflow-wrap:anywhere]">{localized(animal.sex, locale)}</dd>
                 </div>
-                <div>
-                  <dt>{content.weight}</dt>
-                  <dd>{animal.weight || "—"}</dd>
+                <div className="min-w-0">
+                  <dt className="mb-2 font-mono text-[10px] uppercase tracking-[0.12em] opacity-65">{content.weight}</dt>
+                  <dd className="m-0 [overflow-wrap:anywhere]">{animal.weight || "—"}</dd>
                 </div>
               </dl>
             </aside>
@@ -250,7 +258,7 @@ export function ContactFormModal({
   return createPortal(
     <dialog
       ref={dialogRef}
-      className="contact-modal"
+      className="m-auto max-h-[min(90dvh,900px)] w-[min(680px,calc(100vw-32px))] max-w-none border-0 bg-ivory p-[clamp(24px,4vw,48px)] text-ink shadow-[0_24px_90px_rgba(0,0,0,0.35)] backdrop:bg-[rgba(8,18,12,0.76)] backdrop:backdrop-blur-[4px] max-[760px]:max-h-[calc(100dvh-20px)] max-[760px]:w-[calc(100vw-20px)] max-[760px]:px-5 max-[760px]:py-6"
       aria-labelledby="contact-modal-title"
       onClose={onClose}
       onCancel={onClose}
@@ -265,15 +273,15 @@ export function ContactFormModal({
       }}
     >
       {sent ? (
-        <div className="contact-modal-thanks" role="status" aria-live="polite">
-          <span className="contact-success-icon">
+        <div className="grid justify-items-start gap-4" role="status" aria-live="polite">
+          <span className="grid h-[38px] w-[38px] flex-[0_0_auto] place-items-center bg-success-soft text-success">
             <Check size={20} />
           </span>
-          <h2 id="contact-modal-title">{content.successTitle}</h2>
-          <p>{content.success}</p>
+          <h2 id="contact-modal-title" className="m-0 text-[clamp(36px,6vw,52px)] leading-none tracking-[-0.055em]">{content.successTitle}</h2>
+          <p className="m-0 leading-[1.5]">{content.success}</p>
           <button
             type="button"
-            className="contact-submit"
+            className={standardButtonClassName}
             onClick={onClose}
           >
             {content.close}
@@ -281,27 +289,25 @@ export function ContactFormModal({
         </div>
       ) : (
         <>
-          <div className="contact-modal-header">
-            <p className="eyebrow dark">
-              <span /> {content.eyebrow}
-            </p>
+          <div className="flex items-center justify-between gap-5">
+            <Eyebrow tone="dark">{content.eyebrow}</Eyebrow>
             <button
               type="button"
-              className="contact-modal-close"
+              className="grid h-10 w-10 flex-[0_0_auto] place-items-center border border-ink/25 bg-transparent p-0 hover:bg-sand"
               aria-label={content.close}
               onClick={onClose}
             >
               <X size={20} />
             </button>
           </div>
-          <h2 id="contact-modal-title">{content.title}</h2>
+          <h2 id="contact-modal-title" className="mt-5 mb-3 text-[clamp(42px,7vw,64px)] leading-[0.95] tracking-[-0.055em]">{content.title}</h2>
           {animal && (
-            <p className="contact-modal-subtitle">
+            <p className="mb-2 font-mono text-[12px]">
               {animalName} ·{" "}
               {animal.latinName || animal.speciesLatinName || animal.species}
             </p>
           )}
-          <p className="contact-modal-intro">{content.introduction}</p>
+          <p className="mb-0 max-w-[500px] leading-[1.5]">{content.introduction}</p>
           {open && (
             <ContactForm
               animal={animal}
@@ -325,7 +331,7 @@ export function FooterContactForm() {
     <>
       <button
         type="button"
-        className="text-link footer-contact-trigger"
+        className={`${spacedTextLinkClassName} cursor-pointer border-x-0 border-t-0 bg-transparent text-forest`}
         onClick={() => setIsOpen(true)}
       >
         {translations.footer.contactLink} <ArrowUpRight size={15} />

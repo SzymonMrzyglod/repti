@@ -1,6 +1,8 @@
 import { Camera, Mail, Phone } from "lucide-react";
 import { Link } from "react-router-dom";
 import { FooterContactForm } from "@/components/contact/contact-form";
+import Eyebrow from "@/components/ui/eyebrow";
+import { footerLinksClassName } from "@/components/ui/styles";
 import BrandMark from "./brand-mark";
 import { useLocale } from "@/lib/locale-context";
 import { getTranslations } from "@/lib/translations";
@@ -10,33 +12,31 @@ export default function SiteFooter({ logoUrl }: { logoUrl?: string }) {
   const { locale } = useLocale();
   const translations = getTranslations(locale);
   return (
-    <footer id="contact">
-      <div className="footer-top">
+    <footer id="contact" className="bg-ivory px-[5.5vw] pt-[90px] pb-[25px]">
+      <div className="grid min-h-[310px] grid-cols-[1.1fr_2fr_1fr_1fr] gap-[5vw] max-[700px]:grid-cols-2 max-[700px]:gap-x-[25px] max-[700px]:gap-y-[55px]">
         <a
           href="#start"
-          className="logo"
+          className="flex items-center gap-[11px] text-[12px] font-bold leading-[0.92] tracking-[0.17em]"
           aria-label={translations.footer.brandHome}
         >
           <BrandMark logoUrl={logoUrl} />
         </a>
-        <div className="footer-question">
-          <p className="eyebrow dark">
-            <span /> {translations.footer.questions}
-          </p>
-          <h2>
+        <div className="max-[700px]:order-[-1] max-[700px]:col-span-full">
+          <Eyebrow tone="dark">{translations.footer.questions}</Eyebrow>
+          <h2 className="mt-7 mb-[25px] text-[clamp(40px,4vw,58px)] leading-[0.95] tracking-[-0.055em] text-forest">
             {translations.footer.contactTitle}
             <br />
-            <i>{translations.footer.contactTitleAccent}</i>
+            <i className="text-gold">{translations.footer.contactTitleAccent}</i>
           </h2>
           <FooterContactForm />
         </div>
-        <div className="footer-links">
+        <div className={footerLinksClassName}>
           <span>{translations.footer.navigation}</span>
           <a href="#animals">{translations.footer.animals}</a>
           <a href="#philosophy">{translations.footer.breeding}</a>
           <Link to="/guides">{translations.footer.guides}</Link>
         </div>
-        <div className="footer-links">
+        <div className={footerLinksClassName}>
           <span>{translations.footer.findUs}</span>
           <a href="tel:+48888163509">
             <Phone size={16} /> 888 163 509
@@ -57,7 +57,7 @@ export default function SiteFooter({ logoUrl }: { logoUrl?: string }) {
             rel="noopener noreferrer"
           >
             <svg
-              className="facebook-mark"
+              className="block h-4 w-2 flex-[0_0_8px]"
               viewBox="-337 273 123.5 256"
               aria-hidden="true"
               focusable="false"
@@ -71,7 +71,7 @@ export default function SiteFooter({ logoUrl }: { logoUrl?: string }) {
           </a>
         </div>
       </div>
-      <div className="footer-bottom">
+      <div className="flex justify-between border-t border-[#d5d5ca] pt-[17px] text-[8px] tracking-[0.15em] text-[#999b90] max-[700px]:flex-wrap max-[700px]:gap-3 max-[700px]:leading-[1.4]">
         <span>© {currentYear} O TY GADZIE</span>
         <span>{translations.footer.location}</span>
         <span>{translations.footer.tagline}</span>

@@ -16,6 +16,10 @@ import {
   type Guide,
 } from "@/components/guides/guide-pages";
 import HomePage from "@/components/home/home-page";
+import {
+  pageShellClassName,
+  spacedTextLinkClassName,
+} from "@/components/ui/styles";
 import { useLocale } from "@/lib/locale-context";
 import {
   guideByIdQuery,
@@ -131,7 +135,7 @@ function HomeRoute() {
   }, []);
 
   if (hasError) {
-    return <main className="guides-empty">{translations.home.loadError}</main>;
+    return <main className="mx-auto max-w-[1240px] px-[5vw] py-8">{translations.home.loadError}</main>;
   }
 
   if (!data) return <LoadingState />;
@@ -234,9 +238,9 @@ function ContactRoute() {
     const contactTranslations = getTranslations(locale).contact;
 
     return (
-      <main className="contact-page">
+      <main className={`${pageShellClassName} pb-20 max-[760px]:pt-[18px] max-[760px]:pb-12`}>
         <p>{contactTranslations.loadError}</p>
-        <Link className="text-link dark" to="/">
+        <Link className={`${spacedTextLinkClassName} text-forest`} to="/">
           {contactTranslations.backToCollection}
         </Link>
       </main>
@@ -270,6 +274,18 @@ function GuideRoute() {
 }
 
 export default function App() {
+  const { pathname } = useLocation();
+
+  useLayoutEffect(() => {
+    if (pathname !== "/guides" && !pathname.startsWith("/guides/")) return;
+
+    const root = document.documentElement;
+    const previousScrollBehavior = root.style.scrollBehavior;
+    root.style.scrollBehavior = "auto";
+    window.scrollTo(0, 0);
+    root.style.scrollBehavior = previousScrollBehavior;
+  }, [pathname]);
+
   return (
     <Routes>
       <Route path="/" element={<HomeRoute />} />
