@@ -200,20 +200,6 @@ export default function HomePage({
             </a>
           </div>
         </div>
-        <div className="numbers">
-          <div>
-            <strong>7</strong>
-            <span>{translations.home.yearsExperience}</span>
-          </div>
-          <div>
-            <strong>38</strong>
-            <span>{translations.home.animalsCaredFor}</span>
-          </div>
-          <div>
-            <strong>100%</strong>
-            <span>{translations.home.commitment}</span>
-          </div>
-        </div>
       </section>
 
       <section className="catalog-section" id="animals">
