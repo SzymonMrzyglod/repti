@@ -107,9 +107,12 @@ const translations = {
       introduction:
         "Praktyczna wiedza o gatunkach, terrariach i codziennej opiece. Wszystko, co warto wiedzieć przed odbiorem i po nim.",
       listLabel: "Lista poradników",
+      speciesFilterLabel: "Filtruj poradniki według gatunku",
+      allGuides: "Wszystkie poradniki",
       categoryFallback: "PORADNIK",
       readGuide: "Czytaj poradnik",
       empty: "Poradniki pojawią się tutaj po dodaniu ich w CMS.",
+      speciesEmpty: "Brak poradników dla tego gatunku.",
     },
     footer: {
       brandHome: "O ty gadzie! — strona główna",
@@ -233,9 +236,12 @@ const translations = {
       introduction:
         "Practical advice on species, terrariums, and everyday care. Everything to know before and after welcoming your animal home.",
       listLabel: "Guide list",
+      speciesFilterLabel: "Filter guides by species",
+      allGuides: "All guides",
       categoryFallback: "GUIDE",
       readGuide: "Read guide",
       empty: "Guides will appear here once they are added in the CMS.",
+      speciesEmpty: "There are no guides for this species.",
     },
     footer: {
       brandHome: "O ty gadzie! — home",

@@ -108,6 +108,12 @@ const guide = defineType({
       title: "Category",
       type: "localizedString",
     }),
+    defineField({
+      name: "species",
+      title: "Species",
+      type: "reference",
+      to: [{ type: "species" }],
+    }),
     defineField({ name: "readingTime", title: "Reading time", type: "string" }),
     defineField({
       name: "body",

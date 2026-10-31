@@ -1,3 +1,4 @@
+import { useMemo, useState } from "react";
 import { PortableText, type PortableTextComponents } from "@portabletext/react";
 import type { PortableTextBlock } from "@portabletext/types";
 import { ArrowLeft, ArrowUpRight } from "lucide-react";
@@ -26,6 +27,8 @@ export type Guide = {
   title?: LocalizedText;
   excerpt?: LocalizedText;
   category?: LocalizedText;
+  speciesId?: string;
+  speciesName?: LocalizedText;
   readingTime?: string;
   imageUrl?: string;
   body?: GuideBodyBlock[];
@@ -142,6 +145,27 @@ const portableTextComponents: PortableTextComponents<GuideBodyBlock> = {
 export function GuidesPage({ guides }: { guides: Guide[] }) {
   const { locale } = useLocale();
   const translations = getTranslations(locale);
+  const [selectedSpeciesId, setSelectedSpeciesId] = useState<string | null>(
+    null,
+  );
+  const speciesOptions = useMemo(() => {
+    const speciesMap = new Map<string, LocalizedText>();
+
+    guides.forEach((guide) => {
+      if (guide.speciesId && guide.speciesName) {
+        speciesMap.set(guide.speciesId, guide.speciesName);
+      }
+    });
+
+    return Array.from(speciesMap, ([id, name]) => ({
+      id,
+      label: localizedText(name, locale),
+    }));
+  }, [guides, locale]);
+  const filteredGuides =
+    selectedSpeciesId === null
+      ? guides
+      : guides.filter((guide) => guide.speciesId === selectedSpeciesId);
 
   return (
     <main className={`${pageShellClassName} pb-[90px]`}>
@@ -168,49 +192,85 @@ export function GuidesPage({ guides }: { guides: Guide[] }) {
       </section>
 
       <section
-        className="mx-auto grid max-w-[1240px] grid-cols-2 gap-[22px] max-[800px]:grid-cols-1"
         aria-label={translations.guides.listLabel}
+        className="mx-auto max-w-[1240px]"
       >
-        {guides.map((guide, index) => (
-          <article
-            className="grid min-h-[260px] grid-cols-[38%_1fr] bg-sand max-[800px]:grid-cols-[34%_1fr]"
-            key={guide._id}
+        <div
+          aria-label={translations.guides.speciesFilterLabel}
+          className="mb-7 flex flex-wrap gap-x-6 gap-y-3 border-b border-outline pb-4"
+          role="group"
+        >
+          <button
+            type="button"
+            aria-pressed={selectedSpeciesId === null}
+            className={`border-0 bg-transparent p-0 text-[10px] uppercase tracking-[0.1em] transition-colors ${selectedSpeciesId === null ? "text-gold" : "text-muted hover:text-forest"}`}
+            onClick={() => setSelectedSpeciesId(null)}
           >
-            <img
-              src={
-                guide.imageUrl || fallbackImages[index % fallbackImages.length]
-              }
-              alt=""
-              loading="lazy"
-              decoding="async"
-              className="h-full w-full object-cover"
-            />
-            <div className="flex flex-col items-start p-7 max-[800px]:p-5">
-              <p className="font-mono text-[10px] uppercase tracking-[0.12em] opacity-60">
-                {localizedText(guide.category, locale) ||
-                  translations.guides.categoryFallback}
-                {guide.readingTime ? ` · ${guide.readingTime}` : ""}
-              </p>
-              <h2 className="mt-5 mb-3 text-[clamp(25px,2.5vw,40px)] leading-[0.95] tracking-[-0.055em]">
-                {localizedText(guide.title, locale)}
-              </h2>
-              <p className="mb-6 leading-[1.45]">
-                {localizedText(guide.excerpt, locale)}
-              </p>
-              <Link
-                to={`/guides/${guide._id}`}
-                className={`${spacedTextLinkClassName} text-forest`}
-              >
-                {translations.guides.readGuide} <ArrowUpRight size={15} />
-              </Link>
-            </div>
-          </article>
-        ))}
+            {translations.guides.allGuides}
+          </button>
+          {speciesOptions.map((species) => (
+            <button
+              key={species.id}
+              type="button"
+              aria-pressed={selectedSpeciesId === species.id}
+              className={`border-0 bg-transparent p-0 text-[10px] uppercase tracking-[0.1em] transition-colors ${selectedSpeciesId === species.id ? "text-gold" : "text-muted hover:text-forest"}`}
+              onClick={() => setSelectedSpeciesId(species.id)}
+            >
+              {species.label}
+            </button>
+          ))}
+        </div>
+        <div className="grid grid-cols-2 gap-[22px] max-[800px]:grid-cols-1">
+          {filteredGuides.map((guide, index) => (
+            <article
+              className="grid min-h-[260px] grid-cols-[38%_1fr] bg-sand max-[800px]:grid-cols-[34%_1fr]"
+              key={guide._id}
+            >
+              <img
+                src={
+                  guide.imageUrl ||
+                  fallbackImages[index % fallbackImages.length]
+                }
+                alt=""
+                loading="lazy"
+                decoding="async"
+                className="h-full w-full object-cover"
+              />
+              <div className="flex flex-col items-start p-7 max-[800px]:p-5">
+                <p className="font-mono text-[10px] uppercase tracking-[0.12em] opacity-60">
+                  {guide.speciesName
+                    ? localizedText(guide.speciesName, locale)
+                    : ""}
+                  {guide.speciesName && guide.category ? " · " : ""}
+                  {localizedText(guide.category, locale) ||
+                    translations.guides.categoryFallback}
+                  {guide.readingTime ? ` · ${guide.readingTime}` : ""}
+                </p>
+                <h2 className="mt-5 mb-3 text-[clamp(25px,2.5vw,40px)] leading-[0.95] tracking-[-0.055em]">
+                  {localizedText(guide.title, locale)}
+                </h2>
+                <p className="mb-6 leading-[1.45]">
+                  {localizedText(guide.excerpt, locale)}
+                </p>
+                <Link
+                  to={`/guides/${guide._id}`}
+                  className={`${spacedTextLinkClassName} text-forest`}
+                >
+                  {translations.guides.readGuide} <ArrowUpRight size={15} />
+                </Link>
+              </div>
+            </article>
+          ))}
+        </div>
       </section>
 
-      {guides.length === 0 && (
+      {guides.length === 0 ? (
         <p className="mx-auto max-w-[1240px]">{translations.guides.empty}</p>
-      )}
+      ) : filteredGuides.length === 0 ? (
+        <p className="mx-auto mt-8 max-w-[1240px]">
+          {translations.guides.speciesEmpty}
+        </p>
+      ) : null}
     </main>
   );
 }
