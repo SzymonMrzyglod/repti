@@ -10,6 +10,7 @@ type Animal = {
   morph: string;
   sex: string;
   weight: string;
+  price?: string;
   status: "available" | "reserved" | "adopted";
   image: string;
 };
@@ -59,6 +60,12 @@ export default function AnimalCard({ animal }: { animal: Animal }) {
             <small className="text-[8px] tracking-[0.16em] text-sage-muted">{translations.animal.weight}</small>
             {animal.weight}
           </span>
+          {animal.price && (
+            <span className="ml-auto flex flex-col gap-[5px] text-right">
+              <small className="text-[8px] tracking-[0.16em] text-sage-muted">{translations.animal.price}</small>
+              <strong className="font-medium text-gold">{animal.price}</strong>
+            </span>
+          )}
         </div>
       </div>
     </Link>

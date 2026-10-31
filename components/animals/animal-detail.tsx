@@ -165,6 +165,12 @@ export default function AnimalDetail({ animal }: AnimalDetailProps) {
               <small className="mb-[9px] block font-mono text-[10px] leading-none tracking-[0.14em] opacity-60">{translations.animal.status}</small>
               <strong className="text-[16px] font-medium">{translations.animal[status]}</strong>
             </div>
+            {animal.price && (
+              <div className="col-span-2 border-b border-ink/20 py-[18px] pr-3">
+                <small className="mb-[9px] block font-mono text-[10px] leading-none tracking-[0.14em] opacity-60">{translations.animal.price}</small>
+                <strong className="text-[16px] font-medium">{animal.price}</strong>
+              </div>
+            )}
           </div>
           <button
             type="button"

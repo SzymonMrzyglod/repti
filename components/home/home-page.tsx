@@ -22,6 +22,7 @@ type Animal = {
   morph: string;
   sex: string;
   weight: string;
+  price?: string;
   status: "available" | "reserved" | "adopted";
   image: string;
 };

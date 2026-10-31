@@ -27,6 +27,14 @@ export function getHomeViewState(): HomeViewState | undefined {
   }
 }
 
+export function clearHomeViewState() {
+  try {
+    sessionStorage.removeItem(storageKey);
+  } catch {
+    // Storage can be unavailable (e.g. private mode).
+  }
+}
+
 export function saveHomeViewState(partial: Partial<HomeViewState>) {
   try {
     const next: HomeViewState = {

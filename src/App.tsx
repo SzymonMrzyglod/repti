@@ -43,6 +43,7 @@ type SanityReptile = {
   morph?: Localized;
   sex?: Localized;
   weight?: string;
+  price?: string;
   status?: string;
   description?: Localized;
   imageUrl?: string;
@@ -78,6 +79,7 @@ function mapHomeData(
       morph: localizedText(reptile.morph, locale),
       sex: localizedText(reptile.sex, locale),
       weight: reptile.weight || "",
+      price: reptile.price || "",
       status: mapAnimalStatus(reptile.status),
       image: reptile.imageUrl || "",
     })),
