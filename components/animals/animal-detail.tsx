@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
 import {
   ArrowLeft,
@@ -42,6 +42,7 @@ export default function AnimalDetail({ animal }: AnimalDetailProps) {
   const translations = getTranslations(locale);
   const [activeImageIndex, setActiveImageIndex] = useState(0);
   const [contactOpen, setContactOpen] = useState(false);
+  const swipeStartRef = useRef<{ x: number; y: number } | null>(null);
   const images = Array.from(
     new Set([animal.imageUrl, ...(animal.galleryUrls || [])].filter(Boolean)),
   ) as string[];
@@ -60,6 +61,7 @@ export default function AnimalDetail({ animal }: AnimalDetailProps) {
 
   useEffect(() => {
     setActiveImageIndex(0);
+    swipeStartRef.current = null;
   }, [animal._id]);
 
   return (
@@ -71,12 +73,39 @@ export default function AnimalDetail({ animal }: AnimalDetailProps) {
         <LocaleSwitcher />
       </header>
       <section className="mx-auto grid max-w-[1240px] grid-cols-[minmax(0,1fr)_minmax(360px,0.9fr)] items-center gap-[clamp(40px,7vw,120px)] max-[800px]:grid-cols-1 max-[800px]:gap-[34px]">
-        <div className="relative aspect-[4/3] overflow-hidden bg-[#26352a]">
+        <div
+          className="relative aspect-[4/3] touch-pan-y overflow-hidden bg-[#26352a]"
+          onPointerDown={(event) => {
+            if (event.pointerType === "touch" && event.isPrimary) {
+              swipeStartRef.current = { x: event.clientX, y: event.clientY };
+            }
+          }}
+          onPointerUp={(event) => {
+            const start = swipeStartRef.current;
+            swipeStartRef.current = null;
+            if (!start || images.length < 2) return;
+
+            const deltaX = event.clientX - start.x;
+            const deltaY = event.clientY - start.y;
+            if (Math.abs(deltaX) < 40 || Math.abs(deltaX) <= Math.abs(deltaY)) {
+              return;
+            }
+
+            setActiveImageIndex(
+              (currentImageIndex + (deltaX < 0 ? 1 : -1) + images.length) %
+                images.length,
+            );
+          }}
+          onPointerCancel={() => {
+            swipeStartRef.current = null;
+          }}
+        >
           {currentImage ? (
             <img
               src={currentImage}
               alt={`${text(animal.name, locale, translations.animal.unnamed)} (${currentImageIndex + 1} ${translations.animal.photoOf} ${images.length})`}
               className="block h-full w-full object-cover"
+              draggable={false}
               fetchPriority="high"
               decoding="async"
             />

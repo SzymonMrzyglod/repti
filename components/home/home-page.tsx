@@ -146,7 +146,7 @@ export default function HomePage({
   return (
     <main className="overflow-x-clip">
       <section
-        className="relative h-svh min-h-[720px] bg-[#16251c] text-[#f3f1e8] max-[700px]:h-auto max-[700px]:min-h-0"
+        className="relative min-h-[max(720px,100svh)] bg-[#16251c] text-[#f3f1e8] max-[700px]:h-auto max-[700px]:min-h-0"
         id="start"
       >
         <img
