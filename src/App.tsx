@@ -40,6 +40,7 @@ import { getHomeViewState } from "@/lib/home-view-state";
 type SanityReptile = {
   _id: string;
   name?: Localized;
+  speciesId?: string;
   species?: string;
   speciesName?: Localized;
   speciesLatinName?: string;
@@ -74,6 +75,7 @@ function mapHomeData(
     animals: reptiles.map((reptile) => ({
       id: reptile._id,
       name: localizedText(reptile.name, locale),
+      speciesId: reptile.speciesId,
       species:
         localizedText(reptile.speciesName, locale) || reptile.species || "",
       latin: reptile.latinName || reptile.speciesLatinName || "",

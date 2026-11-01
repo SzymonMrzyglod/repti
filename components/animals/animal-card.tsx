@@ -25,7 +25,7 @@ export default function AnimalCard({ animal }: { animal: Animal }) {
       to={`/animal/${encodeURIComponent(animal.id)}`}
       className="group"
     >
-      <div className="relative h-[440px] overflow-hidden bg-[#293a2e] max-[700px]:h-[420px]">
+      <div className="relative aspect-[4/3] overflow-hidden bg-[#293a2e]">
         {animal.featured && (
           <span className="pointer-events-none absolute inset-0 z-10 border-2 border-gold" aria-hidden="true" />
         )}        {animal.featured && (

@@ -71,7 +71,7 @@ export default function AnimalDetail({ animal }: AnimalDetailProps) {
         <LocaleSwitcher />
       </header>
       <section className="mx-auto grid max-w-[1240px] grid-cols-[minmax(0,1fr)_minmax(360px,0.9fr)] items-center gap-[clamp(40px,7vw,120px)] max-[800px]:grid-cols-1 max-[800px]:gap-[34px]">
-        <div className="relative aspect-[4/5] overflow-hidden bg-[#26352a]">
+        <div className="relative aspect-[4/3] overflow-hidden bg-[#26352a]">
           {currentImage ? (
             <img
               src={currentImage}

@@ -18,6 +18,7 @@ import { localizedText, type Localized } from "@/lib/localized";
 type Animal = {
   id: string;
   name: string;
+  speciesId?: string;
   species: string;
   latin: string;
   morph: string;
@@ -89,19 +90,28 @@ export default function HomePage({
       window.removeEventListener("scroll", saveScroll);
     };
   }, []);
-  const species = useMemo(
-    () =>
-      Array.from(
-        new Set(animals.map((animal) => animal.species).filter(Boolean)),
-      ),
-    [animals],
-  );
+  const species = useMemo(() => {
+    const speciesById = new Map<string, string>();
+
+    animals.forEach((animal) => {
+      if (animal.speciesId && animal.species) {
+        speciesById.set(animal.speciesId, animal.species);
+      }
+    });
+
+    return Array.from(speciesById, ([id, name]) => ({ id, name }));
+  }, [animals]);
+  const hasSelectedSpecies = species.some(({ id }) => id === filter);
+  useEffect(() => {
+    if (filter !== "all" && !hasSelectedSpecies) setFilter("all");
+  }, [filter, hasSelectedSpecies]);
+
   const filteredAnimals = useMemo(
     () =>
-      filter === "all"
+      filter === "all" || !hasSelectedSpecies
         ? animals
-        : animals.filter((animal) => animal.species === filter),
-    [filter, animals],
+        : animals.filter((animal) => animal.speciesId === filter),
+    [filter, hasSelectedSpecies, animals],
   );
   const visibleAnimals = showAll
     ? filteredAnimals
@@ -109,7 +119,7 @@ export default function HomePage({
 
   const filterOptions = [
     { value: "all", label: translations.home.allAnimals },
-    ...species.map((name) => ({ value: name, label: name })),
+    ...species.map(({ id, name }) => ({ value: id, label: name })),
   ];
 
   return (
