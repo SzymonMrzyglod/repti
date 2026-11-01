@@ -159,9 +159,30 @@ export default function HomePage({
             {translations.home.discoverAnimals} <ArrowDown size={16} />
           </a>
         </div>
-        <div className="pointer-events-none absolute right-[5.5vw] bottom-7 left-[5.5vw] flex justify-between text-[9px] tracking-[0.18em] text-[#b8b8aa] max-[700px]:static max-[700px]:px-[6vw] max-[700px]:pb-6 min-[2000px]:bottom-5 min-[2000px]:mx-auto min-[2000px]:max-w-[1680px]">
-          <span>{translations.home.scrollToDiscover}</span>
-          <span className="text-[#e9e4d7]">
+        <div className="pointer-events-none absolute right-[5.5vw] bottom-7 left-[5.5vw] flex justify-between text-[9px] tracking-[0.18em] text-[#b8b8aa] max-[700px]:static max-[700px]:mt-[-58px] max-[700px]:px-[6vw] max-[700px]:pb-5 min-[2000px]:bottom-5 min-[2000px]:mx-auto min-[2000px]:max-w-[1680px]">
+          <a
+            href="#philosophy"
+            className="pointer-events-auto inline-flex items-center gap-2 border-b border-gold/70 pb-2 text-[10px] font-bold tracking-[0.15em] text-ivory drop-shadow-[0_1px_5px_rgba(0,0,0,0.8)] transition-colors hover:text-gold motion-reduce:transition-none max-[700px]:hidden"
+          >
+            {translations.home.scrollToDiscover}
+            <ArrowDown
+              aria-hidden="true"
+              size={14}
+              className="animate-bounce motion-reduce:animate-none"
+            />
+          </a>
+          <a
+            href="#philosophy"
+            className="pointer-events-auto hidden items-center gap-2 border-b border-gold/70 pb-2 text-[10px] font-bold tracking-[0.15em] text-ivory transition-colors hover:text-gold motion-reduce:transition-none max-[700px]:inline-flex"
+          >
+            {translations.home.scrollToDiscover}
+            <ArrowDown
+              aria-hidden="true"
+              size={14}
+              className="animate-bounce motion-reduce:animate-none"
+            />
+          </a>
+          <span className="text-[#e9e4d7] max-[700px]:hidden">
             01 <i className="mx-2 not-italic text-gold">/</i> 04
           </span>
         </div>

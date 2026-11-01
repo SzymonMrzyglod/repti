@@ -49,10 +49,13 @@ export default function AnimalCard({ animal }: { animal: Animal }) {
           {translations.animal[animal.status]}
         </span>
         <span
-          className="absolute right-[15px] bottom-[15px] grid h-[37px] w-[37px] place-items-center rounded-full border border-[rgba(255,255,255,0.6)] bg-[rgba(15,31,22,0.3)] text-white transition-all duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 group-hover:scale-110 group-hover:border-gold group-hover:bg-gold group-hover:text-forest motion-reduce:transition-none"
+          className="absolute right-[15px] bottom-[15px] inline-flex h-[37px] items-center gap-2 rounded-full border border-[rgba(255,255,255,0.6)] bg-[rgba(15,31,22,0.76)] pl-3 pr-2 text-[9px] font-medium uppercase tracking-[0.08em] text-white transition-all duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 group-hover:border-gold group-hover:bg-gold group-hover:text-forest motion-reduce:transition-none"
           aria-hidden="true"
         >
-          <ArrowUpRight size={17} />
+          <span>{translations.animal.viewDetails}</span>
+          <span className="grid h-[25px] w-[25px] place-items-center rounded-full bg-white/10 transition-transform duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 group-hover:bg-forest/10 motion-reduce:transition-none">
+            <ArrowUpRight size={15} />
+          </span>
         </span>
       </div>
       <div className="pt-[17px] px-[2px]">
