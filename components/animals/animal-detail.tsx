@@ -115,6 +115,7 @@ export default function AnimalDetail({ animal }: AnimalDetailProps) {
                 <div
                   role="group"
                   aria-label={translations.animal.photoNavigation}
+                  className="flex items-center gap-2"
                 >
                   {images.map((_, index) => (
                     <button

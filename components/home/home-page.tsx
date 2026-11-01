@@ -57,6 +57,27 @@ type HomePageProps = {
   initialFilter?: string;
 };
 
+function SectionNumber({
+  number,
+  tone = "light",
+}: {
+  number: string;
+  tone?: "light" | "dark";
+}) {
+  return (
+    <span
+      className={`font-mono text-[9px] tracking-[0.18em] ${
+        tone === "dark" ? "text-muted" : "text-[#e9e4d7]"
+      }`}
+    >
+      {number} <i className="mx-2 not-italic text-gold">/</i> 04
+    </span>
+  );
+}
+
+const sectionNumberPositionClassName =
+  "absolute right-[5.5vw] bottom-7 max-[700px]:hidden min-[2000px]:right-[calc((100vw-1680px)/2)]";
+
 export default function HomePage({
   animals,
   settings,
@@ -169,7 +190,7 @@ export default function HomePage({
             {translations.home.discoverAnimals} <ArrowDown size={16} />
           </a>
         </div>
-        <div className="pointer-events-none absolute right-[5.5vw] bottom-7 left-[5.5vw] flex justify-between text-[9px] tracking-[0.18em] text-[#b8b8aa] max-[700px]:static max-[700px]:mt-[-58px] max-[700px]:px-[6vw] max-[700px]:pb-5 min-[2000px]:bottom-5 min-[2000px]:mx-auto min-[2000px]:max-w-[1680px]">
+        <div className="pointer-events-none absolute right-[5.5vw] bottom-7 left-[5.5vw] flex items-center justify-between text-[9px] tracking-[0.18em] text-[#b8b8aa] max-[700px]:static max-[700px]:mt-[-58px] max-[700px]:px-[6vw] max-[700px]:pb-5 min-[2000px]:bottom-5 min-[2000px]:mx-auto min-[2000px]:max-w-[1680px]">
           <a
             href="#philosophy"
             className="pointer-events-auto inline-flex items-center gap-2 border-b border-gold/70 pb-2 text-[10px] font-bold tracking-[0.15em] text-ivory drop-shadow-[0_1px_5px_rgba(0,0,0,0.8)] transition-colors hover:text-gold motion-reduce:transition-none max-[700px]:hidden"
@@ -192,13 +213,13 @@ export default function HomePage({
               className="animate-bounce motion-reduce:animate-none"
             />
           </a>
-          <span className="text-[#e9e4d7] max-[700px]:hidden">
-            01 <i className="mx-2 not-italic text-gold">/</i> 04
+          <span className="inline-flex shrink-0 max-[700px]:hidden">
+            <SectionNumber number="01" />
           </span>
         </div>
       </section>
 
-      <section className="bg-ivory px-[11vw] pt-[120px] pb-[105px] max-[700px]:px-[7vw] max-[700px]:py-20" id="philosophy">
+      <section className="relative bg-ivory px-[11vw] pt-[120px] pb-[105px] max-[700px]:px-[7vw] max-[700px]:py-20" id="philosophy">
         <Eyebrow tone="dark">
           {localizedText(
             settings?.historyEyebrow,
@@ -234,10 +255,13 @@ export default function HomePage({
             </a>
           </div>
         </div>
+        <span className={sectionNumberPositionClassName}>
+          <SectionNumber number="02" tone="dark" />
+        </span>
       </section>
 
-      <section className="bg-forest px-[5.5vw] pt-[115px] pb-[85px] text-ivory max-[700px]:px-[6vw] max-[700px]:py-20" id="animals">
-        <div className="mb-[68px] flex items-end justify-between max-[700px]:mb-[45px] max-[700px]:block">
+      <section className="relative bg-forest px-[5.5vw] pt-[115px] pb-[85px] text-ivory max-[700px]:px-[6vw] max-[700px]:py-20" id="animals">
+        <div className="mb-[68px] flex items-end justify-between gap-x-[clamp(32px,6vw,88px)] max-[700px]:mb-[45px] max-[700px]:block">
           <div>
             <Eyebrow>
               {localizedText(
@@ -254,7 +278,7 @@ export default function HomePage({
               )}
             </h2>
           </div>
-          <p className="mb-1 text-[12px] leading-[1.7] text-[#a7afa0] max-[700px]:mt-[25px]">
+          <p className="mb-1 max-w-[430px] text-[12px] leading-[1.7] text-[#a7afa0] max-[700px]:mt-[25px]">
             {localizedText(
               settings?.collectionNote,
               locale,
@@ -301,9 +325,12 @@ export default function HomePage({
             </button>
           )}
         </div>
+        <span className={sectionNumberPositionClassName}>
+          <SectionNumber number="03" />
+        </span>
       </section>
 
-      <section className="flex min-h-[580px] items-center bg-[linear-gradient(90deg,rgba(15,34,24,0.94),rgba(15,34,24,0.7)),url('/images/hero-gecko.webp')] bg-cover bg-[center_49%] text-ivory" id="care">
+      <section className="relative flex min-h-[580px] items-center bg-[linear-gradient(90deg,rgba(15,34,24,0.94),rgba(15,34,24,0.7)),url('/images/hero-gecko.webp')] bg-cover bg-[center_49%] text-ivory" id="care">
         <div className="max-w-[680px] px-[11vw] py-20 max-[700px]:px-[7vw]">
           <Eyebrow>
             {localizedText(
@@ -330,6 +357,9 @@ export default function HomePage({
             {translations.home.guidesLink} <ArrowUpRight size={16} />
           </Link>
         </div>
+        <span className={sectionNumberPositionClassName}>
+          <SectionNumber number="04" />
+        </span>
       </section>
 
       <SiteFooter logoUrl={settings?.logoUrl} />

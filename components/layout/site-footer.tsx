@@ -32,8 +32,9 @@ export default function SiteFooter({ logoUrl }: { logoUrl?: string }) {
         </div>
         <div className={`${footerLinksClassName} max-[700px]:order-2 min-[701px]:order-4`}>
           <span>{translations.footer.navigation}</span>
-          <a href="#animals">{translations.footer.animals}</a>
           <a href="#philosophy">{translations.footer.breeding}</a>
+          <a href="#animals">{translations.footer.animals}</a>
+          <a href="#care">{translations.navigation.care}</a>
           <Link to="/guides">{translations.footer.guides}</Link>
         </div>
         <div className={`${footerLinksClassName} max-[700px]:order-1 min-[701px]:order-3`}>
@@ -57,7 +58,7 @@ export default function SiteFooter({ logoUrl }: { logoUrl?: string }) {
             rel="noopener noreferrer"
           >
             <svg
-              className="block h-4 w-2 flex-[0_0_8px]"
+              className="block h-4 w-4 flex-[0_0_16px]"
               viewBox="-337 273 123.5 256"
               aria-hidden="true"
               focusable="false"
