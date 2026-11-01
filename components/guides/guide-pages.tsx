@@ -7,6 +7,7 @@ import Eyebrow from "@/components/ui/eyebrow";
 import {
   pageShellClassName,
   spacedTextLinkClassName,
+  textLinkClassName,
 } from "@/components/ui/styles";
 import LocaleSwitcher from "@/components/layout/locale-switcher";
 import { useLocale } from "@/lib/locale-context";
@@ -236,7 +237,7 @@ export function GuidesPage({ guides }: { guides: Guide[] }) {
                 decoding="async"
                 className="h-full w-full object-cover"
               />
-              <div className="flex flex-col items-start p-7 max-[800px]:p-5">
+              <div className="flex min-w-0 flex-col items-start p-7 max-[800px]:p-5">
                 <p className="font-mono text-[10px] uppercase tracking-[0.12em] opacity-60">
                   {guide.speciesName
                     ? localizedText(guide.speciesName, locale)
@@ -249,12 +250,12 @@ export function GuidesPage({ guides }: { guides: Guide[] }) {
                 <h2 className="mt-5 mb-3 text-[clamp(25px,2.5vw,40px)] leading-[0.95] tracking-[-0.055em]">
                   {localizedText(guide.title, locale)}
                 </h2>
-                <p className="mb-6 leading-[1.45]">
+                <p className="mb-6 line-clamp-3 leading-[1.45]">
                   {localizedText(guide.excerpt, locale)}
                 </p>
                 <Link
                   to={`/guides/${guide._id}`}
-                  className={`${spacedTextLinkClassName} text-forest`}
+                  className={`${textLinkClassName} mt-auto text-forest`}
                 >
                   {translations.guides.readGuide} <ArrowUpRight size={15} />
                 </Link>
