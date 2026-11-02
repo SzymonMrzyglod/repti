@@ -6,6 +6,7 @@ import {
   ChevronLeft,
   ChevronRight,
   X,
+  ZoomIn,
 } from "lucide-react";
 import LocaleSwitcher from "@/components/layout/locale-switcher";
 import { ContactFormModal } from "@/components/contact/contact-form";
@@ -37,6 +38,9 @@ type AnimalDetailProps = {
   };
 };
 const text = localizedText;
+
+// Gallery URLs are Sanity CDN links with a width param; the lightbox asks for a larger rendition.
+const zoomImageUrl = (url: string) => url.replace(/([?&]w=)\d+/, (_, prefix) => `${prefix}3200`);
 
 function useSwipe(onSwipe: (direction: 1 | -1) => void) {
   const startRef = useRef<{ x: number; y: number } | null>(null);
@@ -148,7 +152,7 @@ export default function AnimalDetail({ animal }: AnimalDetailProps) {
           {currentImage ? (
             <button
               type="button"
-              className="block h-full w-full cursor-zoom-in border-0 bg-transparent p-0"
+              className="group relative block h-full w-full cursor-zoom-in border-0 bg-transparent p-0"
               aria-label={translations.animal.enlargePhoto}
               onClick={() => {
                 if (!gallerySwipe.didMove()) setZoomOpen(true);
@@ -157,11 +161,15 @@ export default function AnimalDetail({ animal }: AnimalDetailProps) {
               <img
                 src={currentImage}
                 alt={`${text(animal.name, locale, translations.animal.unnamed)} (${currentImageIndex + 1} ${translations.animal.photoOf} ${images.length})`}
-                className="block h-full w-full object-cover"
+                className="block h-full w-full object-cover transition-transform duration-300 group-hover:scale-[1.03] motion-reduce:transition-none"
                 draggable={false}
                 fetchPriority="high"
                 decoding="async"
               />
+              <span className="pointer-events-none absolute top-4 right-4 inline-flex items-center gap-2 rounded-full border border-[rgba(255,255,255,0.6)] bg-[rgba(15,31,22,0.65)] px-3 py-2 text-[10px] font-bold uppercase tracking-[0.12em] text-white transition-colors group-hover:bg-[rgba(15,31,22,0.9)]">
+                <ZoomIn size={16} aria-hidden="true" />
+                {translations.animal.enlargePhoto}
+              </span>
             </button>
           ) : (
             <div className="h-full w-full bg-[linear-gradient(145deg,#253a2a,#8d9a75)]" />
@@ -267,7 +275,7 @@ export default function AnimalDetail({ animal }: AnimalDetailProps) {
           {...zoomSwipe.handlers}
         >
           <img
-            src={currentImage}
+            src={zoomImageUrl(currentImage)}
             alt={`${animalName} (${currentImageIndex + 1} ${translations.animal.photoOf} ${images.length})`}
             className="max-h-full max-w-full object-contain"
             draggable={false}
