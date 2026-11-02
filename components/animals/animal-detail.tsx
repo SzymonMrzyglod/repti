@@ -40,7 +40,10 @@ type AnimalDetailProps = {
 const text = localizedText;
 
 // Gallery URLs are Sanity CDN links with a width param; the lightbox asks for a larger rendition.
-const zoomImageUrl = (url: string) => url.replace(/([?&]w=)\d+/, (_, prefix) => `${prefix}3200`);
+const zoomImageUrl = (url: string) =>
+  url
+    .replace(/([?&]w=)\d+/, (_, prefix) => `${prefix}2200`)
+    .replace(/([?&]q=)\d+/, (_, prefix) => `${prefix}78`);
 
 function useSwipe(onSwipe: (direction: 1 | -1) => void) {
   const startRef = useRef<{ x: number; y: number } | null>(null);
@@ -74,12 +77,167 @@ function useSwipe(onSwipe: (direction: 1 | -1) => void) {
   };
 }
 
+const MAX_ZOOM = 4;
+const DOUBLE_TAP_ZOOM = 2.5;
+
+// Touch gestures for the lightbox: pinch to zoom, drag to pan while zoomed,
+// double-tap to toggle zoom and horizontal swipe to change photo at 1x.
+function useZoomGestures(onSwipe: (direction: 1 | -1) => void) {
+  const [view, setView] = useState({ scale: 1, x: 0, y: 0 });
+  const viewRef = useRef(view);
+  const pointers = useRef(new Map<number, { x: number; y: number }>());
+  const gesture = useRef({
+    pinched: false,
+    moved: false,
+    startDistance: 0,
+    startView: { scale: 1, x: 0, y: 0 },
+    startMid: { x: 0, y: 0 },
+    panOrigin: { x: 0, y: 0 },
+    swipeOrigin: { x: 0, y: 0 },
+    lastTap: 0,
+  });
+
+  const apply = (next: { scale: number; x: number; y: number }) => {
+    const scale = Math.min(Math.max(next.scale, 1), MAX_ZOOM);
+    if (scale === 1) {
+      viewRef.current = { scale: 1, x: 0, y: 0 };
+    } else {
+      const maxX = ((scale - 1) * window.innerWidth) / 2;
+      const maxY = ((scale - 1) * window.innerHeight) / 2;
+      viewRef.current = {
+        scale,
+        x: Math.min(Math.max(next.x, -maxX), maxX),
+        y: Math.min(Math.max(next.y, -maxY), maxY),
+      };
+    }
+    setView(viewRef.current);
+  };
+
+  const beginPinch = () => {
+    const [a, b] = Array.from(pointers.current.values());
+    const g = gesture.current;
+    g.pinched = true;
+    g.startDistance = Math.hypot(a.x - b.x, a.y - b.y) || 1;
+    g.startView = viewRef.current;
+    g.startMid = { x: (a.x + b.x) / 2, y: (a.y + b.y) / 2 };
+  };
+
+  const beginPan = (point: { x: number; y: number }) => {
+    const g = gesture.current;
+    g.panOrigin = { x: point.x - viewRef.current.x, y: point.y - viewRef.current.y };
+    g.swipeOrigin = point;
+  };
+
+  return {
+    view,
+    didMove: () => gesture.current.moved,
+    reset: () => {
+      pointers.current.clear();
+      apply({ scale: 1, x: 0, y: 0 });
+    },
+    handlers: {
+      onPointerDown: (event: React.PointerEvent) => {
+        if (event.pointerType === "mouse") return;
+        const g = gesture.current;
+        if (pointers.current.size === 0) {
+          g.moved = false;
+          g.pinched = false;
+        }
+        const point = { x: event.clientX, y: event.clientY };
+        pointers.current.set(event.pointerId, point);
+        if (pointers.current.size === 2) beginPinch();
+        else if (pointers.current.size === 1) beginPan(point);
+      },
+      onPointerMove: (event: React.PointerEvent) => {
+        if (!pointers.current.has(event.pointerId)) return;
+        const point = { x: event.clientX, y: event.clientY };
+        pointers.current.set(event.pointerId, point);
+        const g = gesture.current;
+
+        if (pointers.current.size >= 2) {
+          const [a, b] = Array.from(pointers.current.values());
+          const scale = Math.min(
+            Math.max((g.startView.scale * Math.hypot(a.x - b.x, a.y - b.y)) / g.startDistance, 1),
+            MAX_ZOOM,
+          );
+          const mid = { x: (a.x + b.x) / 2, y: (a.y + b.y) / 2 };
+          const cx = window.innerWidth / 2;
+          const cy = window.innerHeight / 2;
+          // Keep the content point under the initial midpoint under the fingers.
+          const qx = (g.startMid.x - cx - g.startView.x) / g.startView.scale;
+          const qy = (g.startMid.y - cy - g.startView.y) / g.startView.scale;
+          g.moved = true;
+          apply({ scale, x: mid.x - cx - scale * qx, y: mid.y - cy - scale * qy });
+        } else if (viewRef.current.scale > 1) {
+          if (Math.hypot(point.x - g.swipeOrigin.x, point.y - g.swipeOrigin.y) > 10) {
+            g.moved = true;
+          }
+          apply({
+            scale: viewRef.current.scale,
+            x: point.x - g.panOrigin.x,
+            y: point.y - g.panOrigin.y,
+          });
+        } else if (Math.hypot(point.x - g.swipeOrigin.x, point.y - g.swipeOrigin.y) > 10) {
+          g.moved = true;
+        }
+      },
+      onPointerUp: (event: React.PointerEvent) => {
+        if (!pointers.current.has(event.pointerId)) return;
+        const g = gesture.current;
+        pointers.current.delete(event.pointerId);
+
+        if (pointers.current.size === 1) {
+          const [remaining] = Array.from(pointers.current.values());
+          beginPan(remaining);
+          return;
+        }
+        if (pointers.current.size > 0 || g.pinched) return;
+
+        const deltaX = event.clientX - g.swipeOrigin.x;
+        const deltaY = event.clientY - g.swipeOrigin.y;
+
+        if (!g.moved) {
+          const now = Date.now();
+          if (now - g.lastTap < 300) {
+            g.lastTap = 0;
+            g.moved = true;
+            apply(
+              viewRef.current.scale > 1
+                ? { scale: 1, x: 0, y: 0 }
+                : {
+                    scale: DOUBLE_TAP_ZOOM,
+                    x: -(event.clientX - window.innerWidth / 2) * (DOUBLE_TAP_ZOOM - 1),
+                    y: -(event.clientY - window.innerHeight / 2) * (DOUBLE_TAP_ZOOM - 1),
+                  },
+            );
+          } else {
+            g.lastTap = now;
+          }
+          return;
+        }
+
+        if (
+          viewRef.current.scale === 1 &&
+          Math.abs(deltaX) >= 40 &&
+          Math.abs(deltaX) > Math.abs(deltaY)
+        ) {
+          onSwipe(deltaX < 0 ? 1 : -1);
+        }
+      },
+      onPointerCancel: (event: React.PointerEvent) => {
+        pointers.current.delete(event.pointerId);
+      },
+    },
+  };
+}
+
 export default function AnimalDetail({ animal }: AnimalDetailProps) {
   const { locale } = useLocale();
   const translations = getTranslations(locale);
   const [activeImageIndex, setActiveImageIndex] = useState(0);
   const [contactOpen, setContactOpen] = useState(false);
   const [zoomOpen, setZoomOpen] = useState(false);
+  const [loadedZoomUrl, setLoadedZoomUrl] = useState("");
   const closeZoomRef = useRef<HTMLButtonElement>(null);
   const images = Array.from(
     new Set([animal.imageUrl, ...(animal.galleryUrls || [])].filter(Boolean)),
@@ -89,6 +247,7 @@ export default function AnimalDetail({ animal }: AnimalDetailProps) {
     Math.max(images.length - 1, 0),
   );
   const currentImage = images[currentImageIndex];
+  const zoomUrl = currentImage ? zoomImageUrl(currentImage) : "";
   const showImage = (direction: 1 | -1) =>
     setActiveImageIndex(
       (currentImageIndex + direction + images.length) % images.length,
@@ -97,7 +256,10 @@ export default function AnimalDetail({ animal }: AnimalDetailProps) {
     if (images.length > 1) showImage(direction);
   };
   const gallerySwipe = useSwipe(handleSwipe);
-  const zoomSwipe = useSwipe(handleSwipe);
+  const zoomSwipe = useZoomGestures(handleSwipe);
+  const { reset: resetZoomGestures } = zoomSwipe;
+  const [pinchHintVisible, setPinchHintVisible] = useState(false);
+  const isZoomedIn = zoomSwipe.view.scale > 1;
   const animalName = text(animal.name, locale, translations.animal.unnamed);
   const status =
     animal.status === "reserved"
@@ -110,6 +272,25 @@ export default function AnimalDetail({ animal }: AnimalDetailProps) {
     setActiveImageIndex(0);
     setZoomOpen(false);
   }, [animal._id]);
+
+  useEffect(() => {
+    resetZoomGestures();
+  }, [zoomUrl, zoomOpen]);
+
+  useEffect(() => {
+    if (!zoomOpen || !window.matchMedia("(pointer: coarse)").matches) {
+      setPinchHintVisible(false);
+      return;
+    }
+
+    setPinchHintVisible(true);
+    const timeout = window.setTimeout(() => setPinchHintVisible(false), 4500);
+    return () => window.clearTimeout(timeout);
+  }, [zoomOpen]);
+
+  useEffect(() => {
+    if (isZoomedIn) setPinchHintVisible(false);
+  }, [isZoomedIn]);
 
   useEffect(() => {
     if (!zoomOpen) return;
@@ -166,8 +347,8 @@ export default function AnimalDetail({ animal }: AnimalDetailProps) {
                 fetchPriority="high"
                 decoding="async"
               />
-              <span className="pointer-events-none absolute top-4 right-4 inline-flex items-center gap-2 rounded-full border border-[rgba(255,255,255,0.6)] bg-[rgba(15,31,22,0.65)] px-3 py-2 text-[10px] font-bold uppercase tracking-[0.12em] text-white transition-colors group-hover:bg-[rgba(15,31,22,0.9)]">
-                <ZoomIn size={16} aria-hidden="true" />
+              <span className="pointer-events-none               absolute top-3 right-3 inline-flex items-center gap-1.5 rounded-full border border-[rgba(255,255,255,0.6)] bg-[rgba(15,31,22,0.65)] px-2.5 py-1.5 text-[9px] font-bold uppercase tracking-[0.1em] text-white transition-colors group-hover:bg-[rgba(15,31,22,0.9)]">
+                              <ZoomIn size={13} aria-hidden="true" />
                 {translations.animal.enlargePhoto}
               </span>
             </button>
@@ -178,19 +359,19 @@ export default function AnimalDetail({ animal }: AnimalDetailProps) {
             <>
               <button
                 type="button"
-                className="absolute top-1/2 left-4 grid h-10 w-10 -translate-y-1/2 place-items-center rounded-full border border-[rgba(255,255,255,0.6)] bg-[rgba(15,31,22,0.55)] text-white hover:bg-[rgba(15,31,22,0.85)]"
+                className="absolute top-1/2                 left-3 grid h-8 w-8 -translate-y-1/2 place-items-center rounded-full border border-[rgba(255,255,255,0.6)] bg-[rgba(15,31,22,0.55)] text-white hover:bg-[rgba(15,31,22,0.85)]"
                 aria-label={translations.animal.previousPhoto}
                 onClick={() => showImage(-1)}
               >
-                <ChevronLeft size={20} />
+                                <ChevronLeft size={16} />
               </button>
               <button
                 type="button"
-                className="absolute top-1/2 right-4 grid h-10 w-10 -translate-y-1/2 place-items-center rounded-full border border-[rgba(255,255,255,0.6)] bg-[rgba(15,31,22,0.55)] text-white hover:bg-[rgba(15,31,22,0.85)]"
+                className="absolute top-1/2                 right-3 grid h-8 w-8 -translate-y-1/2 place-items-center rounded-full border border-[rgba(255,255,255,0.6)] bg-[rgba(15,31,22,0.55)] text-white hover:bg-[rgba(15,31,22,0.85)]"
                 aria-label={translations.animal.nextPhoto}
                 onClick={() => showImage(1)}
               >
-                <ChevronRight size={20} />
+                                <ChevronRight size={16} />
               </button>
               <div className="absolute right-4 bottom-4 left-4 flex items-center justify-between font-mono text-[10px] text-white [text-shadow:0_1px_5px_rgba(0,0,0,0.7)]">
                 <span aria-live="polite">
@@ -268,19 +449,41 @@ export default function AnimalDetail({ animal }: AnimalDetailProps) {
           role="dialog"
           aria-modal="true"
           aria-label={animalName}
-          className="fixed inset-0 z-50 grid touch-pan-y place-items-center bg-[rgba(8,14,11,0.94)] p-4 max-[800px]:p-0"
+          className="fixed inset-0 z-50 grid touch-none place-items-center overflow-hidden bg-[rgba(8,14,11,0.94)] p-4 max-[800px]:p-0"
           onClick={() => {
-            if (!zoomSwipe.didMove()) setZoomOpen(false);
+            if (!zoomSwipe.didMove() && !isZoomedIn) setZoomOpen(false);
           }}
           {...zoomSwipe.handlers}
         >
+          {loadedZoomUrl !== zoomUrl && (
+            <span
+              role="status"
+              aria-label={translations.animal.loadingPhoto}
+              className="pointer-events-none absolute top-1/2 left-1/2 h-10 w-10 -translate-x-1/2 -translate-y-1/2 animate-spin rounded-full border-2 border-[rgba(255,255,255,0.25)] border-t-white motion-reduce:animate-none"
+            />
+          )}
           <img
-            src={zoomImageUrl(currentImage)}
+            key={zoomUrl}
+            src={zoomUrl}
             alt={`${animalName} (${currentImageIndex + 1} ${translations.animal.photoOf} ${images.length})`}
-            className="max-h-full max-w-full object-contain"
+            className={`max-h-[90vh] max-w-[90vw] object-contain transition-opacity duration-200 motion-reduce:transition-none ${loadedZoomUrl === zoomUrl ? "opacity-100" : "opacity-0"}`}
             draggable={false}
+            style={{
+              transform: `translate(${zoomSwipe.view.x}px, ${zoomSwipe.view.y}px) scale(${zoomSwipe.view.scale})`,
+            }}
+            onLoad={() => setLoadedZoomUrl(zoomUrl)}
+            onError={() => setLoadedZoomUrl(zoomUrl)}
             onClick={(event) => event.stopPropagation()}
           />
+          {pinchHintVisible && (
+            <span
+              role="status"
+              className="pointer-events-none absolute top-5 left-1/2 inline-flex -translate-x-1/2 items-center gap-2 rounded-full border border-[rgba(255,255,255,0.5)] bg-[rgba(15,31,22,0.8)]               px-3 py-1.5 text-[10px] whitespace-nowrap text-white"
+            >
+                            <ZoomIn size={14} aria-hidden="true" />
+              {translations.animal.pinchHint}
+            </span>
+          )}
           <button
             ref={closeZoomRef}
             type="button"
@@ -297,25 +500,25 @@ export default function AnimalDetail({ animal }: AnimalDetailProps) {
             <>
               <button
                 type="button"
-                className="absolute top-1/2 left-4 grid h-11 w-11 -translate-y-1/2 place-items-center rounded-full border border-[rgba(255,255,255,0.6)] bg-[rgba(15,31,22,0.7)] text-white hover:bg-[rgba(15,31,22,0.95)]"
+                className="absolute top-1/2 left-3 grid h-9 w-9 -translate-y-1/2 place-items-center rounded-full border border-[rgba(255,255,255,0.6)] bg-[rgba(15,31,22,0.7)] text-white hover:bg-[rgba(15,31,22,0.95)]"
                 aria-label={translations.animal.previousPhoto}
                 onClick={(event) => {
                   event.stopPropagation();
                   showImage(-1);
                 }}
               >
-                <ChevronLeft size={22} />
+                <ChevronLeft size={18} />
               </button>
               <button
                 type="button"
-                className="absolute top-1/2 right-4 grid h-11 w-11 -translate-y-1/2 place-items-center rounded-full border border-[rgba(255,255,255,0.6)] bg-[rgba(15,31,22,0.7)] text-white hover:bg-[rgba(15,31,22,0.95)]"
+                className="absolute top-1/2 right-3 grid h-9 w-9 -translate-y-1/2 place-items-center rounded-full border border-[rgba(255,255,255,0.6)] bg-[rgba(15,31,22,0.7)] text-white hover:bg-[rgba(15,31,22,0.95)]"
                 aria-label={translations.animal.nextPhoto}
                 onClick={(event) => {
                   event.stopPropagation();
                   showImage(1);
                 }}
               >
-                <ChevronRight size={22} />
+                <ChevronRight size={18} />
               </button>
               <span
                 aria-live="polite"

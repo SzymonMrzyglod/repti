@@ -80,6 +80,8 @@ const translations = {
       photoNavigation: "Wybór zdjęcia",
       enlargePhoto: "Powiększ zdjęcie",
       closePhoto: "Zamknij podgląd zdjęcia",
+      loadingPhoto: "Ładowanie zdjęcia",
+      pinchHint: "Rozsuń palce, aby powiększyć",
     },
     contact: {
       backToAnimal: "Wróć do podopiecznego",
@@ -219,6 +221,8 @@ const translations = {
       photoNavigation: "Photo navigation",
       enlargePhoto: "Enlarge photo",
       closePhoto: "Close photo preview",
+      loadingPhoto: "Loading photo",
+      pinchHint: "Pinch to zoom",
     },
     contact: {
       backToAnimal: "Back to this animal",
