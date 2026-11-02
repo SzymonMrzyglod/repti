@@ -5,6 +5,7 @@ import {
   ArrowUpRight,
   ChevronLeft,
   ChevronRight,
+  X,
 } from "lucide-react";
 import LocaleSwitcher from "@/components/layout/locale-switcher";
 import { ContactFormModal } from "@/components/contact/contact-form";
@@ -37,12 +38,45 @@ type AnimalDetailProps = {
 };
 const text = localizedText;
 
+function useSwipe(onSwipe: (direction: 1 | -1) => void) {
+  const startRef = useRef<{ x: number; y: number } | null>(null);
+  const movedRef = useRef(false);
+
+  return {
+    didMove: () => movedRef.current,
+    handlers: {
+      onPointerDown: (event: React.PointerEvent) => {
+        movedRef.current = false;
+        if (event.pointerType === "touch" && event.isPrimary) {
+          startRef.current = { x: event.clientX, y: event.clientY };
+        }
+      },
+      onPointerUp: (event: React.PointerEvent) => {
+        const start = startRef.current;
+        startRef.current = null;
+        if (!start) return;
+
+        const deltaX = event.clientX - start.x;
+        const deltaY = event.clientY - start.y;
+        movedRef.current = Math.hypot(deltaX, deltaY) > 10;
+        if (Math.abs(deltaX) >= 40 && Math.abs(deltaX) > Math.abs(deltaY)) {
+          onSwipe(deltaX < 0 ? 1 : -1);
+        }
+      },
+      onPointerCancel: () => {
+        startRef.current = null;
+      },
+    },
+  };
+}
+
 export default function AnimalDetail({ animal }: AnimalDetailProps) {
   const { locale } = useLocale();
   const translations = getTranslations(locale);
   const [activeImageIndex, setActiveImageIndex] = useState(0);
   const [contactOpen, setContactOpen] = useState(false);
-  const swipeStartRef = useRef<{ x: number; y: number } | null>(null);
+  const [zoomOpen, setZoomOpen] = useState(false);
+  const closeZoomRef = useRef<HTMLButtonElement>(null);
   const images = Array.from(
     new Set([animal.imageUrl, ...(animal.galleryUrls || [])].filter(Boolean)),
   ) as string[];
@@ -51,6 +85,15 @@ export default function AnimalDetail({ animal }: AnimalDetailProps) {
     Math.max(images.length - 1, 0),
   );
   const currentImage = images[currentImageIndex];
+  const showImage = (direction: 1 | -1) =>
+    setActiveImageIndex(
+      (currentImageIndex + direction + images.length) % images.length,
+    );
+  const handleSwipe = (direction: 1 | -1) => {
+    if (images.length > 1) showImage(direction);
+  };
+  const gallerySwipe = useSwipe(handleSwipe);
+  const zoomSwipe = useSwipe(handleSwipe);
   const animalName = text(animal.name, locale, translations.animal.unnamed);
   const status =
     animal.status === "reserved"
@@ -61,8 +104,33 @@ export default function AnimalDetail({ animal }: AnimalDetailProps) {
 
   useEffect(() => {
     setActiveImageIndex(0);
-    swipeStartRef.current = null;
+    setZoomOpen(false);
   }, [animal._id]);
+
+  useEffect(() => {
+    if (!zoomOpen) return;
+
+    const previousOverflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    closeZoomRef.current?.focus();
+
+    return () => {
+      document.body.style.overflow = previousOverflow;
+    };
+  }, [zoomOpen]);
+
+  useEffect(() => {
+    if (!zoomOpen) return;
+
+    const onKeyDown = (event: KeyboardEvent) => {
+      if (event.key === "Escape") setZoomOpen(false);
+      if (event.key === "ArrowLeft") handleSwipe(-1);
+      if (event.key === "ArrowRight") handleSwipe(1);
+    };
+
+    document.addEventListener("keydown", onKeyDown);
+    return () => document.removeEventListener("keydown", onKeyDown);
+  });
 
   return (
     <main className={`${pageShellClassName} pb-20 max-[800px]:pt-[18px] max-[800px]:pb-12`}>
@@ -75,40 +143,26 @@ export default function AnimalDetail({ animal }: AnimalDetailProps) {
       <section className="mx-auto grid max-w-[1240px] grid-cols-[minmax(0,1fr)_minmax(360px,0.9fr)] items-center gap-[clamp(40px,7vw,120px)] max-[800px]:grid-cols-1 max-[800px]:gap-[34px]">
         <div
           className="relative aspect-[4/3] touch-pan-y overflow-hidden bg-[#26352a]"
-          onPointerDown={(event) => {
-            if (event.pointerType === "touch" && event.isPrimary) {
-              swipeStartRef.current = { x: event.clientX, y: event.clientY };
-            }
-          }}
-          onPointerUp={(event) => {
-            const start = swipeStartRef.current;
-            swipeStartRef.current = null;
-            if (!start || images.length < 2) return;
-
-            const deltaX = event.clientX - start.x;
-            const deltaY = event.clientY - start.y;
-            if (Math.abs(deltaX) < 40 || Math.abs(deltaX) <= Math.abs(deltaY)) {
-              return;
-            }
-
-            setActiveImageIndex(
-              (currentImageIndex + (deltaX < 0 ? 1 : -1) + images.length) %
-                images.length,
-            );
-          }}
-          onPointerCancel={() => {
-            swipeStartRef.current = null;
-          }}
+          {...gallerySwipe.handlers}
         >
           {currentImage ? (
-            <img
-              src={currentImage}
-              alt={`${text(animal.name, locale, translations.animal.unnamed)} (${currentImageIndex + 1} ${translations.animal.photoOf} ${images.length})`}
-              className="block h-full w-full object-cover"
-              draggable={false}
-              fetchPriority="high"
-              decoding="async"
-            />
+            <button
+              type="button"
+              className="block h-full w-full cursor-zoom-in border-0 bg-transparent p-0"
+              aria-label={translations.animal.enlargePhoto}
+              onClick={() => {
+                if (!gallerySwipe.didMove()) setZoomOpen(true);
+              }}
+            >
+              <img
+                src={currentImage}
+                alt={`${text(animal.name, locale, translations.animal.unnamed)} (${currentImageIndex + 1} ${translations.animal.photoOf} ${images.length})`}
+                className="block h-full w-full object-cover"
+                draggable={false}
+                fetchPriority="high"
+                decoding="async"
+              />
+            </button>
           ) : (
             <div className="h-full w-full bg-[linear-gradient(145deg,#253a2a,#8d9a75)]" />
           )}
@@ -118,11 +172,7 @@ export default function AnimalDetail({ animal }: AnimalDetailProps) {
                 type="button"
                 className="absolute top-1/2 left-4 grid h-10 w-10 -translate-y-1/2 place-items-center rounded-full border border-[rgba(255,255,255,0.6)] bg-[rgba(15,31,22,0.55)] text-white hover:bg-[rgba(15,31,22,0.85)]"
                 aria-label={translations.animal.previousPhoto}
-                onClick={() =>
-                  setActiveImageIndex(
-                    (currentImageIndex - 1 + images.length) % images.length,
-                  )
-                }
+                onClick={() => showImage(-1)}
               >
                 <ChevronLeft size={20} />
               </button>
@@ -130,9 +180,7 @@ export default function AnimalDetail({ animal }: AnimalDetailProps) {
                 type="button"
                 className="absolute top-1/2 right-4 grid h-10 w-10 -translate-y-1/2 place-items-center rounded-full border border-[rgba(255,255,255,0.6)] bg-[rgba(15,31,22,0.55)] text-white hover:bg-[rgba(15,31,22,0.85)]"
                 aria-label={translations.animal.nextPhoto}
-                onClick={() =>
-                  setActiveImageIndex((currentImageIndex + 1) % images.length)
-                }
+                onClick={() => showImage(1)}
               >
                 <ChevronRight size={20} />
               </button>
@@ -207,6 +255,71 @@ export default function AnimalDetail({ animal }: AnimalDetailProps) {
           </button>
         </div>
       </section>
+      {zoomOpen && currentImage && (
+        <div
+          role="dialog"
+          aria-modal="true"
+          aria-label={animalName}
+          className="fixed inset-0 z-50 grid touch-pan-y place-items-center bg-[rgba(8,14,11,0.94)] p-4 max-[800px]:p-0"
+          onClick={() => {
+            if (!zoomSwipe.didMove()) setZoomOpen(false);
+          }}
+          {...zoomSwipe.handlers}
+        >
+          <img
+            src={currentImage}
+            alt={`${animalName} (${currentImageIndex + 1} ${translations.animal.photoOf} ${images.length})`}
+            className="max-h-full max-w-full object-contain"
+            draggable={false}
+            onClick={(event) => event.stopPropagation()}
+          />
+          <button
+            ref={closeZoomRef}
+            type="button"
+            className="absolute top-4 right-4 grid h-11 w-11 place-items-center rounded-full border border-[rgba(255,255,255,0.6)] bg-[rgba(15,31,22,0.7)] text-white hover:bg-[rgba(15,31,22,0.95)]"
+            aria-label={translations.animal.closePhoto}
+            onClick={(event) => {
+              event.stopPropagation();
+              setZoomOpen(false);
+            }}
+          >
+            <X size={22} />
+          </button>
+          {images.length > 1 && (
+            <>
+              <button
+                type="button"
+                className="absolute top-1/2 left-4 grid h-11 w-11 -translate-y-1/2 place-items-center rounded-full border border-[rgba(255,255,255,0.6)] bg-[rgba(15,31,22,0.7)] text-white hover:bg-[rgba(15,31,22,0.95)]"
+                aria-label={translations.animal.previousPhoto}
+                onClick={(event) => {
+                  event.stopPropagation();
+                  showImage(-1);
+                }}
+              >
+                <ChevronLeft size={22} />
+              </button>
+              <button
+                type="button"
+                className="absolute top-1/2 right-4 grid h-11 w-11 -translate-y-1/2 place-items-center rounded-full border border-[rgba(255,255,255,0.6)] bg-[rgba(15,31,22,0.7)] text-white hover:bg-[rgba(15,31,22,0.95)]"
+                aria-label={translations.animal.nextPhoto}
+                onClick={(event) => {
+                  event.stopPropagation();
+                  showImage(1);
+                }}
+              >
+                <ChevronRight size={22} />
+              </button>
+              <span
+                aria-live="polite"
+                className="absolute bottom-5 left-1/2 -translate-x-1/2 font-mono text-[11px] text-white [text-shadow:0_1px_5px_rgba(0,0,0,0.7)]"
+              >
+                {currentImageIndex + 1} {translations.animal.photoOf}{" "}
+                {images.length}
+              </span>
+            </>
+          )}
+        </div>
+      )}
       <ContactFormModal
         open={contactOpen}
         onClose={() => setContactOpen(false)}

@@ -78,6 +78,8 @@ const translations = {
       photo: "Zdjęcie",
       photoOf: "z",
       photoNavigation: "Wybór zdjęcia",
+      enlargePhoto: "Powiększ zdjęcie",
+      closePhoto: "Zamknij podgląd zdjęcia",
     },
     contact: {
       backToAnimal: "Wróć do podopiecznego",
@@ -215,6 +217,8 @@ const translations = {
       photo: "Photo",
       photoOf: "of",
       photoNavigation: "Photo navigation",
+      enlargePhoto: "Enlarge photo",
+      closePhoto: "Close photo preview",
     },
     contact: {
       backToAnimal: "Back to this animal",
