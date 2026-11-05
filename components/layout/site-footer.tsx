@@ -70,6 +70,24 @@ export default function SiteFooter({ logoUrl }: { logoUrl?: string }) {
             </svg>{" "}
             Facebook
           </a>
+          <a
+            href="https://www.tiktok.com/@o.ty.gadzie"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            <svg
+              className="block h-4 w-4 flex-[0_0_16px]"
+              viewBox="0 0 24 24"
+              aria-hidden="true"
+              focusable="false"
+            >
+              <path
+                fill="currentColor"
+                d="M19.6 6.7a5.4 5.4 0 0 1-3.3-1.9A5.4 5.4 0 0 1 15 1.5h-3.4v13.3a2.9 2.9 0 1 1-2-2.8V8.5a6.4 6.4 0 1 0 5.4 6.3V9a8.7 8.7 0 0 0 4.6 1.4V7a5.5 5.5 0 0 1-.0-.3z"
+              />
+            </svg>{" "}
+            TikTok
+          </a>
         </div>
       </div>
       <div className="flex justify-between border-t border-[#d5d5ca] pt-[17px] text-[8px] tracking-[0.15em] text-[#999b90] max-[700px]:flex-wrap max-[700px]:gap-3 max-[700px]:leading-[1.4]">
