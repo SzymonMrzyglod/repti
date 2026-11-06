@@ -117,3 +117,8 @@
     font-weight: 400;
   }
 }
+
+.guide-body .guide-image-left + * + *,
+.guide-body .guide-image-right + * + * {
+  clear: both;
+}

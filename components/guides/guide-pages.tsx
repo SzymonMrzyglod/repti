@@ -119,9 +119,9 @@ const portableTextComponents: PortableTextComponents<GuideBodyBlock> = {
         <figure
           className={
             value.layout === "left"
-              ? "float-left mt-2 mb-[18px] mr-8 w-[calc(50%-18px)] max-[640px]:float-none max-[640px]:my-7 max-[640px]:w-auto"
+              ? "guide-image-left float-left mt-2 mb-[18px] mr-8 w-[calc(50%-18px)] max-[640px]:float-none max-[640px]:mx-auto max-[640px]:my-7 max-[640px]:w-[95%] max-[640px]:max-w-[480px]"
               : value.layout === "right"
-                ? "float-right mt-2 mb-[18px] ml-8 w-[calc(50%-18px)] max-[640px]:float-none max-[640px]:my-7 max-[640px]:w-auto"
+                ? "guide-image-right float-right mt-2 mb-[18px] ml-8 w-[calc(50%-18px)] max-[640px]:float-none max-[640px]:mx-auto max-[640px]:my-7 max-[640px]:w-[95%] max-[640px]:max-w-[480px]"
                 : "clear-both my-9"
           }
         >
@@ -301,7 +301,7 @@ export function GuideDetailPage({ guide }: { guide: Guide }) {
           {localizedText(guide.excerpt, locale)}
         </p>
         {body && (
-          <div className="flow-root max-w-[680px] text-[18px] leading-[1.75] [&_p]:mb-6 [&_p]:leading-[1.75]">
+          <div className="guide-body flow-root max-w-[680px] text-[18px] leading-[1.75] [&_p]:mb-6 [&_p]:leading-[1.75]">
             <PortableText<GuideBodyBlock>
               value={body}
               components={portableTextComponents}
