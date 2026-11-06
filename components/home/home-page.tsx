@@ -164,7 +164,7 @@ export default function HomePage({
           brandName={settings?.brandName}
           logoUrl={settings?.logoUrl}
         />
-        <div className="relative z-[1] max-w-[720px] px-[5.5vw] pt-[18vh] pb-[110px] min-[1000px]:max-[1999px]:pt-[10vh] min-[2000px]:max-w-[1120px] min-[2000px]:pt-[120px] max-[900px]:max-w-[650px] max-[700px]:px-[6vw] max-[700px]:pt-[118px] max-[700px]:pb-[96px]">
+        <div className="relative z-[1] max-w-[720px] px-[5.5vw] pt-[calc(18vh+104px)] pb-[110px] min-[1000px]:max-[1999px]:pt-[calc(10vh+104px)] min-[2000px]:max-w-[1120px] min-[2000px]:pt-[224px] max-[900px]:max-w-[650px] max-[700px]:px-[6vw] max-[700px]:pt-[222px] max-[700px]:pb-[96px]">
           <Eyebrow>
             {localizedText(
               settings?.heroEyebrow,

@@ -7,7 +7,6 @@ import Eyebrow from "@/components/ui/eyebrow";
 import {
   pageShellClassName,
   spacedTextLinkClassName,
-  textLinkClassName,
 } from "@/components/ui/styles";
 import LocaleSwitcher from "@/components/layout/locale-switcher";
 import { useLocale } from "@/lib/locale-context";
@@ -170,12 +169,14 @@ export function GuidesPage({ guides }: { guides: Guide[] }) {
 
   return (
     <main className={`${pageShellClassName} pb-[90px]`}>
-      <header className="mx-auto flex max-w-[1240px] items-start justify-between">
-        <Link to="/" className={`${spacedTextLinkClassName} text-forest`}>
-          <ArrowLeft size={15} /> {translations.guides.backHome}
-        </Link>
+      <header className="sticky top-0 z-20 -mx-[5vw] bg-ivory/95 px-[5vw] py-3 backdrop-blur">
+        <div className="mx-auto flex max-w-[1240px] items-start justify-between">
+          <Link to="/" className={`${spacedTextLinkClassName} text-forest`}>
+            <ArrowLeft size={15} /> {translations.guides.backHome}
+          </Link>
 
-        <LocaleSwitcher />
+          <LocaleSwitcher />
+        </div>
       </header>
 
       <section className="mx-auto mt-[130px] mb-20 max-w-[1240px] max-[800px]:mt-[90px] max-[800px]:mb-[55px]">
@@ -223,43 +224,42 @@ export function GuidesPage({ guides }: { guides: Guide[] }) {
         </div>
         <div className="grid grid-cols-2 gap-[22px] max-[800px]:grid-cols-1">
           {filteredGuides.map((guide, index) => (
-            <article
-              className="grid min-h-[260px] grid-cols-[38%_1fr] bg-sand max-[800px]:grid-cols-[34%_1fr]"
-              key={guide._id}
-            >
-              <img
-                src={
-                  guide.imageUrl ||
-                  fallbackImages[index % fallbackImages.length]
-                }
-                alt=""
-                loading="lazy"
-                decoding="async"
-                className="h-full w-full object-cover"
-              />
-              <div className="flex min-w-0 flex-col items-start p-7 max-[800px]:p-5">
-                <p className="font-mono text-[10px] uppercase tracking-[0.12em] opacity-60">
-                  {guide.speciesName
-                    ? localizedText(guide.speciesName, locale)
-                    : ""}
-                  {guide.speciesName && guide.category ? " · " : ""}
-                  {localizedText(guide.category, locale) ||
-                    translations.guides.categoryFallback}
-                  {guide.readingTime ? ` · ${guide.readingTime}` : ""}
-                </p>
-                <h2 className="mt-5 mb-3 text-[clamp(25px,2.5vw,40px)] leading-[0.95] tracking-[-0.055em]">
-                  {localizedText(guide.title, locale)}
-                </h2>
-                <p className="mb-6 line-clamp-3 leading-[1.45]">
-                  {localizedText(guide.excerpt, locale)}
-                </p>
-                <Link
-                  to={`/guides/${guide._id}`}
-                  className={`${textLinkClassName} mt-auto text-forest`}
-                >
-                  {translations.guides.readGuide} <ArrowUpRight size={15} />
-                </Link>
-              </div>
+            <article className="min-h-[260px]" key={guide._id}>
+              <Link
+                to={`/guides/${guide._id}`}
+                className="group grid h-full min-h-[260px] grid-cols-[38%_1fr] bg-sand focus-visible:outline-2 focus-visible:outline-gold focus-visible:outline-offset-4 max-[800px]:grid-cols-[34%_1fr]"
+              >
+                <img
+                  src={
+                    guide.imageUrl ||
+                    fallbackImages[index % fallbackImages.length]
+                  }
+                  alt=""
+                  loading="lazy"
+                  decoding="async"
+                  className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-[1.03] motion-reduce:transform-none motion-reduce:transition-none"
+                />
+                <div className="flex min-w-0 flex-col items-start p-7 max-[800px]:p-5">
+                  <p className="font-mono text-[10px] uppercase tracking-[0.12em] opacity-60">
+                    {guide.speciesName
+                      ? localizedText(guide.speciesName, locale)
+                      : ""}
+                    {guide.speciesName && guide.category ? " · " : ""}
+                    {localizedText(guide.category, locale) ||
+                      translations.guides.categoryFallback}
+                    {guide.readingTime ? ` · ${guide.readingTime}` : ""}
+                  </p>
+                  <h2 className="mt-5 mb-3 text-[clamp(25px,2.5vw,40px)] leading-[0.95] tracking-[-0.055em]">
+                    {localizedText(guide.title, locale)}
+                  </h2>
+                  <p className="mb-6 line-clamp-3 leading-[1.45]">
+                    {localizedText(guide.excerpt, locale)}
+                  </p>
+                  <span className="mt-auto inline-flex items-center gap-[14px] border-b border-gold pb-2 text-[10px] font-bold uppercase tracking-[0.15em] text-forest">
+                    {translations.guides.readGuide} <ArrowUpRight size={15} />
+                  </span>
+                </div>
+              </Link>
             </article>
           ))}
         </div>
@@ -283,11 +283,16 @@ export function GuideDetailPage({ guide }: { guide: Guide }) {
 
   return (
     <main className={`${pageShellClassName} pb-[90px]`}>
-      <header className="mx-auto flex max-w-[1240px] items-start justify-between">
-        <Link to="/guides" className={`${spacedTextLinkClassName} text-forest`}>
-          <ArrowLeft size={15} /> {translations.guides.backToGuides}
-        </Link>
-        <LocaleSwitcher />
+      <header className="sticky top-0 z-20 -mx-[5vw] bg-ivory/95 px-[5vw] py-3 backdrop-blur">
+        <div className="mx-auto flex max-w-[1240px] items-start justify-between">
+          <Link
+            to="/guides"
+            className={`${spacedTextLinkClassName} text-forest`}
+          >
+            <ArrowLeft size={15} /> {translations.guides.backToGuides}
+          </Link>
+          <LocaleSwitcher />
+        </div>
       </header>
       <article className="mx-auto mt-[130px] max-w-[820px]">
         <Eyebrow tone="dark">
