@@ -1,5 +1,4 @@
 import { Camera, Mail, Phone } from "lucide-react";
-import { Link } from "react-router-dom";
 import { FooterContactForm } from "@/components/contact/contact-form";
 import Eyebrow from "@/components/ui/eyebrow";
 import { footerLinksClassName } from "@/components/ui/styles";
@@ -13,7 +12,7 @@ export default function SiteFooter({ logoUrl }: { logoUrl?: string }) {
   const translations = getTranslations(locale);
   return (
     <footer id="contact" className="bg-ivory px-[5.5vw] pt-[90px] pb-[25px]">
-      <div className="grid min-h-[310px] grid-cols-[0.45fr_2fr_1fr_1fr] gap-[5vw] max-[700px]:min-h-0 max-[700px]:grid-cols-2 max-[700px]:gap-x-[25px] max-[700px]:gap-y-[40px] max-[700px]:pb-8">
+      <div className="grid min-h-[310px] grid-cols-[0.45fr_2fr_1fr] gap-[5vw] max-[700px]:min-h-0 max-[700px]:grid-cols-1 max-[700px]:gap-y-[40px] max-[700px]:pb-8">
         <a
           href="#start"
           className="flex items-start gap-[11px] text-[12px] font-bold leading-[0.92] tracking-[0.17em] max-[700px]:hidden"
@@ -30,14 +29,7 @@ export default function SiteFooter({ logoUrl }: { logoUrl?: string }) {
           </h2>
           <FooterContactForm />
         </div>
-        <div className={`${footerLinksClassName} max-[700px]:order-2 min-[701px]:order-4`}>
-          <span>{translations.footer.navigation}</span>
-          <a href="#philosophy">{translations.footer.breeding}</a>
-          <a href="#animals">{translations.footer.animals}</a>
-          <a href="#care">{translations.navigation.care}</a>
-          <Link to="/guides">{translations.footer.guides}</Link>
-        </div>
-        <div className={`${footerLinksClassName} max-[700px]:order-1 min-[701px]:order-3`}>
+        <div className={footerLinksClassName}>
           <span>{translations.footer.findUs}</span>
           <a href="tel:+48888163509">
             <Phone size={16} /> 888 163 509
