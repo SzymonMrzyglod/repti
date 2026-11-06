@@ -319,11 +319,16 @@ export default function AnimalDetail({ animal }: AnimalDetailProps) {
 
   return (
     <main className={`${pageShellClassName} pb-20 max-[800px]:pt-[18px] max-[800px]:pb-12`}>
-      <header className="mx-auto mb-16 flex max-w-[1240px] items-center justify-between max-[800px]:mb-9">
-        <Link to="/#animals" className={`${spacedTextLinkClassName} text-forest`}>
-          <ArrowLeft size={15} /> {translations.animal.backToCollection}
-        </Link>
-        <LocaleSwitcher />
+      <header className="sticky top-0 z-20 -mx-[5vw] mb-16 bg-ivory/85 px-[5vw] py-3 backdrop-blur max-[800px]:mb-9">
+        <div className="mx-auto flex max-w-[1240px] items-start justify-between">
+          <Link
+            to="/#animals"
+            className={`${spacedTextLinkClassName} text-forest`}
+          >
+            <ArrowLeft size={15} /> {translations.animal.backToCollection}
+          </Link>
+          <LocaleSwitcher />
+        </div>
       </header>
       <section className="mx-auto grid max-w-[1240px] grid-cols-[minmax(0,1fr)_minmax(360px,0.9fr)] items-center gap-[clamp(40px,7vw,120px)] max-[800px]:grid-cols-1 max-[800px]:gap-[34px]">
         <div

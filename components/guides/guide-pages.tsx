@@ -169,7 +169,7 @@ export function GuidesPage({ guides }: { guides: Guide[] }) {
 
   return (
     <main className={`${pageShellClassName} pb-[90px]`}>
-      <header className="sticky top-0 z-20 -mx-[5vw] bg-ivory/95 px-[5vw] py-3 backdrop-blur">
+      <header className="sticky top-0 z-20 -mx-[5vw] bg-ivory/85 px-[5vw] py-3 backdrop-blur">
         <div className="mx-auto flex max-w-[1240px] items-start justify-between">
           <Link to="/" className={`${spacedTextLinkClassName} text-forest`}>
             <ArrowLeft size={15} /> {translations.guides.backHome}
@@ -283,7 +283,7 @@ export function GuideDetailPage({ guide }: { guide: Guide }) {
 
   return (
     <main className={`${pageShellClassName} pb-[90px]`}>
-      <header className="sticky top-0 z-20 -mx-[5vw] bg-ivory/95 px-[5vw] py-3 backdrop-blur">
+      <header className="sticky top-0 z-20 -mx-[5vw] bg-ivory/85 px-[5vw] py-3 backdrop-blur">
         <div className="mx-auto flex max-w-[1240px] items-start justify-between">
           <Link
             to="/guides"

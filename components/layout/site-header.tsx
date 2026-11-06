@@ -57,7 +57,7 @@ export default function SiteHeader({
   return (
     <header className={`fixed inset-x-0 top-0 z-50 flex items-center justify-between gap-x-[clamp(24px,4vw,64px)] border-b px-[5.5vw] transition-[background-color,padding] duration-300 max-[900px]:px-[6vw] max-[700px]:gap-x-4 max-[700px]:px-[6vw] ${
       compact
-        ? "border-white/10 bg-forest/95 py-1.5 shadow-md backdrop-blur"
+        ? "border-white/10 bg-forest/85 py-1.5 shadow-md backdrop-blur"
         : "border-[rgba(245,241,229,0.2)] bg-transparent py-3"
     } motion-reduce:transition-none`}>
       <a
