@@ -17,16 +17,20 @@ export default defineConfig({
             S.documentTypeListItem("reptile").title("Reptiles"),
             S.documentTypeListItem("species").title("Species"),
             S.documentTypeListItem("guideCategory").title("Guide categories"),
-            S.documentTypeListItem("guide")
+            S.listItem()
               .title("Guides")
-              .child((documentId) =>
-                S.document()
-                  .schemaType("guide")
-                  .documentId(documentId)
-                  .views([
-                    S.view.form(),
-                    S.view.component(GuidePreview).title("Podgląd"),
-                  ]),
+              .child(
+                S.documentTypeList("guide")
+                  .title("Guides")
+                  .child((documentId) =>
+                    S.document()
+                      .schemaType("guide")
+                      .documentId(documentId)
+                      .views([
+                        S.view.form(),
+                        S.view.component(GuidePreview).title("Podgląd"),
+                      ]),
+                  ),
               ),
             S.listItem()
               .title("Site settings")

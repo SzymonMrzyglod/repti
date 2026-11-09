@@ -4,7 +4,8 @@ import {
   type PortableTextComponents,
 } from "@portabletext/react";
 import type { PortableTextBlock } from "@portabletext/types";
-import { useFormValue } from "sanity";
+import type { ComponentProps } from "react";
+import type { UserViewComponent } from "sanity/structure";
 import "./GuidePreview.css";
 
 type GuideImageBlock = {
@@ -18,6 +19,7 @@ type GuideImageBlock = {
 type GuideBodyBlock = PortableTextBlock | GuideImageBlock;
 type Locale = "pl" | "en";
 type RecordValue = Record<string, unknown>;
+type GuidePreviewProps = ComponentProps<UserViewComponent>;
 
 function isRecord(value: unknown): value is RecordValue {
   return typeof value === "object" && value !== null && !Array.isArray(value);
@@ -98,17 +100,18 @@ const previewComponents: PortableTextComponents<GuideBodyBlock> = {
   },
 };
 
-export default function GuidePreview() {
+export default function GuidePreview({ document }: GuidePreviewProps) {
   const [locale, setLocale] = useState<Locale>("pl");
-  const title = getText(useFormValue(["title"]), locale);
-  const excerptValue = useFormValue(["excerpt"]);
+  const displayedGuide = document.displayed;
+  const title = getText(displayedGuide.title, locale);
+  const excerptValue = displayedGuide.excerpt;
   const excerptContent = isRecord(excerptValue) ? excerptValue[locale] : undefined;
   const excerpt =
     typeof excerptContent === "string" ? excerptContent : undefined;
   const excerptBlocks = Array.isArray(excerptContent)
     ? excerptContent.filter(isGuideBodyBlock)
     : [];
-  const bodyValue = useFormValue([locale === "en" ? "bodyEn" : "body"]);
+  const bodyValue = displayedGuide[locale === "en" ? "bodyEn" : "body"];
   const body = Array.isArray(bodyValue) ? bodyValue.filter(isGuideBodyBlock) : [];
 
   return (
