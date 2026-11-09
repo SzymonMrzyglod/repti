@@ -45,6 +45,74 @@ const guideCategory = defineType({
   },
 });
 
+const guideBodyMembers = [
+  defineArrayMember({
+    type: "block",
+    styles: [
+      { title: "Paragraph", value: "normal" },
+      { title: "Heading 2", value: "h2" },
+      { title: "Heading 3", value: "h3" },
+      { title: "Heading 4", value: "h4" },
+      { title: "Quote", value: "blockquote" },
+    ],
+    lists: [
+      { title: "Bullet", value: "bullet" },
+      { title: "Numbered", value: "number" },
+    ],
+    marks: {
+      decorators: [
+        { title: "Bold", value: "strong" },
+        { title: "Italic", value: "em" },
+        { title: "Underline", value: "underline" },
+        { title: "Code", value: "code" },
+      ],
+      annotations: [
+        defineArrayMember({
+          type: "object",
+          name: "link",
+          title: "Link",
+          fields: [
+            defineField({
+              name: "href",
+              title: "URL",
+              type: "url",
+              validation: (rule) => rule.required(),
+            }),
+            defineField({
+              name: "openInNewTab",
+              title: "Open in new tab",
+              type: "boolean",
+              initialValue: false,
+            }),
+          ],
+        }),
+      ],
+    },
+  }),
+  defineArrayMember({
+    type: "image",
+    title: "Image",
+    options: { hotspot: true },
+    fields: [
+      defineField({ name: "alt", title: "Alt text", type: "string" }),
+      defineField({
+        name: "layout",
+        title: "Placement",
+        type: "string",
+        initialValue: "full",
+        options: {
+          layout: "radio",
+          list: [
+            { title: "Full width", value: "full" },
+            { title: "Half width, left", value: "left" },
+            { title: "Half width, right", value: "right" },
+          ],
+        },
+      }),
+    ],
+  }),
+];
+
 const reptile = defineType({
   name: "reptile",
   title: "Reptile",
@@ -132,59 +200,17 @@ const guide = defineType({
       name: "body",
       title: "Body",
       type: "array",
-      of: [
-        defineArrayMember({ type: "block" }),
-        defineArrayMember({
-          type: "image",
-          options: { hotspot: true },
-          fields: [
-            defineField({ name: "alt", title: "Alt text", type: "string" }),
-            defineField({
-              name: "layout",
-              title: "Placement",
-              type: "string",
-              initialValue: "full",
-              options: {
-                layout: "radio",
-                list: [
-                  { title: "Full width", value: "full" },
-                  { title: "Half width, left", value: "left" },
-                  { title: "Half width, right", value: "right" },
-                ],
-              },
-            }),
-          ],
-        }),
-      ],
+      description:
+        "Write and format the guide here. Add links from the text toolbar and insert images as blocks between paragraphs.",
+      of: guideBodyMembers,
     }),
     defineField({
       name: "bodyEn",
       title: "Body (English)",
       type: "array",
-      of: [
-        defineArrayMember({ type: "block" }),
-        defineArrayMember({
-          type: "image",
-          options: { hotspot: true },
-          fields: [
-            defineField({ name: "alt", title: "Alt text", type: "string" }),
-            defineField({
-              name: "layout",
-              title: "Placement",
-              type: "string",
-              initialValue: "full",
-              options: {
-                layout: "radio",
-                list: [
-                  { title: "Full width", value: "full" },
-                  { title: "Half width, left", value: "left" },
-                  { title: "Half width, right", value: "right" },
-                ],
-              },
-            }),
-          ],
-        }),
-      ],
+      description:
+        "Write and format the English guide here. Add links from the text toolbar and insert images as blocks between paragraphs.",
+      of: guideBodyMembers,
     }),
     defineField({ name: "image", title: "Image", type: "image" }),
     defineField({ name: "order", title: "Order", type: "number" }),
@@ -193,13 +219,12 @@ const guide = defineType({
     select: {
       title: "title.pl",
       subtitle: "categoryRef.name.pl",
-      legacyCategory: "category.pl",
       media: "image",
     },
-    prepare({ title, subtitle, legacyCategory, media }) {
+    prepare({ title, subtitle, media }) {
       return {
         title,
-        subtitle: subtitle || legacyCategory,
+        subtitle,
         media,
       };
     },

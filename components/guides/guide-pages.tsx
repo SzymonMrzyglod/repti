@@ -258,6 +258,8 @@ const portableTextComponents: PortableTextComponents<GuideBodyBlock> = {
     link: ({ children, value }) => (
       <a
         href={value?.href}
+        target={value?.openInNewTab ? "_blank" : undefined}
+        rel={value?.openInNewTab ? "noopener noreferrer" : undefined}
         className="text-forest underline decoration-gold underline-offset-4 hover:text-forest-2"
       >
         {children}
