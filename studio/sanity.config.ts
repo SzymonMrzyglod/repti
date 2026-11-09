@@ -15,6 +15,7 @@ export default defineConfig({
           .items([
             S.documentTypeListItem("reptile").title("Reptiles"),
             S.documentTypeListItem("species").title("Species"),
+            S.documentTypeListItem("guideCategory").title("Guide categories"),
             S.documentTypeListItem("guide").title("Guides"),
             S.listItem()
               .title("Site settings")

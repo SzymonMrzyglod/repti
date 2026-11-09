@@ -33,6 +33,18 @@ const species = defineType({
   },
 });
 
+const guideCategory = defineType({
+  name: "guideCategory",
+  title: "Guide category",
+  type: "document",
+  fields: [
+    defineField({ name: "name", title: "Name", type: "localizedString" }),
+  ],
+  preview: {
+    select: { title: "name.pl", subtitle: "name.en" },
+  },
+});
+
 const reptile = defineType({
   name: "reptile",
   title: "Reptile",
@@ -104,9 +116,10 @@ const guide = defineType({
     }),
     defineField({ name: "excerpt", title: "Excerpt", type: "localizedText" }),
     defineField({
-      name: "category",
+      name: "categoryRef",
       title: "Category",
-      type: "localizedString",
+      type: "reference",
+      to: [{ type: "guideCategory" }],
     }),
     defineField({
       name: "species",
@@ -177,7 +190,19 @@ const guide = defineType({
     defineField({ name: "order", title: "Order", type: "number" }),
   ],
   preview: {
-    select: { title: "title.pl", subtitle: "category.pl", media: "image" },
+    select: {
+      title: "title.pl",
+      subtitle: "categoryRef.name.pl",
+      legacyCategory: "category.pl",
+      media: "image",
+    },
+    prepare({ title, subtitle, legacyCategory, media }) {
+      return {
+        title,
+        subtitle: subtitle || legacyCategory,
+        media,
+      };
+    },
   },
 });
 
@@ -312,6 +337,7 @@ export const schemaTypes = [
   localizedString,
   localizedText,
   species,
+  guideCategory,
   reptile,
   guide,
   siteSettings,

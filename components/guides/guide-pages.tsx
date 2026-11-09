@@ -1,8 +1,15 @@
-import { useMemo, useState } from "react";
+import { useEffect, useId, useLayoutEffect, useMemo, useRef, useState } from "react";
 import { PortableText, type PortableTextComponents } from "@portabletext/react";
 import type { PortableTextBlock } from "@portabletext/types";
-import { ArrowLeft, ArrowUpRight } from "lucide-react";
-import { Link } from "react-router-dom";
+import {
+  ArrowLeft,
+  ArrowUpRight,
+  Check,
+  ChevronDown,
+  SlidersHorizontal,
+  X,
+} from "lucide-react";
+import { Link, useSearchParams } from "react-router-dom";
 import Eyebrow from "@/components/ui/eyebrow";
 import {
   pageShellClassName,
@@ -12,6 +19,10 @@ import LocaleSwitcher from "@/components/layout/locale-switcher";
 import { useLocale } from "@/lib/locale-context";
 import { localizedText, type Localized } from "@/lib/localized";
 import { getTranslations } from "@/lib/translations";
+import {
+  consumeGuidesListScrollRestore,
+  saveGuidesListScrollPosition,
+} from "@/lib/guides-view-state";
 
 type LocalizedText = Localized;
 type GuideImageBlock = {
@@ -27,6 +38,7 @@ export type Guide = {
   title?: LocalizedText;
   excerpt?: LocalizedText;
   category?: LocalizedText;
+  categoryId?: string;
   speciesId?: string;
   speciesName?: LocalizedText;
   readingTime?: string;
@@ -40,6 +52,153 @@ const fallbackImages = [
   "/images/guides/feeding.png",
   "/images/guides/homecoming.png",
 ];
+const guideFilterClassName =
+  "flex min-h-10 w-full items-center justify-between gap-3 bg-sand/70 px-3 py-2 text-left font-sans text-[13px] text-ink transition-colors duration-200 hover:bg-sand focus-visible:outline-2 focus-visible:outline-gold focus-visible:outline-offset-2 motion-reduce:transition-none";
+
+type GuideFilterOption = { id: string; label: string };
+
+function GuideFilterDropdown({
+  label,
+  value,
+  options,
+  onChange,
+  align = "left",
+}: {
+  label: string;
+  value: string;
+  options: GuideFilterOption[];
+  onChange: (value: string) => void;
+  align?: "left" | "right";
+}) {
+  const [open, setOpen] = useState(false);
+  const [activeIndex, setActiveIndex] = useState(0);
+  const rootRef = useRef<HTMLDivElement>(null);
+  const triggerRef = useRef<HTMLButtonElement>(null);
+  const listId = useId();
+  const selectedOption = options.find((option) => option.id === value);
+  const activeOption = options[activeIndex];
+
+  const openList = (index = options.findIndex((option) => option.id === value)) => {
+    setActiveIndex(Math.max(index, 0));
+    setOpen(true);
+  };
+
+  const selectOption = (option: GuideFilterOption) => {
+    onChange(option.id);
+    setOpen(false);
+    triggerRef.current?.focus();
+  };
+
+  useEffect(() => {
+    if (!open) return;
+
+    const handlePointerDown = (event: PointerEvent) => {
+      if (
+        event.target instanceof Node &&
+        !rootRef.current?.contains(event.target)
+      ) {
+        setOpen(false);
+      }
+    };
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === "Escape") {
+        setOpen(false);
+        triggerRef.current?.focus();
+      }
+    };
+
+    document.addEventListener("pointerdown", handlePointerDown);
+    document.addEventListener("keydown", handleKeyDown);
+    return () => {
+      document.removeEventListener("pointerdown", handlePointerDown);
+      document.removeEventListener("keydown", handleKeyDown);
+    };
+  }, [open]);
+
+  return (
+    <div ref={rootRef} className="relative w-[170px] max-[700px]:w-full">
+      <span className="mb-1.5 block font-mono text-[9px] uppercase tracking-[0.15em] text-muted">
+        {label}
+      </span>
+      <div>
+        <button
+          ref={triggerRef}
+          type="button"
+          className={guideFilterClassName}
+          aria-haspopup="listbox"
+          aria-expanded={open}
+          aria-controls={listId}
+          aria-activedescendant={open && activeOption ? `${listId}-${activeOption.id || "all"}` : undefined}
+          aria-label={`${label}: ${selectedOption?.label || options[0]?.label || ""}`}
+          onClick={() => (open ? setOpen(false) : openList())}
+          onKeyDown={(event) => {
+            if (event.key === "ArrowDown") {
+              event.preventDefault();
+              if (!open) openList();
+              else setActiveIndex((index) => (index + 1) % options.length);
+            } else if (event.key === "ArrowUp") {
+              event.preventDefault();
+              if (!open) openList();
+              else setActiveIndex((index) => (index - 1 + options.length) % options.length);
+            } else if (event.key === "Home" && open) {
+              event.preventDefault();
+              setActiveIndex(0);
+            } else if (event.key === "End" && open) {
+              event.preventDefault();
+              setActiveIndex(options.length - 1);
+            } else if ((event.key === "Enter" || event.key === " ") && open && activeOption) {
+              event.preventDefault();
+              selectOption(activeOption);
+            }
+          }}
+        >
+          <span className="truncate">
+            {selectedOption?.label || options[0]?.label}
+          </span>
+          <ChevronDown
+            aria-hidden="true"
+            className={`h-4 w-4 shrink-0 text-gold transition-transform duration-200 ${
+              open ? "rotate-180" : ""
+            } motion-reduce:transition-none`}
+          />
+        </button>
+        {open && (
+          <div
+            id={listId}
+            role="listbox"
+            aria-label={label}
+            className={`absolute top-full z-30 mt-2 max-h-60 w-max min-w-full max-w-[calc(100vw-40px)] overflow-y-auto border-t-2 border-gold bg-ivory py-1 shadow-xl ${
+              align === "right" ? "right-0" : "left-0"
+            }`}
+          >
+            {options.map((option, index) => (
+              <button
+                key={option.id}
+                id={`${listId}-${option.id || "all"}`}
+                type="button"
+                role="option"
+                aria-selected={value === option.id}
+                tabIndex={-1}
+                className={`flex w-full items-center justify-between gap-5 border-0 px-3 py-2.5 text-left text-[13px] transition-colors duration-150 hover:bg-sand focus-visible:bg-sand focus-visible:outline-none motion-reduce:transition-none ${
+                  index === activeIndex || value === option.id
+                    ? "bg-sand/70 text-forest"
+                    : "bg-transparent text-ink"
+                }`}
+                onMouseMove={() => setActiveIndex(index)}
+                onClick={() => selectOption(option)}
+              >
+                <span>{option.label}</span>
+                {value === option.id && (
+                  <Check aria-hidden="true" className="h-4 w-4 shrink-0 text-gold" />
+                )}
+              </button>
+            ))}
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
 
 const portableTextComponents: PortableTextComponents<GuideBodyBlock> = {
   block: {
@@ -145,9 +304,69 @@ const portableTextComponents: PortableTextComponents<GuideBodyBlock> = {
 export function GuidesPage({ guides }: { guides: Guide[] }) {
   const { locale } = useLocale();
   const translations = getTranslations(locale);
-  const [selectedSpeciesId, setSelectedSpeciesId] = useState<string | null>(
-    null,
+  const [searchParams, setSearchParams] = useSearchParams();
+  const selectedSpeciesId = searchParams.get("species");
+  const selectedCategoryId = searchParams.get("category");
+  const currentSearch = searchParams.toString();
+  const [filtersOpen, setFiltersOpen] = useState(() =>
+    window.matchMedia("(min-width: 701px)").matches,
   );
+  const filterPanelId = useId();
+  const activeFilterCount = Number(Boolean(selectedSpeciesId)) +
+    Number(Boolean(selectedCategoryId));
+
+  useEffect(() => {
+    const desktopQuery = window.matchMedia("(min-width: 701px)");
+    const updateDefaultState = (event: MediaQueryListEvent) =>
+      setFiltersOpen(event.matches);
+
+    desktopQuery.addEventListener("change", updateDefaultState);
+    return () => desktopQuery.removeEventListener("change", updateDefaultState);
+  }, []);
+
+  const updateFilter = (name: "species" | "category", value: string) => {
+    const nextSearchParams = new URLSearchParams(searchParams);
+    if (value) nextSearchParams.set(name, value);
+    else nextSearchParams.delete(name);
+    setSearchParams(nextSearchParams);
+  };
+  const resetFilters = () => {
+    const nextSearchParams = new URLSearchParams(searchParams);
+    nextSearchParams.delete("species");
+    nextSearchParams.delete("category");
+    setSearchParams(nextSearchParams);
+  };
+
+  useLayoutEffect(() => {
+    const scrollY = consumeGuidesListScrollRestore();
+    if (scrollY === null) return;
+
+    const root = document.documentElement;
+    const previousScrollBehavior = root.style.scrollBehavior;
+    root.style.scrollBehavior = "auto";
+    try {
+      window.scrollTo(0, scrollY);
+    } finally {
+      root.style.scrollBehavior = previousScrollBehavior;
+    }
+  }, []);
+
+  useEffect(() => {
+    let frame = 0;
+    const saveScrollPosition = () => {
+      cancelAnimationFrame(frame);
+      frame = requestAnimationFrame(() =>
+        saveGuidesListScrollPosition(window.scrollY),
+      );
+    };
+
+    window.addEventListener("scroll", saveScrollPosition, { passive: true });
+    return () => {
+      cancelAnimationFrame(frame);
+      window.removeEventListener("scroll", saveScrollPosition);
+    };
+  }, []);
+
   const speciesOptions = useMemo(() => {
     const speciesMap = new Map<string, LocalizedText>();
 
@@ -162,10 +381,25 @@ export function GuidesPage({ guides }: { guides: Guide[] }) {
       label: localizedText(name, locale),
     }));
   }, [guides, locale]);
-  const filteredGuides =
-    selectedSpeciesId === null
-      ? guides
-      : guides.filter((guide) => guide.speciesId === selectedSpeciesId);
+  const categoryOptions = useMemo(() => {
+    const categoryMap = new Map<string, LocalizedText>();
+
+    guides.forEach((guide) => {
+      if (guide.categoryId && guide.category) {
+        categoryMap.set(guide.categoryId, guide.category);
+      }
+    });
+
+    return Array.from(categoryMap, ([id, name]) => ({
+      id,
+      label: localizedText(name, locale),
+    }));
+  }, [guides, locale]);
+  const filteredGuides = guides.filter(
+    (guide) =>
+      (!selectedSpeciesId || guide.speciesId === selectedSpeciesId) &&
+      (!selectedCategoryId || guide.categoryId === selectedCategoryId),
+  );
 
   return (
     <main className={`${pageShellClassName} pb-[90px]`}>
@@ -197,37 +431,82 @@ export function GuidesPage({ guides }: { guides: Guide[] }) {
         aria-label={translations.guides.listLabel}
         className="mx-auto max-w-[1240px]"
       >
-        <div
-          aria-label={translations.guides.speciesFilterLabel}
-          className="mb-7 flex flex-wrap gap-x-6 gap-y-3 border-b border-outline pb-4"
-          role="group"
-        >
-          <button
-            type="button"
-            aria-pressed={selectedSpeciesId === null}
-            className={`border-0 bg-transparent p-0 text-[10px] uppercase tracking-[0.1em] transition-colors duration-200 hover:text-gold motion-reduce:transition-none ${selectedSpeciesId === null ? "text-gold" : "text-muted"}`}
-            onClick={() => setSelectedSpeciesId(null)}
-          >
-            {translations.guides.allGuides}
-          </button>
-          {speciesOptions.map((species) => (
+        <div className="mb-7 border-b border-outline pb-5">
+          <div className="mb-4 flex items-center justify-between">
             <button
-              key={species.id}
               type="button"
-              aria-pressed={selectedSpeciesId === species.id}
-              className={`border-0 bg-transparent p-0 text-[10px] uppercase tracking-[0.1em] transition-colors duration-200 hover:text-gold motion-reduce:transition-none ${selectedSpeciesId === species.id ? "text-gold" : "text-muted"}`}
-              onClick={() => setSelectedSpeciesId(species.id)}
+              className="inline-flex items-center gap-2 border-0 bg-transparent p-0 text-[10px] font-bold uppercase tracking-[0.12em] text-forest"
+              aria-expanded={filtersOpen}
+              aria-controls={filterPanelId}
+              onClick={() => setFiltersOpen((open) => !open)}
             >
-              {species.label}
+              <SlidersHorizontal aria-hidden="true" size={15} />
+              {translations.guides.filters}
+              <span
+                aria-hidden="true"
+                className={`inline-flex h-[18px] min-w-[18px] items-center justify-center rounded-full px-1 text-[9px] text-forest ${
+                  activeFilterCount > 0
+                    ? "bg-gold opacity-100"
+                    : "pointer-events-none opacity-0"
+                }`}
+              >
+                {activeFilterCount}
+              </span>
+              <ChevronDown
+                aria-hidden="true"
+                size={14}
+                className={`transition-transform duration-200 ${
+                  filtersOpen ? "rotate-180" : ""
+                } motion-reduce:transition-none`}
+              />
             </button>
-          ))}
+            {(selectedSpeciesId || selectedCategoryId) && (
+              <button
+                type="button"
+                className="inline-flex items-center gap-1 border-0 bg-transparent p-0 text-[9px] font-mono uppercase tracking-[0.1em] text-muted transition-colors hover:text-forest motion-reduce:transition-none"
+                onClick={resetFilters}
+              >
+                <X aria-hidden="true" size={13} className="text-gold" />
+                {translations.guides.resetFilters}
+              </button>
+            )}
+          </div>
+          <div
+            id={filterPanelId}
+            className={`hidden flex-wrap items-end gap-4 max-[700px]:grid-cols-2 ${
+              filtersOpen ? "max-[700px]:grid min-[701px]:flex" : ""
+            }`}
+          >
+            <GuideFilterDropdown
+              label={translations.guides.speciesFilterLabel}
+              value={selectedSpeciesId || ""}
+              options={[
+                { id: "", label: translations.guides.allSpecies },
+                ...speciesOptions,
+              ]}
+              onChange={(value) => updateFilter("species", value)}
+            />
+            <GuideFilterDropdown
+              label={translations.guides.categoryFilterLabel}
+              value={selectedCategoryId || ""}
+              align="right"
+              options={[
+                { id: "", label: translations.guides.allCategories },
+                ...categoryOptions,
+              ]}
+              onChange={(value) => updateFilter("category", value)}
+            />
+          </div>
         </div>
         <div className="grid grid-cols-2 gap-[22px] max-[800px]:grid-cols-1">
           {filteredGuides.map((guide, index) => (
             <article className="min-h-[260px]" key={guide._id}>
               <Link
-                to={`/guides/${guide._id}`}
+                to={`/guides/${guide._id}${currentSearch ? `?${currentSearch}` : ""}`}
                 className="group grid h-full min-h-[260px] grid-cols-[38%_1fr] bg-sand focus-visible:outline-2 focus-visible:outline-gold focus-visible:outline-offset-4 max-[800px]:grid-cols-[34%_1fr]"
+                onClick={() =>
+                  saveGuidesListScrollPosition(window.scrollY)
+                }
               >
                 <img
                   src={
@@ -279,6 +558,8 @@ export function GuidesPage({ guides }: { guides: Guide[] }) {
 export function GuideDetailPage({ guide }: { guide: Guide }) {
   const { locale } = useLocale();
   const translations = getTranslations(locale);
+  const [searchParams] = useSearchParams();
+  const currentSearch = searchParams.toString();
   const body = locale === "en" ? guide.bodyEn : guide.body;
 
   return (
@@ -286,7 +567,7 @@ export function GuideDetailPage({ guide }: { guide: Guide }) {
       <header className="sticky top-0 z-20 -mx-[5vw] bg-ivory/85 px-[5vw] py-3 backdrop-blur">
         <div className="mx-auto flex max-w-[1240px] items-start justify-between">
           <Link
-            to="/guides"
+            to={`/guides${currentSearch ? `?${currentSearch}` : ""}`}
             className={`${spacedTextLinkClassName} text-forest`}
           >
             <ArrowLeft size={15} /> {translations.guides.backToGuides}

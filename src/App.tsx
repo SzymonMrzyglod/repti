@@ -1,4 +1,10 @@
-import { useLayoutEffect, useState, useEffect, type ComponentProps } from "react";
+import {
+  useLayoutEffect,
+  useState,
+  useEffect,
+  useRef,
+  type ComponentProps,
+} from "react";
 import {
   Link,
   Route,
@@ -36,6 +42,10 @@ import {
 import { getTranslations } from "@/lib/translations";
 import { SITE_NAME, absoluteUrl, truncate } from "@/lib/seo";
 import { getHomeViewState } from "@/lib/home-view-state";
+import {
+  clearGuidesListScrollRestore,
+  requestGuidesListScrollRestore,
+} from "@/lib/guides-view-state";
 
 type SanityReptile = {
   _id: string;
@@ -443,9 +453,20 @@ function GuideRoute() {
 
 export default function App() {
   const { pathname } = useLocation();
+  const previousPathname = useRef(pathname);
 
   useLayoutEffect(() => {
+    const previousPath = previousPathname.current;
+    if (previousPath === pathname) return;
+    previousPathname.current = pathname;
+
+    if (pathname === "/guides" && previousPath.startsWith("/guides/")) {
+      requestGuidesListScrollRestore();
+      return;
+    }
+
     if (pathname !== "/guides" && !pathname.startsWith("/guides/")) return;
+    clearGuidesListScrollRestore();
 
     const root = document.documentElement;
     const previousScrollBehavior = root.style.scrollBehavior;
