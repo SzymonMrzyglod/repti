@@ -180,7 +180,7 @@ export default function ContactForm({
     <main className={`${pageShellClassName} pb-20 max-[760px]:pt-[18px] max-[760px]:pb-12`}>
       <header className="mx-auto flex max-w-[1240px] items-center justify-between">
         <Link
-          to={animal?._id ? `/animal/${animal._id}` : "/"}
+          to={animal?._id ? `/animal/${animal._id}/` : "/"}
           className={`${spacedTextLinkClassName} text-forest`}
         >
           <ArrowLeft size={15} />

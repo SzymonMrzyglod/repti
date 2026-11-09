@@ -20,7 +20,23 @@ const escapeHtml = (value) =>
 
 const escapeXml = (value) => escapeHtml(value).replace(/'/g, "&apos;");
 
-const pick = (value) => (value?.pl || value?.en || "").trim();
+const plainText = (value) => {
+  if (typeof value === "string") return value.trim();
+  if (!Array.isArray(value)) return "";
+
+  return value
+    .filter((block) => block?._type === "block" && Array.isArray(block.children))
+    .map((block) =>
+      block.children
+        .map((child) => (typeof child?.text === "string" ? child.text : ""))
+        .join(""),
+    )
+    .filter(Boolean)
+    .join(" ")
+    .trim();
+};
+
+const pick = (value) => plainText(value?.pl) || plainText(value?.en);
 
 const truncate = (text, max = 160) => {
   const clean = text.replace(/\s+/g, " ").trim();
@@ -116,20 +132,20 @@ export default function seoPlugin() {
 
       const urls = [
         { loc: `${SITE_URL}/`, lastmod: today, priority: "1.0" },
-        { loc: `${SITE_URL}/guides`, lastmod: today, priority: "0.7" },
+        { loc: `${SITE_URL}/guides/`, lastmod: today, priority: "0.7" },
       ];
 
       await writePage(outDir, "guides", withMeta(template, {
         title: `Poradniki o opiece nad gadami | ${SITE_NAME}`,
         description:
           "Poradniki hodowcy: terrarium, żywienie i pierwsze dni gekona orzęsionego oraz węża zbożowego w nowym domu.",
-        url: `${SITE_URL}/guides`,
+        url: `${SITE_URL}/guides/`,
       }));
 
       const contactPage = withMeta(template, {
         title: `Kontakt | ${SITE_NAME}`,
         description: "Skontaktuj się z hodowlą O ty gadzie!",
-        url: `${SITE_URL}/contact`,
+        url: `${SITE_URL}/contact/`,
       }).replace(
         /<meta name="robots" content="[^"]*"\s*\/?>/,
         '<meta name="robots" content="noindex, nofollow" />',
@@ -144,7 +160,7 @@ export default function seoPlugin() {
         const description =
           truncate(pick(reptile.description)) ||
           [name, morph, reptile.species].filter(Boolean).join(", ");
-        const url = `${SITE_URL}/${route}`;
+        const url = `${SITE_URL}/${route}/`;
 
         await writePage(outDir, route, withMeta(template, {
           title: `${title} | ${SITE_NAME}`,
@@ -158,7 +174,7 @@ export default function seoPlugin() {
       for (const guide of guides) {
         const route = `guides/${guide._id}`;
         const title = pick(guide.title) || SITE_NAME;
-        const url = `${SITE_URL}/${route}`;
+        const url = `${SITE_URL}/${route}/`;
 
         await writePage(outDir, route, withMeta(template, {
           title: `${title} | ${SITE_NAME}`,
@@ -182,11 +198,11 @@ ${urls
 
       const crawlLinks = [
         ...reptiles.map((reptile) => ({
-          href: `/animal/${reptile._id}`,
+          href: `/animal/${reptile._id}/`,
           label: [pick(reptile.name), pick(reptile.morph)].filter(Boolean).join(" — "),
         })),
         ...guides.map((guide) => ({
-          href: `/guides/${guide._id}`,
+          href: `/guides/${guide._id}/`,
           label: pick(guide.title),
         })),
       ].filter((link) => link.label);
@@ -196,7 +212,7 @@ ${urls
       <h1>${SITE_NAME} — hodowla gekonów orzęsionych i węży zbożowych</h1>
       <nav>
 ${crawlLinks.map((link) => `        <a href="${link.href}">${escapeHtml(link.label)}</a>`).join("\n")}
-        <a href="/guides">Poradniki</a>
+        <a href="/guides/">Poradniki</a>
       </nav>
     </noscript>`;
         const homePage = template.replace(

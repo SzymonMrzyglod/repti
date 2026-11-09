@@ -353,7 +353,7 @@ export default function HomePage({
               translations.home.careText,
             )}
           </p>
-          <Link to="/guides" className={outlineButtonClassName}>
+          <Link to="/guides/" className={outlineButtonClassName}>
             {translations.home.guidesLink} <ArrowUpRight size={16} />
           </Link>
         </div>

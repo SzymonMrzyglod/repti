@@ -397,7 +397,7 @@ export function GuidesPage({ guides }: { guides: Guide[] }) {
           {filteredGuides.map((guide, index) => (
             <article className="min-h-[260px]" key={guide._id}>
               <Link
-                to={`/guides/${guide._id}${currentSearch ? `?${currentSearch}` : ""}`}
+                to={`/guides/${guide._id}/${currentSearch ? `?${currentSearch}` : ""}`}
                 className="group grid h-full min-h-[260px] grid-cols-[38%_1fr] bg-sand focus-visible:outline-2 focus-visible:outline-gold focus-visible:outline-offset-4 max-[800px]:grid-cols-[34%_1fr]"
                 onClick={() =>
                   saveGuidesListScrollPosition(window.scrollY)
@@ -462,7 +462,7 @@ export function GuideDetailPage({ guide }: { guide: Guide }) {
       <header className="sticky top-0 z-20 -mx-[5vw] bg-ivory/85 px-[5vw] py-3 backdrop-blur">
         <div className="mx-auto flex max-w-[1240px] items-start justify-between">
           <Link
-            to={`/guides${currentSearch ? `?${currentSearch}` : ""}`}
+            to={`/guides/${currentSearch ? `?${currentSearch}` : ""}`}
             className={`${spacedTextLinkClassName} text-forest`}
           >
             <ArrowLeft size={15} /> {translations.guides.backToGuides}

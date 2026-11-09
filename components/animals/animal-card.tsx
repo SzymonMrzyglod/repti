@@ -22,7 +22,7 @@ export default function AnimalCard({ animal }: { animal: Animal }) {
 
   return (
     <Link
-      to={`/animal/${encodeURIComponent(animal.id)}`}
+      to={`/animal/${encodeURIComponent(animal.id)}/`}
       className="group"
     >
       <div className="relative aspect-[4/3] overflow-hidden bg-[#293a2e]">

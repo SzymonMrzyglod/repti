@@ -77,7 +77,7 @@ export default function SiteHeader({
         <a href="#care" onClick={onNavigate}>
           {translations.navigation.care}
         </a>
-        <Link to="/guides" onClick={onNavigate}>
+        <Link to="/guides/" onClick={onNavigate}>
           {translations.navigation.guides}
         </Link>
         <a href="#contact" onClick={onNavigate}>

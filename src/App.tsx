@@ -229,7 +229,7 @@ function GuidesRoute() {
             ? "Poradniki hodowcy: terrarium, żywienie i pierwsze dni gekona orzęsionego oraz węża zbożowego w nowym domu."
             : "Breeder's guides: terrarium setup, feeding and the first days of a crested gecko or corn snake in a new home."
         }
-        path="/guides"
+        path="/guides/"
       />
       <GuidesPage guides={guides} />
     </>
@@ -289,7 +289,7 @@ function AnimalRoute() {
       <Seo
         title={`${animalTitle || SITE_NAME} | ${SITE_NAME}`}
         description={animalDescription}
-        path={`/animal/${animal._id}`}
+        path={`/animal/${animal._id}/`}
         image={animal.imageUrl}
         type="product"
         jsonLd={{
@@ -303,7 +303,7 @@ function AnimalRoute() {
           ...(Number.isFinite(numericPrice) && {
             offers: {
               "@type": "Offer",
-              url: absoluteUrl(`/animal/${animal._id}`),
+              url: absoluteUrl(`/animal/${animal._id}/`),
               price: numericPrice,
               priceCurrency: "PLN",
               availability:
@@ -380,7 +380,7 @@ function ContactRoute() {
       <Seo
         title={`${getTranslations(locale).contact.title} | ${SITE_NAME}`}
         description={getTranslations(locale).contact.introduction}
-        path="/contact"
+        path="/contact/"
         noindex
       />
       <ContactForm animal={animal ?? undefined} />
@@ -433,7 +433,7 @@ function GuideRoute() {
       <Seo
         title={`${guideTitle} | ${SITE_NAME}`}
         description={guideDescription}
-        path={`/guides/${guide._id}`}
+        path={`/guides/${guide._id}/`}
         image={guide.imageUrl}
         type="article"
         jsonLd={{
@@ -442,7 +442,7 @@ function GuideRoute() {
           headline: guideTitle,
           description: guideDescription,
           image: guide.imageUrl,
-          mainEntityOfPage: absoluteUrl(`/guides/${guide._id}`),
+          mainEntityOfPage: absoluteUrl(`/guides/${guide._id}/`),
           author: { "@type": "Organization", name: SITE_NAME },
           publisher: { "@type": "Organization", name: SITE_NAME },
         }}
@@ -461,12 +461,14 @@ export default function App() {
     if (previousPath === pathname) return;
     previousPathname.current = pathname;
 
-    if (pathname === "/guides" && previousPath.startsWith("/guides/")) {
+    const currentRoute = pathname.replace(/\/+$/, "");
+    const previousRoute = previousPath.replace(/\/+$/, "");
+    if (currentRoute === "/guides" && previousRoute.startsWith("/guides/")) {
       requestGuidesListScrollRestore();
       return;
     }
 
-    if (pathname !== "/guides" && !pathname.startsWith("/guides/")) return;
+    if (currentRoute !== "/guides" && !currentRoute.startsWith("/guides/")) return;
     clearGuidesListScrollRestore();
 
     const root = document.documentElement;
