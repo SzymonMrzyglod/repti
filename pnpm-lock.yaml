@@ -60,6 +60,12 @@ importers:
 
   studio:
     dependencies:
+      '@portabletext/react':
+        specifier: ^8.0.1
+        version: 8.0.1
+      '@portabletext/types':
+        specifier: ^4.0.2
+        version: 4.0.2
       react:
         specifier: 19.2.4
         version: 19.2.4

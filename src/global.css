@@ -122,3 +122,8 @@
 .guide-body .guide-image-right + * + * {
   clear: both;
 }
+
+.rich-text .guide-image-left + * + *,
+.rich-text .guide-image-right + * + * {
+  clear: both;
+}

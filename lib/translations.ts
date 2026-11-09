@@ -15,7 +15,6 @@ const translations = {
       chooseLanguage: "Wybierz język",
       openMenu: "Otwórz menu",
       closeMenu: "Zamknij menu",
-      askAvailability: "Zapytaj o dostępność",
       homePage: "strona główna",
     },
     notFound: {
@@ -160,7 +159,6 @@ const translations = {
       chooseLanguage: "Choose language",
       openMenu: "Open menu",
       closeMenu: "Close menu",
-      askAvailability: "Ask about availability",
       homePage: "home",
     },
     notFound: {

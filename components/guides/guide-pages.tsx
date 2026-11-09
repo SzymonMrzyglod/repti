@@ -1,6 +1,4 @@
 import { useEffect, useId, useLayoutEffect, useMemo, useRef, useState } from "react";
-import { PortableText, type PortableTextComponents } from "@portabletext/react";
-import type { PortableTextBlock } from "@portabletext/types";
 import {
   ArrowLeft,
   ArrowUpRight,
@@ -16,6 +14,12 @@ import {
   spacedTextLinkClassName,
 } from "@/components/ui/styles";
 import LocaleSwitcher from "@/components/layout/locale-switcher";
+import {
+  LocalizedRichText,
+  localizedRichTextPlainText,
+  RichText,
+  type LocalizedRichTextValue,
+} from "@/components/ui/rich-text";
 import { useLocale } from "@/lib/locale-context";
 import { localizedText, type Localized } from "@/lib/localized";
 import { getTranslations } from "@/lib/translations";
@@ -25,26 +29,18 @@ import {
 } from "@/lib/guides-view-state";
 
 type LocalizedText = Localized;
-type GuideImageBlock = {
-  _key: string;
-  _type: "image";
-  assetUrl?: string;
-  alt?: string;
-  layout?: "full" | "left" | "right";
-};
-type GuideBodyBlock = PortableTextBlock | GuideImageBlock;
 export type Guide = {
   _id: string;
   title?: LocalizedText;
-  excerpt?: LocalizedText;
+  excerpt?: LocalizedRichTextValue;
   category?: LocalizedText;
   categoryId?: string;
   speciesId?: string;
   speciesName?: LocalizedText;
   readingTime?: string;
   imageUrl?: string;
-  body?: GuideBodyBlock[];
-  bodyEn?: GuideBodyBlock[];
+  body?: unknown;
+  bodyEn?: unknown;
 };
 
 const fallbackImages = [
@@ -199,109 +195,6 @@ function GuideFilterDropdown({
     </div>
   );
 }
-
-const portableTextComponents: PortableTextComponents<GuideBodyBlock> = {
-  block: {
-    h1: ({ children }) => (
-      <h2 className="mt-10 mb-5 font-display text-4xl leading-tight tracking-tight">
-        {children}
-      </h2>
-    ),
-    h2: ({ children }) => (
-      <h3 className="mt-9 mb-4 font-display text-3xl leading-tight tracking-tight">
-        {children}
-      </h3>
-    ),
-    h3: ({ children }) => (
-      <h4 className="mt-8 mb-4 font-display text-2xl leading-tight tracking-tight">
-        {children}
-      </h4>
-    ),
-    h4: ({ children }) => (
-      <h5 className="mt-7 mb-3 font-display text-xl leading-tight">
-        {children}
-      </h5>
-    ),
-    h5: ({ children }) => (
-      <h6 className="mt-6 mb-3 text-lg font-semibold leading-tight">
-        {children}
-      </h6>
-    ),
-    h6: ({ children }) => (
-      <h6 className="mt-6 mb-3 text-base font-semibold leading-tight">
-        {children}
-      </h6>
-    ),
-    blockquote: ({ children }) => (
-      <blockquote className="my-8 border-l-4 border-gold pl-6 italic text-muted">
-        {children}
-      </blockquote>
-    ),
-  },
-  list: {
-    bullet: ({ children }) => (
-      <ul className="my-6 list-disc space-y-2 pl-8 marker:text-gold">
-        {children}
-      </ul>
-    ),
-    number: ({ children }) => (
-      <ol className="my-6 list-decimal space-y-2 pl-8 marker:font-semibold marker:text-gold">
-        {children}
-      </ol>
-    ),
-  },
-  listItem: {
-    bullet: ({ children }) => <li className="pl-1">{children}</li>,
-    number: ({ children }) => <li className="pl-1">{children}</li>,
-  },
-  marks: {
-    link: ({ children, value }) => (
-      <a
-        href={value?.href}
-        target={value?.openInNewTab ? "_blank" : undefined}
-        rel={value?.openInNewTab ? "noopener noreferrer" : undefined}
-        className="text-forest underline decoration-gold underline-offset-4 hover:text-forest-2"
-      >
-        {children}
-      </a>
-    ),
-    code: ({ children }) => (
-      <code className="rounded bg-sand px-1.5 py-0.5 font-mono text-[0.9em]">
-        {children}
-      </code>
-    ),
-  },
-  types: {
-    image: ({ value }) => {
-      if (!value.assetUrl) return null;
-
-      return (
-        <figure
-          className={
-            value.layout === "left"
-              ? "guide-image-left float-left mt-2 mb-[18px] mr-8 w-[calc(50%-18px)] max-[640px]:float-none max-[640px]:mx-auto max-[640px]:my-7 max-[640px]:w-[95%] max-[640px]:max-w-[480px]"
-              : value.layout === "right"
-                ? "guide-image-right float-right mt-2 mb-[18px] ml-8 w-[calc(50%-18px)] max-[640px]:float-none max-[640px]:mx-auto max-[640px]:my-7 max-[640px]:w-[95%] max-[640px]:max-w-[480px]"
-                : "clear-both my-9"
-          }
-        >
-          <img
-            src={value.assetUrl}
-            alt={value.alt || ""}
-            loading="lazy"
-            decoding="async"
-            className="block max-h-[680px] w-full object-cover"
-          />
-          {value.alt && (
-            <figcaption className="mt-[10px] text-[12px] leading-[1.5] text-muted">
-              {value.alt}
-            </figcaption>
-          )}
-        </figure>
-      );
-    },
-  },
-};
 
 export function GuidesPage({ guides }: { guides: Guide[] }) {
   const { locale } = useLocale();
@@ -534,7 +427,7 @@ export function GuidesPage({ guides }: { guides: Guide[] }) {
                     {localizedText(guide.title, locale)}
                   </h2>
                   <p className="mb-6 line-clamp-3 leading-[1.45]">
-                    {localizedText(guide.excerpt, locale)}
+                    {localizedRichTextPlainText(guide.excerpt, locale)}
                   </p>
                   <span className="mt-auto inline-flex items-center gap-[14px] border-b border-gold pb-2 text-[10px] font-bold uppercase tracking-[0.15em] text-forest">
                     {translations.guides.readGuide} <ArrowUpRight size={15} />
@@ -585,17 +478,15 @@ export function GuideDetailPage({ guide }: { guide: Guide }) {
         <h1 className="mt-[22px] mb-7 text-[clamp(58px,9vw,132px)] leading-[0.84] tracking-[-0.06em]">
           {localizedText(guide.title, locale)}
         </h1>
-        <p className="max-w-[680px] text-[18px] leading-[1.75]">
-          {localizedText(guide.excerpt, locale)}
-        </p>
-        {body && (
-          <div className="guide-body flow-root max-w-[680px] text-[18px] leading-[1.75] [&_p]:mb-6 [&_p]:leading-[1.75]">
-            <PortableText<GuideBodyBlock>
-              value={body}
-              components={portableTextComponents}
-            />
-          </div>
-        )}
+        <LocalizedRichText
+          value={guide.excerpt}
+          locale={locale}
+          className="max-w-[680px] text-[18px] leading-[1.75] [&_p]:mb-6 [&_p]:leading-[1.75]"
+        />
+        <RichText
+          value={body}
+          className="guide-body max-w-[680px] text-[18px] leading-[1.75] [&_p]:mb-6 [&_p]:leading-[1.75]"
+        />
       </article>
     </main>
   );

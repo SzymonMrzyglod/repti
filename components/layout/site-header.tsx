@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import { ArrowUpRight, Menu, X } from "lucide-react";
+import { Menu, X } from "lucide-react";
 import { Link } from "react-router-dom";
 import BrandMark from "./brand-mark";
 import LocaleSwitcher from "./locale-switcher";
@@ -67,7 +67,7 @@ export default function SiteHeader({
       >
         <BrandMark logoUrl={logoUrl} compact={compact} />
       </a>
-      <nav id="mobile-navigation" ref={navRef} className={`ml-auto mr-[5vw] flex gap-[clamp(20px,3.2vw,54px)] text-[11px] uppercase tracking-[0.15em] text-[#d7d5c9] [&_a]:transition-colors [&_a]:duration-200 [&_a:hover]:text-gold [&_a]:motion-reduce:transition-none max-[900px]:mr-[2vw] max-[900px]:gap-[18px] max-[700px]:absolute max-[700px]:right-0 max-[700px]:top-[calc(100%+1px)] max-[700px]:left-0 max-[700px]:m-0 max-[700px]:flex-col max-[700px]:overflow-hidden max-[700px]:bg-forest max-[700px]:px-[6vw] max-[700px]:[transition:max-height_200ms_ease,opacity_200ms_ease,padding_200ms_ease,visibility_200ms_ease] max-[700px]:motion-reduce:transition-none ${mobileMenuStateClassName}`}>
+      <nav id="mobile-navigation" ref={navRef} className={`ml-auto mr-[5vw] flex gap-[clamp(20px,3.2vw,54px)] text-[11px] uppercase tracking-[0.15em] text-[#d7d5c9] [&_a]:transition-colors [&_a]:duration-200 [&_a:hover]:text-gold [&_a]:motion-reduce:transition-none max-[900px]:mr-[2vw] max-[900px]:gap-[18px] max-[700px]:absolute max-[700px]:right-0 max-[700px]:top-[calc(100%+1px)] max-[700px]:left-0 max-[700px]:m-0 max-[700px]:flex-col max-[700px]:overflow-hidden max-[700px]:bg-forest/[0.98] max-[700px]:backdrop-blur max-[700px]:px-[6vw] max-[700px]:[transition:max-height_200ms_ease,opacity_200ms_ease,padding_200ms_ease,visibility_200ms_ease] max-[700px]:motion-reduce:transition-none ${mobileMenuStateClassName}`}>
         <a href="#philosophy" onClick={onNavigate}>
           {translations.navigation.philosophy}
         </a>
@@ -84,12 +84,7 @@ export default function SiteHeader({
           {translations.navigation.contact}
         </a>
       </nav>
-      <div className="flex items-center gap-[22px]">
-        <LocaleSwitcher variant="dark" />
-        <a href="#contact" className="flex items-center gap-[9px] text-[10px] uppercase tracking-[0.12em] text-[#dad6c8] max-[700px]:hidden">
-          {translations.navigation.askAvailability} <ArrowUpRight size={15} />
-        </a>
-      </div>
+      <LocaleSwitcher variant="dark" />
       <button
         ref={menuButtonRef}
         type="button"

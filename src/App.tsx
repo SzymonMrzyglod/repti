@@ -42,6 +42,7 @@ import {
 import { getTranslations } from "@/lib/translations";
 import { SITE_NAME, absoluteUrl, truncate } from "@/lib/seo";
 import { getHomeViewState } from "@/lib/home-view-state";
+import { localizedRichTextPlainText } from "@/components/ui/rich-text";
 import {
   clearGuidesListScrollRestore,
   requestGuidesListScrollRestore,
@@ -424,7 +425,7 @@ function GuideRoute() {
 
   const guideTitle = localizedText(guide.title, locale);
   const guideDescription =
-    truncate(localizedText(guide.excerpt, locale)) ||
+    truncate(localizedRichTextPlainText(guide.excerpt, locale)) ||
     (locale === "pl" ? "Poradnik hodowcy gadów." : "Reptile breeder's guide.");
 
   return (

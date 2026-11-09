@@ -1,4 +1,5 @@
 import { defineArrayMember, defineField, defineType } from "sanity";
+import LocalizedRichTextInput from "../LocalizedRichTextInput";
 
 const localizedString = defineType({
   name: "localizedString",
@@ -113,6 +114,27 @@ const guideBodyMembers = [
   }),
 ];
 
+const localizedRichText = defineType({
+  name: "localizedRichText",
+  title: "Localized rich text",
+  type: "object",
+  components: { input: LocalizedRichTextInput },
+  fields: [
+    defineField({
+      name: "pl",
+      title: "Polish",
+      type: "array",
+      of: guideBodyMembers,
+    }),
+    defineField({
+      name: "en",
+      title: "English",
+      type: "array",
+      of: guideBodyMembers,
+    }),
+  ],
+});
+
 const reptile = defineType({
   name: "reptile",
   title: "Reptile",
@@ -182,7 +204,7 @@ const guide = defineType({
       type: "slug",
       options: { source: "title.pl" },
     }),
-    defineField({ name: "excerpt", title: "Excerpt", type: "localizedText" }),
+    defineField({ name: "excerpt", title: "Excerpt", type: "localizedRichText" }),
     defineField({
       name: "categoryRef",
       title: "Category",
@@ -361,6 +383,7 @@ const siteSettings = defineType({
 export const schemaTypes = [
   localizedString,
   localizedText,
+  localizedRichText,
   species,
   guideCategory,
   reptile,
