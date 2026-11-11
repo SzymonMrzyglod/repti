@@ -133,7 +133,7 @@ export default function ContactForm({
       />
       <div className={`flex flex-wrap items-center justify-between gap-x-5 gap-y-3 ${embedded ? "col-span-2 max-[560px]:col-span-1" : ""}`}>
         <a
-          className="inline-flex w-fit items-center gap-[9px] text-[14px] min-[701px]:text-[16px] text-forest underline decoration-1 underline-offset-[3px] hover:text-[#536e5c]"
+          className="inline-flex w-fit items-center gap-[9px] whitespace-nowrap text-[14px] min-[701px]:text-[16px] text-forest underline decoration-1 underline-offset-[3px] hover:text-[#536e5c]"
           href="https://www.facebook.com/profile.php?id=61596249982202"
           target="_blank"
           rel="noopener noreferrer"
@@ -142,10 +142,10 @@ export default function ContactForm({
         </a>
         <button
           type="submit"
-          className={`${embedded ? compactButtonClassName : standardButtonClassName} disabled:cursor-wait disabled:opacity-[0.65]`}
+          className={`${embedded ? compactButtonClassName : standardButtonClassName} whitespace-nowrap disabled:cursor-wait disabled:opacity-[0.65]`}
           disabled={result === "sending"}
         >
-          {result === "sending" ? content.sending : content.submit}
+          {result === "sending" ? content.sending : (<><span className="max-[700px]:hidden">{content.submit}</span><span className="min-[701px]:hidden">{content.submitShort}</span></>)}
           <ArrowUpRight size={16} />
         </button>
       </div>

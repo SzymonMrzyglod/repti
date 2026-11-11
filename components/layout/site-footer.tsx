@@ -38,7 +38,7 @@ export default function SiteFooter({ logoUrl }: { logoUrl?: string }) {
             <Mail size={16} /> o.ty.gadzie@gmail.com
           </a>
           <a
-            href="https://www.instagram.com/o_ty_gadzie/"
+            href="https://www.instagram.com/o.ty.gadzie/"
             target="_blank"
             rel="noopener noreferrer"
           >
