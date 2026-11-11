@@ -1,5 +1,5 @@
 import { useEffect, useLayoutEffect, useMemo, useState } from "react";
-import { ArrowDown, ArrowUpRight } from "lucide-react";
+import { ArrowDown, ArrowRight, ArrowUpRight } from "lucide-react";
 import { Link } from "react-router-dom";
 import AnimalCard from "@/components/animals/animal-card";
 import SiteFooter from "@/components/layout/site-footer";
@@ -146,7 +146,7 @@ export default function HomePage({
   return (
     <main className="overflow-x-clip">
       <section
-        className="relative min-h-[max(720px,100svh)] bg-[#16251c] text-[#f3f1e8] max-[700px]:h-auto max-[700px]:min-h-0"
+        className="relative flex min-h-[max(600px,100svh)] flex-col justify-center bg-[#16251c] text-[#f3f1e8] max-[700px]:justify-center"
         id="start"
       >
         <img
@@ -164,7 +164,7 @@ export default function HomePage({
           brandName={settings?.brandName}
           logoUrl={settings?.logoUrl}
         />
-        <div className="relative z-[1] max-w-[720px] px-[5.5vw] pt-[calc(18vh+104px)] pb-[110px] min-[1000px]:max-[1999px]:pt-[calc(10vh+104px)] min-[2000px]:max-w-[1120px] min-[2000px]:pt-[224px] max-[900px]:max-w-[650px] max-[700px]:px-[6vw] max-[700px]:pt-[222px] max-[700px]:pb-[96px]">
+        <div className="relative z-[1] max-w-[720px] px-[5.5vw] pt-[150px] max-[700px]:flex max-[700px]:flex-1 max-[700px]:flex-col max-[700px]:justify-center pb-[60px] min-[2000px]:max-w-[1120px] max-[900px]:max-w-[650px] max-[700px]:px-[6vw] max-[700px]:pt-[110px] max-[700px]:pb-[48px]">
           <Eyebrow>
             {localizedText(
               settings?.heroEyebrow,
@@ -172,50 +172,47 @@ export default function HomePage({
               translations.home.heroEyebrow,
             )}
           </Eyebrow>
-          <h1 className="mt-[28px] mb-[30px] max-w-[8ch] text-[clamp(58px,7vw,104px)] leading-[0.86] tracking-[-0.07em] max-[700px]:text-[clamp(58px,18vw,96px)] min-[2000px]:text-[clamp(84px,7vw,132px)]">
+          <h1 className="mt-[28px] mb-[30px] max-w-[8ch] max-[700px]:mt-[40px] max-[700px]:mb-[40px] text-[clamp(58px,7vw,104px)] leading-[0.86] tracking-[-0.07em] max-[700px]:text-[clamp(64px,21vw,110px)] min-[2000px]:text-[clamp(84px,7vw,132px)]">
             {localizedText(
               settings?.heroTitle,
               locale,
               translations.home.heroTitle,
             )}
           </h1>
-          <p className="mb-[35px] max-w-[48ch] text-[14px] min-[701px]:text-[16px] leading-[1.7] text-[#d0cec3]">
+          <p className="mb-[35px] max-w-[48ch] max-[700px]:mb-[48px] text-[14px] min-[701px]:text-[16px] leading-[1.7] text-[#d0cec3]">
             {localizedText(
               settings?.heroText,
               locale,
               translations.home.heroText,
             )}
           </p>
-          <a href="#animals" className={outlineButtonClassName}>
-            {translations.home.discoverAnimals} <ArrowDown size={16} />
-          </a>
+          <div className="flex items-center justify-between gap-4">
+            <a href="#animals" className={outlineButtonClassName}>
+              <span className="max-[700px]:hidden">{translations.home.discoverAnimals}</span>
+              <span className="min-[701px]:hidden">{translations.home.discoverAnimalsShort}</span>
+              <ArrowRight size={16} />
+            </a>
+            <a
+              href="#philosophy"
+              aria-label={translations.home.scrollToDiscover}
+              className="inline-flex text-ivory/35 transition-colors duration-300 hover:text-gold min-[701px]:hidden motion-reduce:transition-none"
+            >
+              <ArrowDown size={18} strokeWidth={1.5} className="motion-safe:animate-bounce" aria-hidden="true" />
+            </a>
+          </div>
         </div>
-        <div className="pointer-events-none absolute right-[5.5vw] bottom-7 left-[5.5vw] flex items-center justify-between text-[12px] tracking-[0.18em] text-[#b8b8aa] max-[700px]:static max-[700px]:mt-[-58px] max-[700px]:px-[6vw] max-[700px]:pb-5 min-[2000px]:bottom-5 min-[2000px]:mx-auto min-[2000px]:max-w-[1680px]">
+        <div className="pointer-events-none absolute right-[5.5vw] bottom-[60px] left-[5.5vw] flex items-end justify-end min-[2000px]:mx-auto min-[2000px]:max-w-[1680px] max-[700px]:hidden">
           <a
             href="#philosophy"
-            className="pointer-events-auto inline-flex items-center gap-2 border-b border-gold/50 pb-[7px] text-[12px] font-medium tracking-[0.2em] text-ivory drop-shadow-[0_1px_5px_rgba(0,0,0,0.8)] transition-[color,border-color] duration-300 hover:border-gold hover:text-gold motion-reduce:transition-none max-[700px]:hidden"
+            aria-label={translations.home.scrollToDiscover}
+            className="pointer-events-auto group inline-flex flex-col items-center gap-2 text-ivory/35 drop-shadow-[0_1px_5px_rgba(0,0,0,0.8)] transition-colors duration-300 hover:text-gold motion-reduce:transition-none"
           >
-            {translations.home.scrollToDiscover}
-            <ArrowDown
+            <span
               aria-hidden="true"
-              size={14}
-              className="animate-bounce motion-reduce:animate-none"
+              className="h-8 w-px bg-gradient-to-b from-transparent to-current"
             />
+            <ArrowDown size={16} strokeWidth={1.5} className="motion-safe:animate-bounce" aria-hidden="true" />
           </a>
-          <a
-            href="#philosophy"
-            className="pointer-events-auto hidden items-center gap-2 border-b border-gold/50 pb-[7px] text-[12px] font-medium tracking-[0.2em] text-ivory transition-[color,border-color] duration-300 hover:border-gold hover:text-gold motion-reduce:transition-none max-[700px]:inline-flex"
-          >
-            {translations.home.scrollToDiscover}
-            <ArrowDown
-              aria-hidden="true"
-              size={14}
-              className="animate-bounce motion-reduce:animate-none"
-            />
-          </a>
-          <span className="inline-flex shrink-0 max-[700px]:hidden">
-            <SectionNumber number="01" />
-          </span>
         </div>
       </section>
 

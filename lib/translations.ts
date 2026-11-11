@@ -30,6 +30,7 @@ const translations = {
       heroText:
         "Hodujemy z szacunkiem. Tworzymy świadomie. Poznaj nasze wyjątkowe gady.",
       discoverAnimals: "Poznaj naszych podopiecznych",
+      discoverAnimalsShort: "Poznaj podopiecznych",
       scrollToDiscover: "PRZEWIŃ, ABY ODKRYĆ",
       historyEyebrow: "NASZA HISTORIA",
       historyTitle: "Więcej niż hodowla.",
@@ -174,6 +175,7 @@ const translations = {
       heroText:
         "We breed with care and purpose. Meet the remarkable reptiles in our collection.",
       discoverAnimals: "Meet our animals",
+      discoverAnimalsShort: "Meet our animals",
       scrollToDiscover: "SCROLL TO DISCOVER",
       historyEyebrow: "OUR STORY",
       historyTitle: "More than breeding.",

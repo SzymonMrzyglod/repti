@@ -402,7 +402,7 @@ export function GuidesPage({ guides }: { guides: Guide[] }) {
                   className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-[1.03] motion-reduce:transform-none motion-reduce:transition-none"
                 />
                 <div className="flex min-w-0 flex-col items-start p-7 max-[800px]:p-5">
-                  <p className="font-mono text-[12px] uppercase tracking-[0.12em] opacity-60">
+                  <p className="font-mono text-[11px] min-[701px]:text-[12px] uppercase tracking-[0.06em] min-[701px]:tracking-[0.12em] opacity-60">
                     {guide.speciesName
                       ? localizedText(guide.speciesName, locale)
                       : ""}
@@ -414,7 +414,7 @@ export function GuidesPage({ guides }: { guides: Guide[] }) {
                   <h2 className="mt-5 mb-3 text-[clamp(22px,1.9vw,30px)] leading-[1] tracking-[-0.04em]">
                     {localizedText(guide.title, locale)}
                   </h2>
-                  <p className="mb-6 line-clamp-3 leading-[1.45]">
+                  <p className="mb-6 line-clamp-3 text-[14px] min-[701px]:text-[16px] leading-[1.45]">
                     {localizedRichTextPlainText(guide.excerpt, locale)}
                   </p>
                   <span className="mt-auto inline-flex items-center gap-[14px] border-b border-gold pb-2 text-[12px] font-bold uppercase tracking-[0.15em] text-forest">
