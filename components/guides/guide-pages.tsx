@@ -411,7 +411,7 @@ export function GuidesPage({ guides }: { guides: Guide[] }) {
                       translations.guides.categoryFallback}
                     {guide.readingTime ? ` · ${guide.readingTime}` : ""}
                   </p>
-                  <h2 className="mt-5 mb-3 text-[clamp(25px,2.5vw,40px)] leading-[0.95] tracking-[-0.055em]">
+                  <h2 className="mt-5 mb-3 text-[clamp(22px,1.9vw,30px)] leading-[1] tracking-[-0.04em]">
                     {localizedText(guide.title, locale)}
                   </h2>
                   <p className="mb-6 line-clamp-3 leading-[1.45]">

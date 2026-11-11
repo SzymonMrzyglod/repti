@@ -227,8 +227,8 @@ export default function HomePage({
             translations.home.historyEyebrow,
           )}
         </Eyebrow>
-        <div className="mt-[44px] mb-[85px] ml-[7vw] grid max-w-[1000px] grid-cols-2 gap-[7vw] max-[700px]:mt-[35px] max-[700px]:mb-[65px] max-[700px]:ml-0 max-[700px]:grid-cols-1 max-[700px]:gap-[35px]">
-          <h2 className="m-0 text-[clamp(50px,6vw,82px)] leading-[0.95] tracking-[-0.055em] text-forest">
+        <div className="mt-[44px] mb-[85px] flex max-w-[1100px] items-start justify-between gap-[7vw] max-[700px]:mt-[35px] max-[700px]:mb-[65px] max-[700px]:flex-col max-[700px]:gap-[35px]">
+          <h2 className="m-0 max-w-[8em] text-balance text-[clamp(50px,6vw,82px)] leading-[0.95] tracking-[-0.055em] text-forest">
             {localizedText(
               settings?.historyTitle,
               locale,
@@ -261,7 +261,7 @@ export default function HomePage({
       </section>
 
       <section className="relative bg-forest px-[5.5vw] pt-[115px] pb-[85px] text-ivory max-[700px]:px-[6vw] max-[700px]:py-20" id="animals">
-        <div className="mb-[68px] flex items-end justify-between gap-x-[clamp(32px,6vw,88px)] max-[700px]:mb-[45px] max-[700px]:block">
+        <div className="mb-[68px] flex max-w-[1100px] items-end justify-between gap-x-[clamp(32px,6vw,88px)] max-[700px]:mb-[45px] max-[700px]:block">
           <div>
             <Eyebrow>
               {localizedText(
@@ -270,7 +270,7 @@ export default function HomePage({
                 translations.home.collectionEyebrow,
               )}
             </Eyebrow>
-            <h2 className="mt-7 mb-0 text-[clamp(50px,6vw,82px)] leading-[0.95] tracking-[-0.055em]">
+            <h2 className="mt-7 mb-0 max-w-[8em] text-balance text-[clamp(50px,6vw,82px)] leading-[0.95] tracking-[-0.055em]">
               {localizedText(
                 settings?.collectionTitle,
                 locale,
@@ -331,7 +331,7 @@ export default function HomePage({
       </section>
 
       <section className="relative flex min-h-[580px] items-center bg-[linear-gradient(90deg,rgba(15,34,24,0.94),rgba(15,34,24,0.7)),url('/images/hero-gecko.webp')] bg-cover bg-[center_49%] text-ivory" id="care">
-        <div className="max-w-[680px] px-[11vw] py-20 max-[700px]:px-[7vw]">
+        <div className="max-w-[820px] px-[11vw] py-20 max-[700px]:px-[7vw]">
           <Eyebrow>
             {localizedText(
               settings?.careEyebrow,
@@ -339,14 +339,14 @@ export default function HomePage({
               translations.home.careEyebrow,
             )}
           </Eyebrow>
-          <h2 className="my-7 text-[clamp(50px,6vw,82px)] leading-[0.95] tracking-[-0.055em]">
+          <h2 className="my-7 max-w-[8em] text-balance text-[clamp(50px,6vw,82px)] leading-[0.95] tracking-[-0.055em]">
             {localizedText(
               settings?.careTitle,
               locale,
               translations.home.careTitle,
             )}
           </h2>
-          <p className="mb-[30px] max-w-[350px] text-[14px] min-[701px]:text-[16px] leading-[1.75] text-[#b8c0b2]">
+          <p className="mb-[30px] max-w-[350px] text-[14px] min-[701px]:max-w-[560px] min-[701px]:text-[16px] leading-[1.75] text-[#b8c0b2]">
             {localizedText(
               settings?.careText,
               locale,
