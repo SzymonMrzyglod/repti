@@ -82,7 +82,7 @@ export default function SiteFooter({ logoUrl }: { logoUrl?: string }) {
           </a>
         </div>
       </div>
-      <div className="flex justify-between border-t border-[#d5d5ca] pt-[17px] text-[8px] tracking-[0.15em] text-[#999b90] max-[700px]:flex-wrap max-[700px]:gap-3 max-[700px]:leading-[1.4]">
+      <div className="flex justify-between border-t border-[#d5d5ca] pt-[17px] text-[9px] min-[701px]:text-[12px] tracking-[0.15em] text-[#999b90] max-[700px]:flex-wrap max-[700px]:gap-3 max-[700px]:leading-[1.4]">
         <span>© {currentYear} O TY GADZIE</span>
         <span>{translations.footer.location}</span>
         <span>{translations.footer.tagline}</span>

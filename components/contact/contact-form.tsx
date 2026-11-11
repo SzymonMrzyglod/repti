@@ -1,4 +1,4 @@
-﻿import { useEffect, useRef, useState, type FormEvent } from "react";
+import { useEffect, useRef, useState, type FormEvent } from "react";
 import { createPortal } from "react-dom";
 import { ArrowLeft, ArrowUpRight, Check, MessageCircle, X } from "lucide-react";
 import { Link } from "react-router-dom";
@@ -7,6 +7,7 @@ import {
   compactButtonClassName,
   formFieldClassName,
   pageShellClassName,
+  spacedBackLinkClassName,
   spacedTextLinkClassName,
   standardButtonClassName,
 } from "@/components/ui/styles";
@@ -48,7 +49,7 @@ export default function ContactForm({
   const animalName = localized(animal?.name, locale);
   const species =
     animal?.latinName || animal?.speciesLatinName || animal?.species || "—";
-  const formLabelClassName = `grid ${embedded ? "gap-[7px] text-[12px]" : "gap-[9px] text-[13px]"}`;
+  const formLabelClassName = `grid ${embedded ? "gap-[7px] text-[14px] min-[701px]:text-[16px]" : "gap-[9px] text-[14px] min-[701px]:text-[16px]"}`;
 
   async function onSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -99,14 +100,6 @@ export default function ContactForm({
     </div>
   ) : (
     <form className={`grid border-t border-ink/20 pt-6 ${embedded ? "grid-cols-2 gap-3 border-t-0 pt-0 max-[560px]:grid-cols-1" : "gap-[22px]"}`} onSubmit={onSubmit}>
-      <a
-        className={`inline-flex w-fit items-center gap-[9px] text-[12px] text-forest underline decoration-1 underline-offset-[3px] hover:text-[#536e5c] ${embedded ? "order-3 col-span-2 max-[560px]:col-span-1" : ""}`}
-        href="https://www.facebook.com/profile.php?id=61596249982202"
-        target="_blank"
-        rel="noopener noreferrer"
-      >
-        <MessageCircle size={17} /> {content.messenger}
-      </a>
       <label className={formLabelClassName}>
         <span>{content.name}</span>
         <input autoComplete="name" name="name" required className={formFieldClassName} />
@@ -138,17 +131,27 @@ export default function ContactForm({
         tabIndex={-1}
         autoComplete="off"
       />
-      <button
-        type="submit"
-        className={`${embedded ? `${compactButtonClassName} order-2 col-span-2 max-[560px]:col-span-1` : standardButtonClassName} disabled:cursor-wait disabled:opacity-[0.65]`}
-        disabled={result === "sending"}
-      >
-        {result === "sending" ? content.sending : content.submit}
-        <ArrowUpRight size={16} />
-      </button>
+      <div className={`flex flex-wrap items-center justify-between gap-x-5 gap-y-3 ${embedded ? "col-span-2 max-[560px]:col-span-1" : ""}`}>
+        <a
+          className="inline-flex w-fit items-center gap-[9px] text-[14px] min-[701px]:text-[16px] text-forest underline decoration-1 underline-offset-[3px] hover:text-[#536e5c]"
+          href="https://www.facebook.com/profile.php?id=61596249982202"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          <MessageCircle size={17} /> {content.messenger}
+        </a>
+        <button
+          type="submit"
+          className={`${embedded ? compactButtonClassName : standardButtonClassName} disabled:cursor-wait disabled:opacity-[0.65]`}
+          disabled={result === "sending"}
+        >
+          {result === "sending" ? content.sending : content.submit}
+          <ArrowUpRight size={16} />
+        </button>
+      </div>
       {result === "error" && (
         <p
-          className={`m-0 leading-[1.5] text-error ${embedded ? "order-4 col-span-2 max-[560px]:col-span-1" : ""}`}
+          className={`m-0 leading-[1.5] text-error           ${embedded ? "col-span-2 max-[560px]:col-span-1" : ""}`}
           role="alert"
           aria-live="polite"
         >
@@ -165,9 +168,9 @@ export default function ContactForm({
           <aside className="grid grid-cols-[120px_minmax(0,1fr)] items-center gap-[18px] bg-sand p-4 max-[760px]:grid-cols-[76px_minmax(0,1fr)] max-[760px]:gap-3 max-[760px]:p-3">
             {animal.imageUrl && <img src={animal.imageUrl} alt={animalName} className="block aspect-square w-[120px] object-cover max-[760px]:w-[76px]" />}
             <div>
-              <p className="mb-0 font-mono text-[10px] uppercase tracking-[0.12em] opacity-65">{content.selectedAnimal}</p>
+              <p className="mb-0 font-mono text-[12px] uppercase tracking-[0.12em] opacity-65">{content.selectedAnimal}</p>
               <h3 className="mt-2 mb-1 font-display text-[28px] leading-none max-[760px]:text-[23px]">{animalName}</h3>
-              <p className="mb-0 font-mono text-[12px]">{species}</p>
+              <p className="mb-0 font-sans text-[14px] min-[701px]:text-[16px]">{species}</p>
             </div>
           </aside>
         )}
@@ -181,7 +184,7 @@ export default function ContactForm({
       <header className="mx-auto flex max-w-[1240px] items-center justify-between">
         <Link
           to={animal?._id ? `/animal/${animal._id}/` : "/"}
-          className={`${spacedTextLinkClassName} text-forest`}
+          className={`${spacedBackLinkClassName} text-forest`}
         >
           <ArrowLeft size={15} />
           {animal ? content.backToAnimal : content.backToCollection}
@@ -200,20 +203,20 @@ export default function ContactForm({
           {animal && (
             <aside className="bg-sand p-6 max-[760px]:p-[18px]">
               {animal.imageUrl && <img src={animal.imageUrl} alt={animalName} className="mb-6 block aspect-[4/3] w-full object-cover" />}
-              <p className="mb-0 font-mono text-[10px] uppercase tracking-[0.12em] opacity-65">{content.selectedAnimal}</p>
+              <p className="mb-0 font-mono text-[12px] uppercase tracking-[0.12em] opacity-65">{content.selectedAnimal}</p>
               <h2 className="mt-[14px] mb-2 text-[38px] leading-none tracking-[-0.055em]">{animalName}</h2>
-              <p className="mb-0 font-mono text-[12px]">{species}</p>
+              <p className="mb-0 font-sans text-[14px] min-[701px]:text-[16px]">{species}</p>
               <dl className="mt-6 grid grid-cols-2 gap-4 border-t border-ink/20 pt-[18px]">
                 <div className="min-w-0">
-                  <dt className="mb-2 font-mono text-[10px] uppercase tracking-[0.12em] opacity-65">{content.morph}</dt>
+                  <dt className="mb-2 font-mono text-[12px] uppercase tracking-[0.12em] opacity-65">{content.morph}</dt>
                   <dd className="m-0 [overflow-wrap:anywhere]">{localized(animal.morph, locale)}</dd>
                 </div>
                 <div className="min-w-0">
-                  <dt className="mb-2 font-mono text-[10px] uppercase tracking-[0.12em] opacity-65">{content.sex}</dt>
+                  <dt className="mb-2 font-mono text-[12px] uppercase tracking-[0.12em] opacity-65">{content.sex}</dt>
                   <dd className="m-0 [overflow-wrap:anywhere]">{localized(animal.sex, locale)}</dd>
                 </div>
                 <div className="min-w-0">
-                  <dt className="mb-2 font-mono text-[10px] uppercase tracking-[0.12em] opacity-65">{content.weight}</dt>
+                  <dt className="mb-2 font-mono text-[12px] uppercase tracking-[0.12em] opacity-65">{content.weight}</dt>
                   <dd className="m-0 [overflow-wrap:anywhere]">{animal.weight || "—"}</dd>
                 </div>
               </dl>
@@ -302,7 +305,7 @@ export function ContactFormModal({
           </div>
           <h2 id="contact-modal-title" className="mt-3 mb-2 text-[clamp(36px,5vw,50px)] leading-[0.95] tracking-[-0.055em]">{content.title}</h2>
           {animal && (
-            <p className="mb-2 font-mono text-[12px]">
+            <p className="mb-2 font-sans text-[14px] min-[701px]:text-[16px]">
               {animalName} ·{" "}
               {animal.latinName || animal.speciesLatinName || animal.species}
             </p>

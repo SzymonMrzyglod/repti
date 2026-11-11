@@ -2,6 +2,8 @@ import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
 import { BrowserRouter } from "react-router-dom";
 import App from "./App";
+import "@fontsource-variable/lora";
+import "@fontsource-variable/source-sans-3";
 import "./global.css";
 import { clearHomeViewState } from "@/lib/home-view-state";
 import { LocaleProvider } from "@/lib/locale-context";

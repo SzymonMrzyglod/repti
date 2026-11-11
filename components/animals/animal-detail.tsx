@@ -1,20 +1,17 @@
 import { useEffect, useRef, useState } from "react";
-import { Link } from "react-router-dom";
 import {
-  ArrowLeft,
   ArrowUpRight,
   ChevronLeft,
   ChevronRight,
   X,
   ZoomIn,
 } from "lucide-react";
-import LocaleSwitcher from "@/components/layout/locale-switcher";
+import PageHeader from "@/components/layout/page-header";
 import { ContactFormModal } from "@/components/contact/contact-form";
 import Eyebrow from "@/components/ui/eyebrow";
 import {
-  outlineButtonClassName,
+  textLinkClassName,
   pageShellClassName,
-  spacedTextLinkClassName,
 } from "@/components/ui/styles";
 import { useLocale } from "@/lib/locale-context";
 import { localizedText, type Localized } from "@/lib/localized";
@@ -319,17 +316,11 @@ export default function AnimalDetail({ animal }: AnimalDetailProps) {
 
   return (
     <main className={`${pageShellClassName} pb-20 max-[800px]:pt-[18px] max-[800px]:pb-12`}>
-      <header className="sticky top-0 z-20 -mx-[5vw] mb-16 bg-ivory/85 px-[5vw] py-3 backdrop-blur max-[800px]:mb-9">
-        <div className="mx-auto flex max-w-[1240px] items-start justify-between">
-          <Link
-            to="/#animals"
-            className={`${spacedTextLinkClassName} text-forest`}
-          >
-            <ArrowLeft size={15} /> {translations.animal.backToCollection}
-          </Link>
-          <LocaleSwitcher />
-        </div>
-      </header>
+      <PageHeader
+        backTo="/#animals"
+        backLabel={translations.animal.backToCollection}
+        className="mb-16 max-[800px]:mb-9"
+      />
       <section className="mx-auto grid max-w-[1240px] grid-cols-[minmax(0,1fr)_minmax(360px,0.9fr)] items-center gap-[clamp(40px,7vw,120px)] max-[800px]:grid-cols-1 max-[800px]:gap-[34px]">
         <div
           className="relative aspect-[4/3] touch-pan-y overflow-hidden bg-[#26352a]"
@@ -352,8 +343,8 @@ export default function AnimalDetail({ animal }: AnimalDetailProps) {
                 fetchPriority="high"
                 decoding="async"
               />
-              <span className="pointer-events-none               absolute top-3 right-3 inline-flex items-center gap-1.5 rounded-full border border-[rgba(255,255,255,0.6)] bg-[rgba(15,31,22,0.65)] px-2.5 py-1.5 text-[9px] font-bold uppercase tracking-[0.1em] text-white transition-colors group-hover:bg-[rgba(15,31,22,0.9)]">
-                              <ZoomIn size={13} aria-hidden="true" />
+              <span className="pointer-events-none absolute top-3 right-3 inline-flex items-center gap-2 rounded-full border border-white/30 bg-forest/45 px-4 py-[9px] text-[12px] font-medium uppercase tracking-[0.18em] text-ivory backdrop-blur-sm transition-[color,background-color,border-color] duration-300 group-hover:border-gold/70 group-hover:bg-forest/70 group-hover:text-gold motion-reduce:transition-none">
+                <ZoomIn size={14} aria-hidden="true" />
                 {translations.animal.enlargePhoto}
               </span>
             </button>
@@ -378,7 +369,7 @@ export default function AnimalDetail({ animal }: AnimalDetailProps) {
               >
                                 <ChevronRight size={16} />
               </button>
-              <div className="absolute right-4 bottom-4 left-4 flex items-center justify-between font-mono text-[10px] text-white [text-shadow:0_1px_5px_rgba(0,0,0,0.7)]">
+              <div className="absolute right-4 bottom-4 left-4 flex items-center justify-between font-mono text-[12px] text-white [text-shadow:0_1px_5px_rgba(0,0,0,0.7)]">
                 <span aria-live="polite">
                   {currentImageIndex + 1} {translations.animal.photoOf}{" "}
                   {images.length}
@@ -406,7 +397,7 @@ export default function AnimalDetail({ animal }: AnimalDetailProps) {
         <div>
           <Eyebrow tone="dark">{translations.animal.collectionSpecimen}</Eyebrow>
           <h1 className="mt-5 mb-3 text-[clamp(56px,7vw,120px)] leading-[0.84] tracking-[-0.06em] max-[800px]:text-[clamp(54px,18vw,90px)]">{animalName}</h1>
-          <p className="font-mono text-[12px] uppercase tracking-[0.12em] opacity-70">
+          <p className="font-sans text-[14px] min-[701px]:text-[16px] uppercase tracking-[0.12em] opacity-70">
             {animal.latinName || animal.speciesLatinName || animal.species}
           </p>
           <p className="my-[30px] max-w-[500px] text-[18px] leading-[1.6]">
@@ -418,31 +409,31 @@ export default function AnimalDetail({ animal }: AnimalDetailProps) {
           </p>
           <div className="my-8 grid grid-cols-2 border-t border-ink/20">
             <div className="border-b border-ink/20 py-[18px] pr-3">
-              <small className="mb-[9px] block font-mono text-[10px] leading-none tracking-[0.14em] opacity-60">{translations.animal.morph}</small>
+              <small className="mb-[9px] block font-mono text-[12px] leading-none tracking-[0.14em] opacity-60">{translations.animal.morph}</small>
               <strong className="text-[16px] font-medium">{text(animal.morph, locale, "—")}</strong>
             </div>
             <div className="border-b border-ink/20 py-[18px] pr-3">
-              <small className="mb-[9px] block font-mono text-[10px] leading-none tracking-[0.14em] opacity-60">{translations.animal.sex}</small>
+              <small className="mb-[9px] block font-mono text-[12px] leading-none tracking-[0.14em] opacity-60">{translations.animal.sex}</small>
               <strong className="text-[16px] font-medium">{text(animal.sex, locale, "—")}</strong>
             </div>
             <div className="border-b border-ink/20 py-[18px] pr-3">
-              <small className="mb-[9px] block font-mono text-[10px] leading-none tracking-[0.14em] opacity-60">{translations.animal.weight}</small>
+              <small className="mb-[9px] block font-mono text-[12px] leading-none tracking-[0.14em] opacity-60">{translations.animal.weight}</small>
               <strong className="text-[16px] font-medium">{animal.weight || "—"}</strong>
             </div>
             <div className="border-b border-ink/20 py-[18px] pr-3">
-              <small className="mb-[9px] block font-mono text-[10px] leading-none tracking-[0.14em] opacity-60">{translations.animal.status}</small>
+              <small className="mb-[9px] block font-mono text-[12px] leading-none tracking-[0.14em] opacity-60">{translations.animal.status}</small>
               <strong className="text-[16px] font-medium">{translations.animal[status]}</strong>
             </div>
             {animal.price && (
               <div className="col-span-2 border-b border-ink/20 py-[18px] pr-3">
-                <small className="mb-[9px] block font-mono text-[10px] leading-none tracking-[0.14em] opacity-60">{translations.animal.price}</small>
+                <small className="mb-[9px] block font-mono text-[12px] leading-none tracking-[0.14em] opacity-60">{translations.animal.price}</small>
                 <strong className="text-[16px] font-medium">{animal.price}</strong>
               </div>
             )}
           </div>
           <button
             type="button"
-            className={outlineButtonClassName}
+            className={`${textLinkClassName} w-fit cursor-pointer border-x-0 border-t-0 bg-transparent text-forest`}
             onClick={() => setContactOpen(true)}
           >
             {translations.animal.askAboutAnimal} <ArrowUpRight size={16} />
@@ -483,7 +474,7 @@ export default function AnimalDetail({ animal }: AnimalDetailProps) {
           {pinchHintVisible && (
             <span
               role="status"
-              className="pointer-events-none absolute top-5 left-1/2 inline-flex -translate-x-1/2 items-center gap-2 rounded-full border border-[rgba(255,255,255,0.5)] bg-[rgba(15,31,22,0.8)]               px-3 py-1.5 text-[10px] whitespace-nowrap text-white"
+              className="pointer-events-none absolute top-5 left-1/2 inline-flex -translate-x-1/2 items-center gap-2 rounded-full border border-[rgba(255,255,255,0.5)] bg-[rgba(15,31,22,0.8)]               px-3 py-1.5 text-[12px] whitespace-nowrap text-white"
             >
                             <ZoomIn size={14} aria-hidden="true" />
               {translations.animal.pinchHint}
@@ -527,7 +518,7 @@ export default function AnimalDetail({ animal }: AnimalDetailProps) {
               </button>
               <span
                 aria-live="polite"
-                className="absolute bottom-5 left-1/2 -translate-x-1/2 font-mono text-[11px] text-white [text-shadow:0_1px_5px_rgba(0,0,0,0.7)]"
+                className="absolute bottom-5 left-1/2 -translate-x-1/2 font-mono text-[12px] text-white [text-shadow:0_1px_5px_rgba(0,0,0,0.7)]"
               >
                 {currentImageIndex + 1} {translations.animal.photoOf}{" "}
                 {images.length}

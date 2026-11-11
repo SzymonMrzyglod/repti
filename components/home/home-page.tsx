@@ -66,7 +66,7 @@ function SectionNumber({
 }) {
   return (
     <span
-      className={`font-mono text-[9px] tracking-[0.18em] ${
+      className={`font-mono text-[12px] tracking-[0.18em] ${
         tone === "dark" ? "text-muted" : "text-[#e9e4d7]"
       }`}
     >
@@ -179,7 +179,7 @@ export default function HomePage({
               translations.home.heroTitle,
             )}
           </h1>
-          <p className="mb-[35px] max-w-[48ch] text-[14px] leading-[1.7] text-[#d0cec3]">
+          <p className="mb-[35px] max-w-[48ch] text-[14px] min-[701px]:text-[16px] leading-[1.7] text-[#d0cec3]">
             {localizedText(
               settings?.heroText,
               locale,
@@ -190,10 +190,10 @@ export default function HomePage({
             {translations.home.discoverAnimals} <ArrowDown size={16} />
           </a>
         </div>
-        <div className="pointer-events-none absolute right-[5.5vw] bottom-7 left-[5.5vw] flex items-center justify-between text-[9px] tracking-[0.18em] text-[#b8b8aa] max-[700px]:static max-[700px]:mt-[-58px] max-[700px]:px-[6vw] max-[700px]:pb-5 min-[2000px]:bottom-5 min-[2000px]:mx-auto min-[2000px]:max-w-[1680px]">
+        <div className="pointer-events-none absolute right-[5.5vw] bottom-7 left-[5.5vw] flex items-center justify-between text-[12px] tracking-[0.18em] text-[#b8b8aa] max-[700px]:static max-[700px]:mt-[-58px] max-[700px]:px-[6vw] max-[700px]:pb-5 min-[2000px]:bottom-5 min-[2000px]:mx-auto min-[2000px]:max-w-[1680px]">
           <a
             href="#philosophy"
-            className="pointer-events-auto inline-flex items-center gap-2 border-b border-gold/70 pb-2 text-[10px] font-bold tracking-[0.15em] text-ivory drop-shadow-[0_1px_5px_rgba(0,0,0,0.8)] transition-colors hover:text-gold motion-reduce:transition-none max-[700px]:hidden"
+            className="pointer-events-auto inline-flex items-center gap-2 border-b border-gold/50 pb-[7px] text-[12px] font-medium tracking-[0.2em] text-ivory drop-shadow-[0_1px_5px_rgba(0,0,0,0.8)] transition-[color,border-color] duration-300 hover:border-gold hover:text-gold motion-reduce:transition-none max-[700px]:hidden"
           >
             {translations.home.scrollToDiscover}
             <ArrowDown
@@ -204,7 +204,7 @@ export default function HomePage({
           </a>
           <a
             href="#philosophy"
-            className="pointer-events-auto hidden items-center gap-2 border-b border-gold/70 pb-2 text-[10px] font-bold tracking-[0.15em] text-ivory transition-colors hover:text-gold motion-reduce:transition-none max-[700px]:inline-flex"
+            className="pointer-events-auto hidden items-center gap-2 border-b border-gold/50 pb-[7px] text-[12px] font-medium tracking-[0.2em] text-ivory transition-[color,border-color] duration-300 hover:border-gold hover:text-gold motion-reduce:transition-none max-[700px]:inline-flex"
           >
             {translations.home.scrollToDiscover}
             <ArrowDown
@@ -235,7 +235,7 @@ export default function HomePage({
               translations.home.historyTitle,
             )}
           </h2>
-          <div className="max-w-[390px] pt-[11px] text-[13px] leading-[1.8] text-[#73766d]">
+          <div className="max-w-[390px] pt-[11px] text-[14px] min-[701px]:text-[16px] leading-[1.8] text-[#73766d]">
             <p className="mb-[23px] font-display text-[21px] leading-[1.25] text-ink">
               {localizedText(
                 settings?.historyLead,
@@ -278,7 +278,7 @@ export default function HomePage({
               )}
             </h2>
           </div>
-          <p className="mb-1 max-w-[430px] text-[12px] leading-[1.7] text-[#a7afa0] max-[700px]:mt-[25px]">
+          <p className="mb-1 max-w-[430px] text-[14px] min-[701px]:text-[16px] leading-[1.7] text-[#a7afa0] max-[700px]:mt-[25px]">
             {localizedText(
               settings?.collectionNote,
               locale,
@@ -292,7 +292,7 @@ export default function HomePage({
               <button
                 key={option.value}
                 type="button"
-                className={`border-0 bg-transparent p-0 text-[10px] uppercase tracking-[0.1em] text-[#89978a] transition-colors duration-200 hover:text-gold motion-reduce:transition-none max-[700px]:text-[8px] ${filter === option.value ? "text-gold" : ""}`}
+                className={`border-0 bg-transparent p-0 text-[12px] uppercase tracking-[0.1em] text-[#89978a] transition-colors duration-200 hover:text-gold motion-reduce:transition-none ${filter === option.value ? "text-gold" : ""}`}
                 onClick={() => {
                   setFilter(option.value);
                 }}
@@ -307,7 +307,7 @@ export default function HomePage({
             <AnimalCard animal={animal} key={animal.id} />
           ))}
         </div>
-        <div className="mt-[55px] flex items-center justify-between text-[10px] text-[#819184]">
+        <div className="mt-[55px] flex items-center justify-between text-[12px] text-[#819184]">
           <span>
             {String(
               Math.min(visibleAnimals.length, filteredAnimals.length),
@@ -346,7 +346,7 @@ export default function HomePage({
               translations.home.careTitle,
             )}
           </h2>
-          <p className="mb-[30px] max-w-[350px] text-[13px] leading-[1.75] text-[#b8c0b2]">
+          <p className="mb-[30px] max-w-[350px] text-[14px] min-[701px]:text-[16px] leading-[1.75] text-[#b8c0b2]">
             {localizedText(
               settings?.careText,
               locale,

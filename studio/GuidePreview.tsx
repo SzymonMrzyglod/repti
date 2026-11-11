@@ -6,6 +6,8 @@ import {
 import type { PortableTextBlock } from "@portabletext/types";
 import type { ComponentProps } from "react";
 import type { UserViewComponent } from "sanity/structure";
+import "@fontsource-variable/lora";
+import "@fontsource-variable/source-sans-3";
 import "./GuidePreview.css";
 
 type GuideImageBlock = {

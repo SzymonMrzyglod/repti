@@ -8,7 +8,7 @@ type EyebrowProps = {
 export default function Eyebrow({ children, tone = "light" }: EyebrowProps) {
   return (
     <p
-      className={`mb-0 flex items-center gap-3 text-[10px] font-bold tracking-[0.22em] ${
+      className={`mb-0 flex items-center gap-3 text-[12px] font-bold tracking-[0.22em] ${
         tone === "dark" ? "text-stone" : "text-stone-light"
       }`}
     >

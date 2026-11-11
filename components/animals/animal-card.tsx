@@ -29,7 +29,7 @@ export default function AnimalCard({ animal }: { animal: Animal }) {
         {animal.featured && (
           <span className="pointer-events-none absolute inset-0 z-10 border-2 border-gold" aria-hidden="true" />
         )}        {animal.featured && (
-          <span className="absolute top-[15px] right-[15px] z-10 bg-gold px-[10px] py-[7px] text-[8px] font-medium uppercase tracking-[0.15em] text-[#1d2a20]">
+          <span className="absolute top-[15px] right-[15px] z-10 bg-gold px-[10px] py-[7px] text-[12px] font-medium uppercase tracking-[0.15em] text-[#1d2a20]">
             {translations.animal.featured}
           </span>
         )}        {animal.image ? (
@@ -44,38 +44,36 @@ export default function AnimalCard({ animal }: { animal: Animal }) {
           <div className="h-full w-full object-cover" aria-hidden="true" />
         )}
         <span
-          className={`absolute top-[15px] left-[15px] px-[10px] py-[7px] text-[8px] uppercase tracking-[0.15em] ${animal.status === "available" ? "bg-[#e4d8b8] text-[#43513d]" : "bg-[#30483b] text-[#d9dbc9]"}`}
+          className={`absolute top-[15px] left-[15px] px-[10px] py-[7px] text-[12px] uppercase tracking-[0.15em] ${animal.status === "available" ? "bg-[#e4d8b8] text-[#43513d]" : "bg-[#30483b] text-[#d9dbc9]"}`}
         >
           {translations.animal[animal.status]}
         </span>
         <span
-          className="absolute right-[15px] bottom-[15px] inline-flex h-[37px] items-center gap-2 rounded-full border border-[rgba(255,255,255,0.6)] bg-[rgba(15,31,22,0.76)] pl-3 pr-2 text-[9px] font-medium uppercase tracking-[0.08em] text-white transition-all duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 group-hover:border-gold group-hover:bg-gold group-hover:text-forest motion-reduce:transition-none"
+          className="absolute right-[15px] bottom-[15px] inline-flex items-center gap-1.5 rounded-full border border-white/30 bg-forest/45 px-3 py-[7px] text-[12px] font-medium uppercase tracking-[0.16em] text-ivory backdrop-blur-sm transition-[color,background-color,border-color] duration-300 group-hover:border-gold/70 group-hover:bg-forest/70 group-hover:text-gold motion-reduce:transition-none"
           aria-hidden="true"
         >
-          <span>{translations.animal.viewDetails}</span>
-          <span className="grid h-[25px] w-[25px] place-items-center rounded-full bg-white/10 transition-transform duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 group-hover:bg-forest/10 motion-reduce:transition-none">
-            <ArrowUpRight size={15} />
-          </span>
+          {translations.animal.viewDetails}
+          <ArrowUpRight size={14} className="transition-transform duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 motion-reduce:transition-none" />
         </span>
       </div>
       <div className="pt-[17px] px-[2px]">
         <div className="flex items-baseline justify-between">
           <h3 className="m-0 font-display text-[25px] font-normal">{animal.name}</h3>
-          <span className="text-[10px] uppercase tracking-[0.1em] text-sage">{animal.sex}</span>
+          <span className="text-[12px] uppercase tracking-[0.1em] text-sage">{animal.sex}</span>
         </div>
-        <p className="mt-[5px] text-[10px] italic tracking-[0.04em] text-sage">{animal.latin}</p>
-        <div className="mt-[17px] flex gap-[30px] border-t border-forest-border pt-3 text-[11px] text-[#d7d9cc]">
+        <p className="mt-[5px] text-[12px] italic tracking-[0.04em] text-sage">{animal.latin}</p>
+        <div className="mt-[17px] flex gap-[30px] border-t border-forest-border pt-3 text-[12px] text-[#d7d9cc]">
           <span className="flex flex-col gap-[5px]">
-            <small className="text-[8px] tracking-[0.16em] text-sage-muted">{translations.animal.morph}</small>
+            <small className="text-[12px] tracking-[0.16em] text-sage-muted">{translations.animal.morph}</small>
             {animal.morph}
           </span>
           <span className="flex flex-col gap-[5px]">
-            <small className="text-[8px] tracking-[0.16em] text-sage-muted">{translations.animal.weight}</small>
+            <small className="text-[12px] tracking-[0.16em] text-sage-muted">{translations.animal.weight}</small>
             {animal.weight}
           </span>
           {animal.price && (
             <span className="ml-auto flex flex-col gap-[5px] text-right">
-              <small className="text-[8px] tracking-[0.16em] text-sage-muted">{translations.animal.price}</small>
+              <small className="text-[12px] tracking-[0.16em] text-sage-muted">{translations.animal.price}</small>
               <strong className="font-medium text-gold">{animal.price}</strong>
             </span>
           )}

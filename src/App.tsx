@@ -111,17 +111,20 @@ function HomeRoute() {
 
   useLayoutEffect(() => {
     if (!data) return;
-    if (!savedView && location.hash !== "#animals") return;
+    const hashTarget = location.hash
+      ? document.getElementById(decodeURIComponent(location.hash.slice(1)))
+      : null;
+    if (!savedView && !hashTarget) return;
 
     const root = document.documentElement;
     const previousScrollBehavior = root.style.scrollBehavior;
     root.style.scrollBehavior = "auto";
 
     try {
-      if (savedView) {
+      if (hashTarget) {
+        hashTarget.scrollIntoView();
+      } else if (savedView) {
         window.scrollTo(0, savedView.scrollY);
-      } else {
-        document.getElementById("animals")?.scrollIntoView();
       }
     } finally {
       root.style.scrollBehavior = previousScrollBehavior;

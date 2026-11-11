@@ -130,7 +130,7 @@ const components: PortableTextComponents<RichTextBlock> = {
             className="block max-h-[680px] w-full object-cover"
           />
           {value.alt && (
-            <figcaption className="mt-[10px] text-[12px] leading-[1.5] text-muted">
+            <figcaption className="mt-[10px] text-[14px] min-[701px]:text-[16px] leading-[1.5] text-muted">
               {value.alt}
             </figcaption>
           )}

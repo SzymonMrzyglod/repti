@@ -8,6 +8,8 @@
     "deploy": "sanity deploy"
   },
   "dependencies": {
+    "@fontsource-variable/lora": "^5.3.0",
+    "@fontsource-variable/source-sans-3": "^5.3.1",
     "@portabletext/react": "^8.0.1",
     "@portabletext/types": "^4.0.2",
     "react": "19.2.4",

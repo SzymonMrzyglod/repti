@@ -1,6 +1,5 @@
 import { useEffect, useId, useLayoutEffect, useMemo, useRef, useState } from "react";
 import {
-  ArrowLeft,
   ArrowUpRight,
   Check,
   ChevronDown,
@@ -9,11 +8,8 @@ import {
 } from "lucide-react";
 import { Link, useSearchParams } from "react-router-dom";
 import Eyebrow from "@/components/ui/eyebrow";
-import {
-  pageShellClassName,
-  spacedTextLinkClassName,
-} from "@/components/ui/styles";
-import LocaleSwitcher from "@/components/layout/locale-switcher";
+import { pageShellClassName } from "@/components/ui/styles";
+import PageHeader from "@/components/layout/page-header";
 import {
   LocalizedRichText,
   localizedRichTextPlainText,
@@ -49,7 +45,7 @@ const fallbackImages = [
   "/images/guides/homecoming.png",
 ];
 const guideFilterClassName =
-  "flex min-h-10 w-full items-center justify-between gap-3 bg-sand/70 px-3 py-2 text-left font-sans text-[13px] text-ink transition-colors duration-200 hover:bg-sand focus-visible:outline-2 focus-visible:outline-gold focus-visible:outline-offset-2 motion-reduce:transition-none";
+  "flex min-h-10 w-full items-center justify-between gap-3 bg-sand/70 px-3 py-2 text-left font-sans text-[14px] min-[701px]:text-[16px] text-ink transition-colors duration-200 hover:bg-sand focus-visible:outline-2 focus-visible:outline-gold focus-visible:outline-offset-2 motion-reduce:transition-none";
 
 type GuideFilterOption = { id: string; label: string };
 
@@ -113,7 +109,7 @@ function GuideFilterDropdown({
 
   return (
     <div ref={rootRef} className="relative w-[170px] max-[700px]:w-full">
-      <span className="mb-1.5 block font-mono text-[9px] uppercase tracking-[0.15em] text-muted">
+      <span className="mb-1.5 block font-mono text-[12px] uppercase tracking-[0.15em] text-muted">
         {label}
       </span>
       <div>
@@ -175,7 +171,7 @@ function GuideFilterDropdown({
                 role="option"
                 aria-selected={value === option.id}
                 tabIndex={-1}
-                className={`flex w-full items-center justify-between gap-5 border-0 px-3 py-2.5 text-left text-[13px] transition-colors duration-150 hover:bg-sand focus-visible:bg-sand focus-visible:outline-none motion-reduce:transition-none ${
+                className={`flex w-full items-center justify-between gap-5 border-0 px-3 py-2.5 text-left text-[14px] min-[701px]:text-[16px] transition-colors duration-150 hover:bg-sand focus-visible:bg-sand focus-visible:outline-none motion-reduce:transition-none ${
                   index === activeIndex || value === option.id
                     ? "bg-sand/70 text-forest"
                     : "bg-transparent text-ink"
@@ -298,17 +294,9 @@ export function GuidesPage({ guides }: { guides: Guide[] }) {
 
   return (
     <main className={`${pageShellClassName} pb-[90px]`}>
-      <header className="sticky top-0 z-20 -mx-[5vw] bg-ivory/85 px-[5vw] py-3 backdrop-blur">
-        <div className="mx-auto flex max-w-[1240px] items-start justify-between">
-          <Link to="/" className={`${spacedTextLinkClassName} text-forest`}>
-            <ArrowLeft size={15} /> {translations.guides.backHome}
-          </Link>
+      <PageHeader backTo="/" backLabel={translations.guides.backHome} />
 
-          <LocaleSwitcher />
-        </div>
-      </header>
-
-      <section className="mx-auto mt-[130px] mb-20 max-w-[1240px] max-[800px]:mt-[90px] max-[800px]:mb-[55px]">
+      <section className="mx-auto mt-[56px] mb-20 max-w-[1240px] max-[800px]:mt-[36px] max-[800px]:mb-[55px]">
         <Eyebrow tone="dark">{translations.guides.eyebrow}</Eyebrow>
         <h1 className="mt-5 mb-7 text-[clamp(64px,9vw,144px)] leading-[0.84] tracking-[-0.06em]">
           {translations.guides.title}
@@ -330,7 +318,7 @@ export function GuidesPage({ guides }: { guides: Guide[] }) {
           <div className="mb-4 flex items-center justify-between">
             <button
               type="button"
-              className="inline-flex items-center gap-2 border-0 bg-transparent p-0 text-[10px] font-bold uppercase tracking-[0.12em] text-forest"
+              className="inline-flex items-center gap-2 border-0 bg-transparent p-0 text-[12px] font-bold uppercase tracking-[0.12em] text-forest"
               aria-expanded={filtersOpen}
               aria-controls={filterPanelId}
               onClick={() => setFiltersOpen((open) => !open)}
@@ -339,7 +327,7 @@ export function GuidesPage({ guides }: { guides: Guide[] }) {
               {translations.guides.filters}
               <span
                 aria-hidden="true"
-                className={`inline-flex h-[18px] min-w-[18px] items-center justify-center rounded-full px-1 text-[9px] text-forest ${
+                className={`inline-flex h-[18px] min-w-[18px] items-center justify-center rounded-full px-1 text-[12px] text-forest ${
                   activeFilterCount > 0
                     ? "bg-gold opacity-100"
                     : "pointer-events-none opacity-0"
@@ -358,7 +346,7 @@ export function GuidesPage({ guides }: { guides: Guide[] }) {
             {(selectedSpeciesId || selectedCategoryId) && (
               <button
                 type="button"
-                className="inline-flex items-center gap-1 border-0 bg-transparent p-0 text-[9px] font-mono uppercase tracking-[0.1em] text-muted transition-colors hover:text-forest motion-reduce:transition-none"
+                className="inline-flex items-center gap-1 border-0 bg-transparent p-0 text-[12px] font-mono uppercase tracking-[0.1em] text-muted transition-colors hover:text-forest motion-reduce:transition-none"
                 onClick={resetFilters}
               >
                 <X aria-hidden="true" size={13} className="text-gold" />
@@ -414,7 +402,7 @@ export function GuidesPage({ guides }: { guides: Guide[] }) {
                   className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-[1.03] motion-reduce:transform-none motion-reduce:transition-none"
                 />
                 <div className="flex min-w-0 flex-col items-start p-7 max-[800px]:p-5">
-                  <p className="font-mono text-[10px] uppercase tracking-[0.12em] opacity-60">
+                  <p className="font-mono text-[12px] uppercase tracking-[0.12em] opacity-60">
                     {guide.speciesName
                       ? localizedText(guide.speciesName, locale)
                       : ""}
@@ -429,7 +417,7 @@ export function GuidesPage({ guides }: { guides: Guide[] }) {
                   <p className="mb-6 line-clamp-3 leading-[1.45]">
                     {localizedRichTextPlainText(guide.excerpt, locale)}
                   </p>
-                  <span className="mt-auto inline-flex items-center gap-[14px] border-b border-gold pb-2 text-[10px] font-bold uppercase tracking-[0.15em] text-forest">
+                  <span className="mt-auto inline-flex items-center gap-[14px] border-b border-gold pb-2 text-[12px] font-bold uppercase tracking-[0.15em] text-forest">
                     {translations.guides.readGuide} <ArrowUpRight size={15} />
                   </span>
                 </div>
@@ -459,18 +447,11 @@ export function GuideDetailPage({ guide }: { guide: Guide }) {
 
   return (
     <main className={`${pageShellClassName} pb-[90px]`}>
-      <header className="sticky top-0 z-20 -mx-[5vw] bg-ivory/85 px-[5vw] py-3 backdrop-blur">
-        <div className="mx-auto flex max-w-[1240px] items-start justify-between">
-          <Link
-            to={`/guides/${currentSearch ? `?${currentSearch}` : ""}`}
-            className={`${spacedTextLinkClassName} text-forest`}
-          >
-            <ArrowLeft size={15} /> {translations.guides.backToGuides}
-          </Link>
-          <LocaleSwitcher />
-        </div>
-      </header>
-      <article className="mx-auto mt-[130px] max-w-[820px]">
+      <PageHeader
+        backTo={`/guides/${currentSearch ? `?${currentSearch}` : ""}`}
+        backLabel={translations.guides.backToGuides}
+      />
+      <article className="mx-auto mt-[56px] max-w-[1100px] max-[800px]:mt-[36px]">
         <Eyebrow tone="dark">
           {localizedText(guide.category, locale) ||
             translations.guides.categoryFallback}
@@ -481,11 +462,11 @@ export function GuideDetailPage({ guide }: { guide: Guide }) {
         <LocalizedRichText
           value={guide.excerpt}
           locale={locale}
-          className="max-w-[680px] text-[18px] leading-[1.75] [&_p]:mb-6 [&_p]:leading-[1.75]"
+          className="max-w-[960px] text-[18px] leading-[1.75] [&_p]:mb-6 [&_p]:leading-[1.75]"
         />
         <RichText
           value={body}
-          className="guide-body max-w-[680px] text-[18px] leading-[1.75] [&_p]:mb-6 [&_p]:leading-[1.75]"
+          className="guide-body max-w-[960px] text-[18px] leading-[1.75] [&_p]:mb-6 [&_p]:leading-[1.75]"
         />
       </article>
     </main>

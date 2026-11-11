@@ -20,8 +20,9 @@
   --color-success: #285d38;
   --color-success-soft: #dce8dd;
   --color-error: #9c302a;
-  --font-sans: Arial, Helvetica, sans-serif;
-  --font-display: Georgia, "Times New Roman", serif;
+  --font-sans: "Source Sans 3 Variable", Arial, Helvetica, sans-serif;
+  --font-display: "Lora Variable", Georgia, "Times New Roman", serif;
+  --font-mono: ui-monospace, "SF Mono", Menlo, Consolas, "Liberation Mono", monospace;
 }
 
 @theme inline {
