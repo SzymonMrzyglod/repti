@@ -25,15 +25,19 @@ Create a production build with:
 pnpm build
 ```
 
-The build fetches published content from Sanity and renders each Polish guide
-into its HTML file, including its text, images and links. The browser starts
-with that snapshot and fetches the latest guide from Sanity; if the request
-fails, it keeps the snapshot and displays a warning. A build fails if Sanity
-cannot be reached, rather than deploying an incomplete sitemap and guide set.
+The build fetches published content from Sanity's uncached API and renders the
+Polish homepage and each guide into HTML, including text, images and links.
+The browser starts with the snapshot and fetches the latest content from Sanity;
+if the request fails, it keeps the snapshot and displays a warning. Without
+JavaScript, interactive controls such as filters, language selection and the
+contact form do not work; contact details and guide links remain available.
+A build fails if Sanity cannot be reached, rather than deploying an incomplete site.
 
-Publishing changes in the CMS does not rebuild the site automatically. Run
-the GitHub Pages deployment workflow after publishing guides to update their
-HTML snapshots, metadata and sitemap. The prerendered content is not a
+The homepage SEO title and description are editable in the CMS; the build
+includes the published Polish values in the initial HTML. Publishing changes
+in the CMS does not rebuild the site automatically. Run the GitHub Pages
+deployment workflow after changes to update HTML snapshots, metadata and the
+sitemap. The prerendered content is not a
 guarantee of indexing or ranking; use Google Search Console's URL inspection
 to check how Google sees the deployed page.
 

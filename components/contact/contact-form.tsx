@@ -258,6 +258,8 @@ export function ContactFormModal({
     if (!open && dialog.open) dialog.close();
   }, [open]);
 
+  if (typeof document === "undefined") return null;
+
   return createPortal(
     <dialog
       ref={dialogRef}

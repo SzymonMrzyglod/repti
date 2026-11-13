@@ -3,7 +3,6 @@ import {
   useState,
   useEffect,
   useRef,
-  type ComponentProps,
 } from "react";
 import {
   Link,
@@ -30,7 +29,8 @@ import {
   spacedTextLinkClassName,
 } from "@/components/ui/styles";
 import { useLocale } from "@/lib/locale-context";
-import { localizedText, type Localized } from "@/lib/localized";
+import { localizedText } from "@/lib/localized";
+import { mapHomeData, type HomeData, type HomeSettings, type SanityReptile } from "@/lib/home-data";
 import {
   guideByIdQuery,
   guidesQuery,
@@ -48,66 +48,27 @@ import {
   requestGuidesListScrollRestore,
 } from "@/lib/guides-view-state";
 
-type SanityReptile = {
-  _id: string;
-  name?: Localized;
-  speciesId?: string;
-  species?: string;
-  speciesName?: Localized;
-  speciesLatinName?: string;
-  latinName?: string;
-  morph?: Localized;
-  sex?: Localized;
-  weight?: string;
-  price?: string;
-  featured?: boolean;
-  status?: string;
-  description?: Localized;
-  imageUrl?: string;
-};
-type HomePageProps = ComponentProps<typeof HomePage>;
-type HomeSettings = HomePageProps["settings"];
-type HomeAnimal = HomePageProps["animals"][number];
-type HomeData = { reptiles: SanityReptile[]; settings: HomeSettings };
-
-function mapAnimalStatus(status?: string): HomeAnimal["status"] {
-  if (status === "reserved") return "reserved";
-  if (status === "adopted") return "adopted";
-  return "available";
-}
-
-function mapHomeData(
-  reptiles: SanityReptile[],
-  settings: HomeSettings,
-  locale: "pl" | "en",
-): HomePageProps {
-  return {
-    settings,
-    animals: reptiles.map((reptile) => ({
-      id: reptile._id,
-      name: localizedText(reptile.name, locale),
-      speciesId: reptile.speciesId,
-      species:
-        localizedText(reptile.speciesName, locale) || reptile.species || "",
-      latin: reptile.latinName || reptile.speciesLatinName || "",
-      morph: localizedText(reptile.morph, locale),
-      sex: localizedText(reptile.sex, locale),
-      weight: reptile.weight || "",
-      price: reptile.price || "",
-      featured: Boolean(reptile.featured),
-      status: mapAnimalStatus(reptile.status),
-      image: reptile.imageUrl || "",
-    })),
-  };
-}
-
 function HomeRoute() {
   const { locale } = useLocale();
   const location = useLocation();
   const translations = getTranslations(locale);
   const [savedView] = useState(getHomeViewState);
-  const [data, setData] = useState<HomeData | null>(null);
+  const [data, setData] = useState<HomeData | null>(() => {
+    const snapshot = document.getElementById("home-snapshot");
+    if (!snapshot?.textContent) return null;
+    try {
+      const value: HomeData = JSON.parse(snapshot.textContent);
+      if (!value || !Array.isArray(value.reptiles) || !value.settings || typeof value.settings !== "object") {
+        throw new Error("Invalid homepage snapshot");
+      }
+      return value;
+    } catch (error) {
+      console.error("Could not read the prerendered homepage snapshot", error);
+      return null;
+    }
+  });
   const [hasError, setHasError] = useState(false);
+  const [refreshFailed, setRefreshFailed] = useState(false);
 
   useLayoutEffect(() => {
     if (!data) return;
@@ -135,6 +96,8 @@ function HomeRoute() {
 
   useEffect(() => {
     let isActive = true;
+    document.getElementById("home-snapshot")?.remove();
+    const hasSnapshot = data !== null;
 
     Promise.all([
       sanityClient.fetch<SanityReptile[]>(reptilesQuery),
@@ -145,8 +108,12 @@ function HomeRoute() {
           setData({ reptiles, settings: settings || {} });
         }
       })
-      .catch(() => {
-        if (isActive) setHasError(true);
+      .catch((error: unknown) => {
+        console.error("Could not refresh homepage content", error);
+        if (isActive) {
+          if (hasSnapshot) setRefreshFailed(true);
+          else setHasError(true);
+        }
       });
 
     return () => {
@@ -166,18 +133,23 @@ function HomeRoute() {
         title={
           localizedText(data.settings?.seoTitle, locale) ||
           (locale === "pl"
-            ? "O ty gadzie! — Hodowla gekonów i węży z pasją"
+            ? "Gekony orzęsione i węże zbożowe — hodowla Śląsk | O ty gadzie!"
             : "O ty gadzie! — Passionate gecko and snake breeder")
         }
         description={
           localizedText(data.settings?.seoDescription, locale) ||
           (locale === "pl"
-            ? "O ty gadzie! — świadoma hodowla gekonów orzęsionych i węży zbożowych w Jastrzębiu-Zdroju. Zdrowe zwierzęta, rzetelna wiedza i wsparcie na start."
+            ? "Hodowla gekonów orzęsionych i węży zbożowych w Jastrzębiu-Zdroju na Śląsku. Poznaj nasze zwierzęta, poradniki i wsparcie dla przyszłych opiekunów."
             : "O ty gadzie! — responsible breeding of crested geckos and corn snakes in Jastrzębie-Zdrój, Poland. Healthy animals, reliable care knowledge and support.")
         }
         path="/"
         image={data.settings?.heroImageUrl}
       />
+      {refreshFailed && (
+        <p role="alert" className="fixed inset-x-0 bottom-0 z-[60] m-0 bg-ivory px-[5vw] py-3 text-ink shadow-lg">
+          {translations.home.snapshotWarning}
+        </p>
+      )}
       <HomePage
         {...mapHomeData(data.reptiles, data.settings, locale)}
         initialShowAll={savedView?.showAll}

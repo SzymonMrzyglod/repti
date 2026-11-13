@@ -4,7 +4,7 @@ import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { createServer } from "vite";
 import react from "@vitejs/plugin-react";
-import { renderGuidePage } from "./seo-plugin.mjs";
+import { renderGuidePage, renderHomePage, withHomeMeta } from "./seo-plugin.mjs";
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const template = `<html><head><title>Old</title>
@@ -35,6 +35,7 @@ const guide = {
 
 let server;
 let renderGuide;
+let renderHome;
 before(async () => {
   server = await createServer({
     configFile: false,
@@ -45,6 +46,7 @@ before(async () => {
     appType: "custom",
   });
   ({ renderGuide } = await server.ssrLoadModule("/scripts/render-guide.tsx"));
+  ({ renderHome } = await server.ssrLoadModule("/scripts/render-home.tsx"));
 });
 after(async () => {
   await server?.close();
@@ -71,4 +73,56 @@ test("guide HTML contains the actual formatted article and safe snapshot", () =>
 
 test("missing root element fails the build instead of publishing an empty guide", () => {
   assert.throws(() => renderGuidePage("<html></html>", guide, renderGuide), /root element not found/);
+});
+
+test("homepage metadata uses published CMS values and escapes HTML", () => {
+  const homeTemplate = template.replace("</head>", `<meta property="og:title" content="Old" />
+<meta property="og:description" content="Old" />
+<meta name="twitter:title" content="Old" />
+<meta name="twitter:description" content="Old" /></head>`);
+  const html = withHomeMeta(homeTemplate, {
+    seoTitle: { pl: "Gekony & węże" },
+    seoDescription: { pl: "Hodowla na Śląsku" },
+  });
+  assert.match(html, /<title>Gekony &amp; węże<\/title>/);
+  assert.match(html, /property="og:title" content="Gekony &amp; węże"/);
+  assert.match(html, /name="twitter:title" content="Gekony &amp; węże"/);
+  assert.match(html, /name="description" content="Hodowla na Śląsku"/);
+  assert.match(html, /property="og:description" content="Hodowla na Śląsku"/);
+  assert.match(html, /name="twitter:description" content="Hodowla na Śląsku"/);
+  assert.equal(withHomeMeta(homeTemplate, null), homeTemplate);
+});
+
+test("homepage renders CMS content, animal links and a safe snapshot", () => {
+  const data = {
+    settings: {
+      heroTitle: { pl: "Nasza hodowla" },
+      heroText: { pl: "Gekony orzęsione i węże zbożowe" },
+      historyText: { pl: "Jastrzębie-Zdrój </script><script>alert(1)</script>" },
+      seoTitle: { pl: "Hodowla na Śląsku" },
+    },
+    reptiles: [{
+      _id: "animal-test",
+      name: { pl: "Gekon testowy" },
+      speciesId: "species-test",
+      speciesName: { pl: "Gekon orzęsiony" },
+      morph: { pl: "Harlequin" },
+      status: "available",
+      imageUrl: "https://example.com/gecko.jpg",
+    }],
+  };
+  const html = renderHomePage(template, data, renderHome, [
+    { href: "/guides/test/", label: "Poradnik gekona" },
+  ]);
+  assert.match(html, /<title>Hodowla na Śląsku<\/title>/);
+  assert.match(html, /<h1[^>]*>Nasza hodowla<\/h1>/);
+  assert.match(html, /Gekony orzęsione i węże zbożowe/);
+  assert.match(html, /Jastrzębie-Zdrój &lt;\/script&gt;/);
+  assert.match(html, /href="\/animal\/animal-test\/"/);
+  assert.match(html, /href="\/guides\/test\/">Poradnik gekona/);
+  const snapshot = html.match(/<script id="home-snapshot" type="application\/json">([\s\S]*?)<\/script>/);
+  assert.ok(snapshot);
+  assert.deepEqual(JSON.parse(snapshot[1]), data);
+  assert.doesNotMatch(snapshot[1], /<\/script>/i);
+  assert.throws(() => renderHomePage("<html></html>", data, renderHome, []), /root element not found/);
 });

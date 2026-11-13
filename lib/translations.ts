@@ -55,6 +55,7 @@ const translations = {
         "Przygotowaliśmy praktyczne przewodniki, które pomogą Ci zapewnić Twojemu gadowi najlepsze warunki od pierwszego dnia.",
       guidesLink: "Przejdź do poradników",
       loadError: "Nie udało się załadować danych. Spróbuj ponownie.",
+      snapshotWarning: "Nie udało się pobrać aktualnych danych. Wyświetlamy ostatnią opublikowaną wersję strony.",
       loading: "Ładowanie…",
     },
     animal: {
@@ -202,6 +203,7 @@ const translations = {
         "Our practical guides help you provide the right conditions for your reptile from day one.",
       guidesLink: "Explore the guides",
       loadError: "We couldn't load the content. Please try again.",
+      snapshotWarning: "Could not load the latest content. Showing the last published version of the site.",
       loading: "Loading…",
     },
     animal: {

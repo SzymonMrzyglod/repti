@@ -2,13 +2,16 @@ import fs from "node:fs/promises";
 import path from "node:path";
 import { createServer } from "vite";
 import react from "@vitejs/plugin-react";
+import { reptilesQuery, siteSettingsQuery } from "../lib/home-queries.mjs";
 
 const SITE_URL = "https://o-ty-gadzie.pl";
 const SITE_NAME = "O ty gadzie!";
 const SANITY_API =
-  "https://t5to691s.apicdn.sanity.io/v2026-10-28/data/query/production";
+  "https://t5to691s.api.sanity.io/v2026-10-28/data/query/production";
 
 const query = `{
+  "settings": ${siteSettingsQuery},
+  "homeReptiles": ${reptilesQuery},
   "reptiles": *[_type == "reptile"]{_id, name, morph, description, "species": species->name.pl, "image": coalesce(image.asset->url, gallery[0].asset->url), _updatedAt},
   "guides": *[_type == "guide"]{
     _id, title{pl, en}, excerpt{pl, en}, "category": categoryRef->name,
@@ -58,8 +61,8 @@ async function fetchContent() {
   const response = await fetch(`${SANITY_API}?query=${encodeURIComponent(query)}`);
   if (!response.ok) throw new Error(`[seo] Sanity responded with ${response.status}`);
   const { result } = await response.json();
-  if (!Array.isArray(result?.reptiles) || !Array.isArray(result?.guides)) {
-    throw new Error("[seo] Invalid CMS response: reptiles and guides must be arrays");
+  if (!Array.isArray(result?.reptiles) || !Array.isArray(result?.homeReptiles) || !Array.isArray(result?.guides)) {
+    throw new Error("[seo] Invalid CMS response: reptiles, homepage reptiles and guides must be arrays");
   }
   return result;
 }
@@ -122,6 +125,29 @@ async function writePage(outDir, route, html) {
   await fs.writeFile(path.join(directory, "index.html"), html);
 }
 
+export function withHomeMeta(template, settings) {
+  const title = pick(settings?.seoTitle);
+  const description = pick(settings?.seoDescription);
+  const fallbackTitle = template.match(/<title>([\s\S]*?)<\/title>/)?.[1];
+  const fallbackDescription = template.match(/<meta name="description" content="([^"]*)"\s*\/?>/)?.[1];
+  if (!fallbackTitle || !fallbackDescription) {
+    throw new Error("[seo] Cannot render home metadata: template title or description missing");
+  }
+  const replacements = [
+    ...(title ? [
+      [/<title>[\s\S]*?<\/title>/, `<title>${escapeHtml(title)}</title>`],
+      [/<meta property="og:title" content="[^"]*"\s*\/?>/, `<meta property="og:title" content="${escapeHtml(title)}" />`],
+      [/<meta name="twitter:title" content="[^"]*"\s*\/?>/, `<meta name="twitter:title" content="${escapeHtml(title)}" />`],
+    ] : []),
+    ...(description ? [
+      [/<meta name="description" content="[^"]*"\s*\/?>/, `<meta name="description" content="${escapeHtml(description)}" />`],
+      [/<meta property="og:description" content="[^"]*"\s*\/?>/, `<meta property="og:description" content="${escapeHtml(description)}" />`],
+      [/<meta name="twitter:description" content="[^"]*"\s*\/?>/, `<meta name="twitter:description" content="${escapeHtml(description)}" />`],
+    ] : []),
+  ];
+  return replacements.reduce((html, [pattern, replacement]) => html.replace(pattern, () => replacement), template);
+}
+
 export function renderGuidePage(template, guide, renderGuide) {
   const route = `guides/${guide._id}`;
   const title = pick(guide.title) || SITE_NAME;
@@ -142,7 +168,25 @@ export function renderGuidePage(template, guide, renderGuide) {
   );
 }
 
-// Generates route metadata, rendered guide content, sitemap.xml and robots.txt.
+export function renderHomePage(template, data, renderHome, crawlLinks) {
+  const root = '<div id="root"></div>';
+  if (!template.includes(root)) {
+    throw new Error("[seo] Cannot render homepage: root element not found in HTML template");
+  }
+  const snapshot = JSON.stringify(data).replace(/</g, "\\u003c");
+  const noscript = `<noscript>
+      <p>Niektóre funkcje strony wymagają JavaScript. Możesz skontaktować się z nami telefonicznie lub przez e-mail w stopce.</p>
+      <nav aria-label="Poradniki i zwierzęta">
+${crawlLinks.map((link) => `        <a href="${escapeHtml(link.href)}">${escapeHtml(link.label)}</a>`).join("\n")}
+      </nav>
+    </noscript>`;
+  return withHomeMeta(template, data.settings).replace(
+    root,
+    `<div id="root">${renderHome(data)}</div>\n    <script id="home-snapshot" type="application/json">${snapshot}</script>\n    ${noscript}`,
+  );
+}
+
+// Generates route metadata, rendered homepage and guide content, sitemap.xml and robots.txt.
 export default function seoPlugin() {
   let outDir = "dist";
   let root = process.cwd();
@@ -156,7 +200,7 @@ export default function seoPlugin() {
     },
     async closeBundle() {
       const template = await fs.readFile(path.join(outDir, "index.html"), "utf8");
-      const { reptiles, guides } = await fetchContent();
+      const { reptiles, homeReptiles, guides, settings } = await fetchContent();
       const today = new Date().toISOString().slice(0, 10);
 
       const urls = [
@@ -200,7 +244,18 @@ export default function seoPlugin() {
         urls.push({ loc: url, lastmod: (reptile._updatedAt || today).slice(0, 10), priority: "0.8" });
       }
 
-      if (guides.length) {
+      const crawlLinks = [
+        ...reptiles.map((reptile) => ({
+          href: `/animal/${reptile._id}/`,
+          label: [pick(reptile.name), pick(reptile.morph)].filter(Boolean).join(" — "),
+        })),
+        ...guides.map((guide) => ({
+          href: `/guides/${guide._id}/`,
+          label: pick(guide.title),
+        })),
+      ].filter((link) => link.label);
+
+      {
         const server = await createServer({
           configFile: false,
           root,
@@ -210,6 +265,12 @@ export default function seoPlugin() {
           appType: "custom",
         });
         try {
+          const { renderHome } = await server.ssrLoadModule("/scripts/render-home.tsx");
+          const homeData = { reptiles: homeReptiles, settings: settings || {} };
+          await fs.writeFile(
+            path.join(outDir, "index.html"),
+            renderHomePage(template, homeData, renderHome, crawlLinks),
+          );
           const { renderGuide } = await server.ssrLoadModule("/scripts/render-guide.tsx");
           for (const guide of guides) {
             const route = `guides/${guide._id}`;
@@ -233,32 +294,6 @@ ${urls
   .join("\n")}
 </urlset>
 `;
-
-      const crawlLinks = [
-        ...reptiles.map((reptile) => ({
-          href: `/animal/${reptile._id}/`,
-          label: [pick(reptile.name), pick(reptile.morph)].filter(Boolean).join(" — "),
-        })),
-        ...guides.map((guide) => ({
-          href: `/guides/${guide._id}/`,
-          label: pick(guide.title),
-        })),
-      ].filter((link) => link.label);
-
-      if (crawlLinks.length) {
-        const noscript = `<noscript>
-      <h1>${SITE_NAME} — hodowla gekonów orzęsionych i węży zbożowych</h1>
-      <nav>
-${crawlLinks.map((link) => `        <a href="${link.href}">${escapeHtml(link.label)}</a>`).join("\n")}
-        <a href="/guides/">Poradniki</a>
-      </nav>
-    </noscript>`;
-        const homePage = template.replace(
-          '<div id="root"></div>',
-          `<div id="root"></div>\n    ${noscript}`,
-        );
-        await fs.writeFile(path.join(outDir, "index.html"), homePage);
-      }
 
       await fs.writeFile(path.join(outDir, "sitemap.xml"), sitemap);
       await fs.writeFile(
