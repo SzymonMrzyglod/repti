@@ -1,5 +1,7 @@
 import fs from "node:fs/promises";
 import path from "node:path";
+import { createServer } from "vite";
+import react from "@vitejs/plugin-react";
 
 const SITE_URL = "https://o-ty-gadzie.pl";
 const SITE_NAME = "O ty gadzie!";
@@ -8,7 +10,15 @@ const SANITY_API =
 
 const query = `{
   "reptiles": *[_type == "reptile"]{_id, name, morph, description, "species": species->name.pl, "image": coalesce(image.asset->url, gallery[0].asset->url), _updatedAt},
-  "guides": *[_type == "guide"]{_id, title, excerpt, "image": image.asset->url, _updatedAt}
+  "guides": *[_type == "guide"]{
+    _id, title{pl, en}, excerpt{pl, en}, "category": categoryRef->name,
+    "categoryId": categoryRef._ref, "speciesId": species._ref, "speciesName": species->name,
+    readingTime, "image": image.asset->url,
+    "imageUrl": image.asset->url + "?auto=format&fit=max&w=1200&q=84",
+    body[]{..., "assetUrl": asset->url + "?auto=format&fit=max&w=1800&q=85"},
+    bodyEn[]{..., "assetUrl": asset->url + "?auto=format&fit=max&w=1800&q=85"},
+    _updatedAt
+  }
 }`;
 
 const escapeHtml = (value) =>
@@ -45,15 +55,13 @@ const truncate = (text, max = 160) => {
 };
 
 async function fetchContent() {
-  try {
-    const response = await fetch(`${SANITY_API}?query=${encodeURIComponent(query)}`);
-    if (!response.ok) throw new Error(`Sanity responded with ${response.status}`);
-    const { result } = await response.json();
-    return { reptiles: result.reptiles || [], guides: result.guides || [] };
-  } catch (error) {
-    console.warn(`[seo] Could not load CMS content: ${error.message}`);
-    return { reptiles: [], guides: [] };
+  const response = await fetch(`${SANITY_API}?query=${encodeURIComponent(query)}`);
+  if (!response.ok) throw new Error(`[seo] Sanity responded with ${response.status}`);
+  const { result } = await response.json();
+  if (!Array.isArray(result?.reptiles) || !Array.isArray(result?.guides)) {
+    throw new Error("[seo] Invalid CMS response: reptiles and guides must be arrays");
   }
+  return result;
 }
 
 function withMeta(html, { title, description, url, image }) {
@@ -114,15 +122,36 @@ async function writePage(outDir, route, html) {
   await fs.writeFile(path.join(directory, "index.html"), html);
 }
 
-// Generates sitemap.xml, robots.txt, a 404 fallback and per-route HTML with correct
-// <head> metadata, so crawlers and link previews see it without running JavaScript.
+export function renderGuidePage(template, guide, renderGuide) {
+  const route = `guides/${guide._id}`;
+  const title = pick(guide.title) || SITE_NAME;
+  const url = `${SITE_URL}/${route}/`;
+  const snapshot = JSON.stringify(guide).replace(/</g, "\\u003c");
+  const root = '<div id="root"></div>';
+  if (!template.includes(root)) {
+    throw new Error("[seo] Cannot render guide: root element not found in HTML template");
+  }
+  return withMeta(template, {
+    title: `${title} | ${SITE_NAME}`,
+    description: truncate(pick(guide.excerpt)) || "Poradnik hodowcy gadów.",
+    url,
+    image: guide.image && `${guide.image}?auto=format&fit=max&w=1200&q=84`,
+  }).replace(
+    root,
+    `<div id="root">${renderGuide(guide)}</div>\n    <script id="guide-snapshot" type="application/json">${snapshot}</script>`,
+  );
+}
+
+// Generates route metadata, rendered guide content, sitemap.xml and robots.txt.
 export default function seoPlugin() {
   let outDir = "dist";
+  let root = process.cwd();
 
   return {
     name: "repti-seo",
     apply: "build",
     configResolved(config) {
+      root = path.resolve(config.root);
       outDir = path.resolve(config.root, config.build.outDir);
     },
     async closeBundle() {
@@ -171,18 +200,27 @@ export default function seoPlugin() {
         urls.push({ loc: url, lastmod: (reptile._updatedAt || today).slice(0, 10), priority: "0.8" });
       }
 
-      for (const guide of guides) {
-        const route = `guides/${guide._id}`;
-        const title = pick(guide.title) || SITE_NAME;
-        const url = `${SITE_URL}/${route}/`;
-
-        await writePage(outDir, route, withMeta(template, {
-          title: `${title} | ${SITE_NAME}`,
-          description: truncate(pick(guide.excerpt)) || "Poradnik hodowcy gadów.",
-          url,
-          image: guide.image && `${guide.image}?auto=format&fit=max&w=1200&q=84`,
-        }));
-        urls.push({ loc: url, lastmod: (guide._updatedAt || today).slice(0, 10), priority: "0.6" });
+      if (guides.length) {
+        const server = await createServer({
+          configFile: false,
+          root,
+          plugins: [react()],
+          resolve: { alias: { "@": root } },
+          server: { middlewareMode: true },
+          appType: "custom",
+        });
+        try {
+          const { renderGuide } = await server.ssrLoadModule("/scripts/render-guide.tsx");
+          for (const guide of guides) {
+            const route = `guides/${guide._id}`;
+            const url = `${SITE_URL}/${route}/`;
+            const html = renderGuidePage(template, guide, renderGuide);
+            await writePage(outDir, route, html);
+            urls.push({ loc: url, lastmod: (guide._updatedAt || today).slice(0, 10), priority: "0.6" });
+          }
+        } finally {
+          await server.close();
+        }
       }
 
       const sitemap = `<?xml version="1.0" encoding="UTF-8"?>

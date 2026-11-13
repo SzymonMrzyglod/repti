@@ -17,7 +17,9 @@ const LocaleContext = createContext<LocaleContextValue | null>(null);
 
 export function LocaleProvider({ children }: { children: ReactNode }) {
   const [locale, setLocaleState] = useState<Locale>(() =>
-    localStorage.getItem("site-locale") === "en" ? "en" : "pl",
+    typeof window !== "undefined" && localStorage.getItem("site-locale") === "en"
+      ? "en"
+      : "pl",
   );
 
   function setLocale(nextLocale: Locale) {

@@ -130,6 +130,7 @@ const translations = {
       readGuide: "Czytaj poradnik",
       empty: "Poradniki pojawią się tutaj po dodaniu ich w CMS.",
       speciesEmpty: "Brak poradników dla wybranych filtrów.",
+      snapshotWarning: "Nie udało się pobrać aktualnej wersji poradnika. Wyświetlamy ostatnią opublikowaną wersję strony.",
     },
     footer: {
       brandHome: "O ty gadzie! — strona główna",
@@ -276,6 +277,7 @@ const translations = {
       readGuide: "Read guide",
       empty: "Guides will appear here once they are added in the CMS.",
       speciesEmpty: "There are no guides matching the selected filters.",
+      snapshotWarning: "Could not load the latest version of this guide. Showing the last published version of the site.",
     },
     footer: {
       brandHome: "O ty gadzie! — home",

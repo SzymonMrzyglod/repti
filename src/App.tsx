@@ -394,17 +394,33 @@ function ContactRoute() {
 function GuideRoute() {
   const { id } = useParams();
   const { locale } = useLocale();
-  const [guide, setGuide] = useState<Guide | null>(null);
+  const [guide, setGuide] = useState<Guide | null>(() => {
+    const snapshot = document.getElementById("guide-snapshot");
+    if (!snapshot?.textContent) return null;
+    try {
+      const value: Guide = JSON.parse(snapshot.textContent);
+      return value?._id === id ? value : null;
+    } catch (error) {
+      console.error("Could not read the prerendered guide snapshot", error);
+      return null;
+    }
+  });
   const [status, setStatus] = useState<
     "loading" | "ready" | "not-found" | "error"
-  >("loading");
+  >(guide ? "ready" : "loading");
+  const [refreshFailed, setRefreshFailed] = useState(false);
 
   useEffect(() => {
     if (!id) return;
 
     let isActive = true;
-    setGuide(null);
-    setStatus("loading");
+    document.getElementById("guide-snapshot")?.remove();
+    const hasSnapshot = guide?._id === id;
+    if (!hasSnapshot) {
+      setGuide(null);
+      setStatus("loading");
+    }
+    setRefreshFailed(false);
 
     sanityClient
       .fetch<Guide | null>(guideByIdQuery, { id })
@@ -414,7 +430,10 @@ function GuideRoute() {
         setStatus(result ? "ready" : "not-found");
       })
       .catch(() => {
-        if (isActive) setStatus("error");
+        if (isActive) {
+          if (hasSnapshot) setRefreshFailed(true);
+          else setStatus("error");
+        }
       });
 
     return () => {
@@ -424,7 +443,7 @@ function GuideRoute() {
 
   if (status === "not-found") return <NotFoundPage />;
   if (status === "error") return <LoadError />;
-  if (status !== "ready" || !guide) return <LoadingState />;
+  if (status !== "ready" || !guide || guide._id !== id) return <LoadingState />;
 
   const guideTitle = localizedText(guide.title, locale);
   const guideDescription =
@@ -450,6 +469,11 @@ function GuideRoute() {
           publisher: { "@type": "Organization", name: SITE_NAME },
         }}
       />
+      {refreshFailed && (
+        <p role="alert" className={`${pageShellClassName} text-ink`}>
+          {getTranslations(locale).guides.snapshotWarning}
+        </p>
+      )}
       <GuideDetailPage guide={guide} />
     </>
   );
